@@ -453,6 +453,14 @@
   .m-pending .btn.sm { margin-left: 4px; }
   .m-sent { font-size: 13px; font-weight: 700; color: #1d5a35; text-align: center; }
   .m-scanhint { font-size: 13px; color: var(--ink2); text-align: center; }
+  .m-clockok { font-size: 12.5px; color: var(--ok); text-align: center; margin-top: -6px; }
+  .m-clockok.fix { color: #8a5a00; }
+  .m-gun { background: #fff; border: 2px solid var(--gold); border-radius: 16px; padding: 12px 14px; display: grid; gap: 8px; }
+  .m-gun > b { font-size: 17px; } .m-gun > span { font-size: 13px; color: var(--ink2); }
+  .m-gunbtns { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+  .m-gunbtn { border: 0; border-radius: 12px; color: #fff; font: inherit; font-weight: 800; font-size: 17px; padding: 12px 10px; cursor: pointer; display: grid; gap: 2px; }
+  .m-gunbtn small { font-weight: 600; font-size: 12px; opacity: .92; }
+  .m-gunmsg { font-size: 14px; font-weight: 700; }
   #m-clear { display: grid; }
   .m-clear-btn { justify-self: center; }
   .m-clear-box { display: grid; gap: 8px; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; font-size: 14px; }
@@ -1551,8 +1559,9 @@ window.__startApp = function () {
     var st = M.station, type = stType(st);
     if (type === 'kit') return viewKit();
     if (type === 'payment') return viewPayment();
-    return '<section class="m-wrap">' + stationBar() +
-      '<div class="m-clock" id="m-clock">' + esc(mClock(Date.now())) + '</div>' +
+    return '<section class="m-wrap">' + stationBar() + (type === 'start' ? '<div id="m-gun">' + gunPanel() + '</div>' : '') +
+      '<div class="m-clock" id="m-clock">' + esc(mClock(mNow())) + '</div>' +
+      '<div class="m-clockok' + (CLK.use ? ' fix' : '') + '" id="m-clockok">' + clockNote() + '</div>' +
       '<form id="m-form" class="m-form" autocomplete="off"><label for="m-bib">Runner’s bib number</label>' +
       '<input id="m-bib" class="m-bib" type="text" inputmode="numeric" maxlength="300" autocomplete="off" placeholder="0000">' +
       '<button class="m-go" type="submit">' + (type === 'finish' ? 'Confirm finish' : type === 'start' ? 'Check in at the start' : 'Confirm check-in') + '</button></form>' +
@@ -1679,16 +1688,20 @@ window.__startApp = function () {
     var input = $('#m-bib');
     var raw = String(input.value || '');
     var link = parseQrLink(raw);                 // a scanner may type the whole QR link
+    var now = mNow(), when = BOX.first && now - BOX.first < 20000 ? BOX.first : now;   // the moment the bib started coming in
+    BOX.first = 0;
     input.value = '';
     input.focus();
-    if (link) mRecord(link.bib, link.code);
-    else mRecord(raw.replace(/\D/g, ''), '');
+    if (link) mRecord(link.bib, link.code, when);
+    else mRecord(raw.replace(/\D/g, ''), '', when);
   }
 
-  function mRecord(bib, qrCode) {
+  // The time recorded is the moment of the scan / tap, on Google's clock (see clockCheck) – never the
+  // moment the phone manages to send it, so a slow or lost signal does not change any result.
+  function mRecord(bib, qrCode, when) {
     bib = bib ? String(Number(bib)) : '';
     if (!bib || bib === '0' || bib === 'NaN') return;
-    var e = { id: mUid(), bib: bib, clientTime: Date.now(), code: 'PENDING', qrc: qrCode || '' };
+    var e = { id: mUid(), bib: bib, clientTime: when || mNow(), code: 'PENDING', qrc: qrCode || '' };
     M.queue.push({ id: e.id, bib: bib, clientTime: e.clientTime, qrc: e.qrc });
     M.recent.unshift(e);
     M.note = '';
@@ -1798,7 +1811,7 @@ window.__startApp = function () {
     if (!pin) { M.error = 'Enter your station PIN.'; render(); return; }
     if (!hasGas()) return;
     google.script.run.withSuccessHandler(function (res) {
-      if (res && res.ok) { M.station = res.station; M.pin = pin; M.error = ''; mSave(); render(); mPump(); }
+      if (res && res.ok) { M.station = res.station; M.pin = pin; M.error = ''; mSave(); render(); mPump(); clockCheck(3); }
       else { M.error = (res && res.error) || 'Could not sign in.'; render(); }
     }).withFailureHandler(function () { M.error = 'No internet connection. Try again when you have signal.'; render(); })
       .marshalLogin(M.pick, pin);
@@ -1812,6 +1825,75 @@ window.__startApp = function () {
       mSave(); mRefresh();
     }).withFailureHandler(function () { M.note = 'No signal – try Undo again in a moment.'; mRefresh(); })
       .undoCheckpoint({ station: M.station.name, pin: M.pin, id: id });
+  }
+
+  // ---- one clock for every phone: compared with Google's clock, corrected when a phone is clearly off ----
+  var CLK = { off: 0, rtt: 0, at: 0, use: false, busy: false, tried: 0 };
+  try {
+    var ck = JSON.parse(localStorage.getItem('funrun-clock') || 'null');
+    if (ck && Date.now() - ck.at < 12 * 3600000) { CLK.off = ck.off; CLK.rtt = ck.rtt; CLK.at = ck.at; CLK.use = ck.use; }
+  } catch (err) {}
+  function mNow() { return Date.now() + (CLK.use ? CLK.off : 0); }
+  function clockCheck(times) {                    // asks Google's time a few times and keeps the most precise answer
+    if (!hasGas() || CLK.busy) return;
+    CLK.busy = true; CLK.tried = Date.now();
+    var best = null, left = times || 3;
+    function done() {
+      CLK.busy = false;
+      if (!best) return;
+      CLK.off = Math.round(best.off); CLK.rtt = best.rtt; CLK.at = Date.now();
+      CLK.use = Math.abs(CLK.off) > Math.max(1500, best.rtt / 2 + 500);   // a correct phone clock is left alone
+      try { localStorage.setItem('funrun-clock', JSON.stringify({ off: CLK.off, rtt: CLK.rtt, at: CLK.at, use: CLK.use })); } catch (err) {}
+      var el = $('#m-clockok');
+      if (el) { el.innerHTML = clockNote(); el.className = 'm-clockok' + (CLK.use ? ' fix' : ''); }
+    }
+    (function ask() {
+      var t0 = Date.now();
+      google.script.run.withSuccessHandler(function (s) {
+        var t1 = Date.now(), off = Number(s) - (t0 + t1) / 2;
+        if (isFinite(off) && (!best || t1 - t0 < best.rtt)) best = { off: off, rtt: t1 - t0 };
+        if (--left > 0) ask(); else done();
+      }).withFailureHandler(done).serverClock();
+    })();
+  }
+  function clockNote() {
+    if (!CLK.at) return '⏱ Checking this phone’s clock…';
+    var s = Math.abs(CLK.off) / 1000;
+    if (!CLK.use) return '⏱ Phone clock matches Google’s time (within ' + Math.max(0.1, Math.round(Math.max(s, CLK.rtt / 2000) * 10) / 10) + ' s)';
+    return '⏱ This phone’s clock is ' + (s >= 90 ? Math.round(s / 60) + ' min' : s.toFixed(1) + ' s') + (CLK.off > 0 ? ' behind' : ' ahead') +
+      ' – every time is corrected automatically';
+  }
+
+  // ---- 🔫 Start Line: the exact gun start of each category ----
+  var G = { msg: '', pending: {} };
+  function gunPanel() {
+    var cats = (M.station.cats && M.station.cats.length ? M.station.cats : (DATA.funrun && DATA.funrun.categories) || []);
+    var gun = (DATA.race && DATA.race.gun) || {};
+    return '<div class="m-gun"><b>🔫 Gun start</b><span>Tap the moment the race starts. Finish times are measured from this exact time.</span>' +
+      '<div class="m-gunbtns">' + cats.map(function (c) {
+        var p = G.pending[c];
+        return '<button type="button" class="m-gunbtn bg-' + catKey(c) + '" data-gunstart="' + esc(c) + '">🔫 START ' + esc(c) +
+          '<small>' + (p ? 'Not sent yet (' + esc(mClock(p)) + ') – tap to send' : gun[c] ? 'Started ' + esc(mClock(gun[c])) : 'Not started yet') + '</small></button>';
+      }).join('') + '</div>' + (G.msg ? '<div class="m-gunmsg">' + esc(G.msg) + '</div>' : '') + '</div>';
+  }
+  function gunTap(cat) {
+    var t = G.pending[cat] || mNow();               // the time of the tap, kept even if sending needs a retry
+    var gun = (DATA.race && DATA.race.gun) || {};
+    if (!G.pending[cat] && gun[cat] && !window.confirm(cat + ' already started at ' + mClock(gun[cat]) + '.\n\nReplace it with ' + mClock(t) + '?')) return;
+    G.pending[cat] = t; G.msg = '🔫 Sending the ' + cat + ' start (' + mClock(t) + ')…';
+    $('#m-gun').innerHTML = gunPanel();
+    google.script.run.withSuccessHandler(function (res) {
+      if (staffAuthFail(res)) return;
+      if (res && res.ok) {
+        delete G.pending[cat];
+        DATA.race = DATA.race || {}; DATA.race.gun = DATA.race.gun || {}; DATA.race.gun[cat] = res.gunMs;
+        G.msg = '✅ ' + cat + ' started at ' + res.clock + '. The race clock is running.';
+      } else G.msg = (res && res.error) || 'Not saved. Tap the button again.';
+      var el = $('#m-gun'); if (el) el.innerHTML = gunPanel();
+    }).withFailureHandler(function () {
+      G.msg = 'No signal – the start time ' + mClock(t) + ' is kept on this phone. Tap ' + cat + ' again to send it.';
+      var el = $('#m-gun'); if (el) el.innerHTML = gunPanel();
+    }).setGunStart(staffReq({ cat: cat, clientTime: t }));
   }
 
   var wakeLock = null;
@@ -2427,7 +2509,7 @@ window.__startApp = function () {
   // ---------------- WIRED / BLUETOOTH SCANNER (works like a keyboard) ----------------
   // A scanner "types" very fast and ends with Enter. When no text box is selected, those fast
   // keystrokes are caught here, so scans still count while the camera is on or after tapping a button.
-  var KB = { buf: '', last: 0, timer: null, slow: false }, BOX = { last: 0, slow: true, timer: null };
+  var KB = { buf: '', last: 0, timer: null, slow: false, first: 0 }, BOX = { last: 0, slow: true, timer: null, first: 0 };
   function scanSpeed(text, slow) {              // finished without Enter: a QR link, or a bare bib number typed at scanner speed
     return !!parseQrLink(text) || (!slow && /^\d{3,6}$/.test(text));
   }
@@ -2437,32 +2519,32 @@ window.__startApp = function () {
     if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable)) return;   // the box gets it
     if (e.ctrlKey || e.metaKey || e.altKey) return;
     var now = Date.now(), gap = now - KB.last;
-    if (gap > 150) { KB.buf = ''; KB.slow = false; }  // people type slower than this: start a new scan
+    if (gap > 150) { KB.buf = ''; KB.slow = false; KB.first = mNow(); }  // people type slower than this: start a new scan (timed from here)
     else if (gap > 60) KB.slow = true;                // quick, but slower than a scanner
     KB.last = now;
     if (e.key === 'Enter') {
-      if (KB.buf.length >= 3) { e.preventDefault(); scannerInput(KB.buf); }
+      if (KB.buf.length >= 3) { e.preventDefault(); scannerInput(KB.buf, KB.first); }
       KB.buf = ''; clearTimeout(KB.timer); return;
     }
     if (e.key && e.key.length === 1) {
       KB.buf += e.key;
       clearTimeout(KB.timer);
       KB.timer = setTimeout(function () {             // scanners set to "no Enter": finish after a short pause
-        if (scanSpeed(KB.buf, KB.slow)) scannerInput(KB.buf);
+        if (scanSpeed(KB.buf, KB.slow)) scannerInput(KB.buf, KB.first);
         KB.buf = '';
       }, 250);
     }
   });
 
-  function scannerInput(text) {
+  function scannerInput(text, when) {
     M.scannerSeen = true;
     var hint = $('#m-scanhint'); if (hint) hint.innerHTML = scanHint();
     var type = stType(M.station);
     if (type === 'kit') { kitSearch(text); return; }
     if (type === 'payment') { payFind(bibFromText(text) || text); return; }
     var link = parseQrLink(text);
-    if (link) mRecord(link.bib, link.code);
-    else mRecord(String(text).replace(/\D/g, ''), '');
+    if (link) mRecord(link.bib, link.code, when);
+    else mRecord(String(text).replace(/\D/g, ''), '', when);
     if (CAM.on) camMessage('🔫 Bib ' + (link ? link.bib : String(text).replace(/\D/g, '')) + ' scanned', 'good');
   }
 
@@ -2552,7 +2634,8 @@ window.__startApp = function () {
       el.textContent = '⏱ ' + raceClock(Date.now() - Number(el.getAttribute('data-gun')));
     });
     var mc = $('#m-clock');
-    if (mc) mc.textContent = mClock(Date.now());
+    if (mc) mc.textContent = mClock(mNow());
+    if (state.page === 'marshal' && M.station && M.pin && !CLK.busy && Date.now() - CLK.at > 600000 && Date.now() - CLK.tried > 30000) clockCheck(3);
     if (state.page === 'marshal' && M.queue.length && !M.sending && (M.offline || M.lastError)) mRefreshPending();
     var cd = $('#countdown');
     if (!cd || !DATA.info.countdownMs) return;
@@ -2576,6 +2659,8 @@ window.__startApp = function () {
     if (t) { state.runnerLimit += 60; $('#runlist').innerHTML = runnerList(); return; }
     t = e.target.closest('[data-lane]');
     if (t) { var lk = t.getAttribute('data-lane'); TRK.open[lk] = !TRK.open[lk]; $('#trk-body').innerHTML = trackBody(); return; }
+    t = e.target.closest('[data-gunstart]');
+    if (t) { gunTap(t.getAttribute('data-gunstart')); return; }
     t = e.target.closest('[data-kbcat]');
     if (t) { KBD.cat = t.getAttribute('data-kbcat'); KBD.page = 0; $('#kb-tabs').innerHTML = kbTabs(); $('#kb-sum').innerHTML = kbSummary(); kbRedraw(); kbFit(); return; }
     t = e.target.closest('[data-trkcat]');
@@ -2640,6 +2725,7 @@ window.__startApp = function () {
     if (e.target.id === 'trackq') { state.trackQuery = e.target.value; $('#trk-body').innerHTML = trackBody(); }
     if (e.target.id === 'm-bib') {                 // Bluetooth/USB scanner typed into the box: record it without Enter
       var lk = parseQrLink(e.target.value), now = Date.now(), v = e.target.value.trim();
+      if (!v) BOX.first = 0; else if (!BOX.first) BOX.first = mNow();   // timed from the first character, not from Confirm
       if (lk && lk.code) { mSubmit(); return; }
       BOX.slow = v.length <= 1 ? false : (BOX.slow || now - BOX.last > 60);   // a person's taps are never this fast
       BOX.last = now;
