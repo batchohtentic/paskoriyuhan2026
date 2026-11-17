@@ -372,6 +372,48 @@
   @container (max-width: 619px) { .live-board .ln-fin { order: -2; } .live-board .ln-back { order: -1; } }   /* big screen: finishers first */
   @media (min-width: 1500px) { .live-board .rc { font-size: 15px; padding: 8px 11px; } .live-board .bd-cat { font-size: 30px; } .live-board .cs-n { font-size: 30px; } }
   @media (prefers-reduced-motion: reduce) { .rc.moved { animation: none; } }
+  /* race kit & payment board (?page=kits) */
+  .kit-board { padding-top: 10px; }
+  .kb-sum { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin: 0 0 10px; }
+  .kb-s { background: var(--card); border: 1px solid var(--line); border-top: 4px solid var(--cc, var(--pine)); border-radius: 12px; padding: 8px 14px 10px; }
+  .kb-s.c-5km { --cc: var(--c5km); } .kb-s.c-8km { --cc: var(--c8km); } .kb-s.c-12km { --cc: var(--c12km); }
+  .kb-s .t { display: flex; justify-content: space-between; align-items: baseline; font-weight: 800; font-size: 16px; }
+  .kb-m { display: grid; grid-template-columns: 96px 1fr auto; align-items: center; gap: 8px; font-size: 13px; margin-top: 5px; }
+  .kb-m .bar { height: 8px; background: #e7ebe8; border-radius: 999px; overflow: hidden; }
+  .kb-m .bar i { display: block; height: 100%; background: var(--ok); border-radius: 999px; }
+  .kb-m b { font-variant-numeric: tabular-nums; }
+  .kb-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 13px; color: var(--ink2); margin: 0 0 8px; }
+  .kb-feed { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px; font-size: 13px; }
+  .kb-feed span { background: var(--gold-soft); border: 1px solid #f0d77a; border-radius: 999px; padding: 3px 10px; }
+  .kb-page { display: flex; align-items: center; gap: 12px; margin: 2px 0 8px; }
+  .kb-page h2 { margin: 0; font-size: clamp(20px, 2vw, 28px); display: flex; align-items: center; gap: 8px; }
+  .kb-dots { display: flex; gap: 5px; margin-left: auto; } .kb-dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--line); } .kb-dots i.on { background: var(--pine); }
+  .kb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(178px, 1fr)); gap: 8px; }
+  .kb-tile { position: relative; background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 6px 8px 8px 14px; height: 88px; overflow: hidden; }
+  .kb-tile::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--cc); }
+  .kb-tile.c-5km { --cc: var(--c5km); } .kb-tile.c-8km { --cc: var(--c8km); } .kb-tile.c-12km { --cc: var(--c12km); }
+  .kb-tile.done { background: #f3faf4; border-color: #a9d8b6; }
+  .kb-tile.fresh { box-shadow: 0 0 0 3px var(--gold); animation: kbPulse 1.2s ease-in-out 4; }
+  @keyframes kbPulse { 50% { box-shadow: 0 0 0 7px rgba(242, 183, 5, .45); } }
+  .kb-top { display: flex; align-items: baseline; gap: 8px; }
+  .kb-bib { font-size: 23px; font-weight: 900; line-height: 1.15; font-variant-numeric: tabular-nums; }
+  .kb-cat { font-size: 11px; font-weight: 800; color: var(--cc); }
+  .kb-done { margin-left: auto; font-size: 11px; font-weight: 800; color: var(--ok); }
+  .kb-name { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0 0 5px; }
+  .kb-st { display: flex; gap: 4px; }
+  .kb-chip { font-size: 11px; font-weight: 800; border-radius: 999px; padding: 2px 7px; white-space: nowrap; }
+  .kb-chip.ok { background: #dcf1e2; color: #17602f; } .kb-chip.wait { background: #fff0c7; color: #6f4e00; }
+  .kb-chip.no { background: #eceef0; color: #4f5459; } .kb-chip.bad { background: #fde0e0; color: #8a1c1c; }
+  @media (min-width: 1500px) {
+    .kb-grid { grid-template-columns: repeat(auto-fill, minmax(206px, 1fr)); }
+    .kb-tile { height: 100px; } .kb-bib { font-size: 28px; } .kb-name { font-size: 15px; } .kb-chip { font-size: 12.5px; padding: 3px 8px; }
+  }
+  @media (max-width: 640px) {
+    .kb-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+    .kb-tile { height: auto; padding: 6px 7px 7px 12px; } .kb-bib { font-size: 20px; } .kb-done { display: none; }
+    .kb-st { flex-wrap: wrap; } .kb-chip { font-size: 10.5px; padding: 2px 6px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .kb-tile.fresh { animation: none; } }
   .pill { font-size: 11px; font-weight: 800; padding: 4px 9px; border-radius: 999px; white-space: nowrap; letter-spacing: .02em; }
   .pill.s2 { background: var(--ok); color: #fff; }
   .pill.s1 { background: var(--gold); color: #3d2e00; }
@@ -580,7 +622,7 @@ window.__startApp = function () {
 
   // ---------------- helpers ----------------
   function $(s) { return document.querySelector(s); }
-  function isPage(p) { return p === 'marshal' || p === 'qrcodes' || p === 'live' || PAGES.some(function (x) { return x.id === p; }); }
+  function isPage(p) { return p === 'marshal' || p === 'qrcodes' || p === 'live' || p === 'kits' || PAGES.some(function (x) { return x.id === p; }); }
   function pageInfo(id) { return PAGES.filter(function (x) { return x.id === id; })[0] || PAGES[0]; }
   function esc(s) {
     return String(s === null || s === undefined ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -799,7 +841,8 @@ window.__startApp = function () {
       '<section class="sec"><div class="stats">' + tiles + '</div>' + seg + '</section>' +
       '<section class="sec"><h2>🔎 Find your race bib</h2><div class="card">' +
       '<input class="search" id="bibq" type="search" autocomplete="off" placeholder="Type your name or bib number" value="' + esc(state.bibQuery) + '">' +
-      '<div id="bibres">' + bibResults() + '</div></div></section>' +
+      '<div id="bibres">' + bibResults() + '</div>' +
+      '<div class="hint"><a href="#" class="btn ghost big-btn" data-page="kits">🎽 Race kit &amp; payment board</a> Payment verified? Race kit claimed? See every runner at a glance.</div></div></section>' +
       '<div id="tracker-wrap">' + trackerSection() + '</div>' +
       '<div id="results-sec">' + resultsSection() + '</div>' +
       '<section class="sec"><h2>📋 Registered runners</h2>' +
@@ -1289,6 +1332,124 @@ window.__startApp = function () {
       '<div id="trk-body">' + trackBody() + '</div></section>';
   }
 
+  // ---------------- RACE KIT & PAYMENT BOARD (?page=kits) ----------------
+  // A wide public board for a TV at the kit-claiming area: every runner with a bib, whether the payment is
+  // verified and whether the race bib & kit were claimed. Wide screens show one category page at a time and
+  // turn the page every 12 seconds; phones show the whole list with a search box.
+  var KBD = { cat: 'All', page: 0, per: 0, q: '', timer: null, prev: null, fresh: {}, feed: [], wide: null };
+  function kbWide() { return window.innerWidth >= 900; }
+  function kbList(cat) { return DATA.funrun.runners.filter(function (r) { return cat === 'All' || r.cat === cat; }); }
+  function kbNoteChanges() {                     // runners whose payment was just verified or kit just claimed
+    var cur = {}, now = Date.now();
+    DATA.funrun.runners.forEach(function (r) { cur[r.bib] = { pay: r.pay === 'verified', kit: !!r.kit, r: r }; });
+    if (KBD.prev) Object.keys(cur).forEach(function (b) {
+      var a = KBD.prev[b], c = cur[b];
+      if (!a) return;
+      if (c.kit && !a.kit) { KBD.fresh[b] = now; KBD.feed.unshift({ t: now, html: '🎽 <b>' + esc(b) + '</b> ' + esc(c.r.name) + ' claimed the race kit' }); }
+      if (c.pay && !a.pay) { KBD.fresh[b] = now; KBD.feed.unshift({ t: now, html: '💳 <b>' + esc(b) + '</b> ' + esc(c.r.name) + ' – payment verified' }); }
+    });
+    KBD.feed = KBD.feed.filter(function (x) { return now - x.t < 600000; }).slice(0, 6);
+    KBD.prev = cur;
+  }
+  function kbPages() {
+    var cats = KBD.cat === 'All' ? DATA.funrun.categories : [KBD.cat], per = Math.max(KBD.per || 24, 1), pages = [];
+    cats.forEach(function (c) {
+      var list = kbList(c), n = Math.max(1, Math.ceil(list.length / per));
+      for (var i = 0; i < n; i++) pages.push({ cat: c, i: i, n: n, list: list.slice(i * per, (i + 1) * per) });
+    });
+    return pages;
+  }
+  function kbTile(r) {
+    var pay = r.pay === 'verified' ? '<span class="kb-chip ok">💳 Verified</span>'
+      : (r.pay === 'issue' ? '<span class="kb-chip bad">💳 See desk</span>' : '<span class="kb-chip wait">💳 To verify</span>');
+    var kit = r.kit ? '<span class="kb-chip ok">🎽 Claimed</span>' : '<span class="kb-chip no">🎽 Not yet</span>';
+    var done = r.pay === 'verified' && r.kit;
+    var fresh = KBD.fresh[r.bib] && Date.now() - KBD.fresh[r.bib] < 60000;
+    return '<div class="kb-tile c-' + catKey(r.cat) + (done ? ' done' : '') + (fresh ? ' fresh' : '') + '">' +
+      '<div class="kb-top"><span class="kb-bib">' + esc(r.bib) + '</span><span class="kb-cat">' + esc(r.cat) + '</span>' +
+      (done ? '<span class="kb-done">✔ All set</span>' : '') + '</div>' +
+      '<div class="kb-name">' + esc(r.name) + '</div><div class="kb-st">' + pay + kit + '</div></div>';
+  }
+  function kbMeter(label, n, total) {
+    return '<div class="kb-m"><span>' + label + '</span><span class="bar"><i style="width:' + (total ? Math.round(n * 100 / total) : 0) + '%"></i></span>' +
+      '<b>' + fmt(n) + ' / ' + fmt(total) + '</b></div>';
+  }
+  function kbSummary() {
+    var f = DATA.funrun;
+    var cats = KBD.wide ? ['All'].concat(f.categories) : [KBD.cat];   // phones: only the category picked
+    return cats.map(function (c) {
+      var list = kbList(c);
+      var pay = list.filter(function (r) { return r.pay === 'verified'; }).length, kit = list.filter(function (r) { return r.kit; }).length;
+      return '<div class="kb-s' + (c === 'All' ? '' : ' c-' + catKey(c)) + '"><div class="t"><span>' + (c === 'All' ? 'All runners' : esc(c)) + '</span>' +
+        '<span class="muted">' + plural(list.length, 'runner') + '</span></div>' +
+        kbMeter('💳 Verified', pay, list.length) + kbMeter('🎽 Kit claimed', kit, list.length) + '</div>';
+    }).join('');
+  }
+  function kbTabs() {
+    return ['All'].concat(DATA.funrun.categories).map(function (c) {
+      return '<button type="button" class="tab' + (c === KBD.cat ? ' on' : '') + '" data-kbcat="' + esc(c) + '">' +
+        (c === 'All' ? 'All' : '<span class="dot bg-' + catKey(c) + '"></span>' + esc(c)) + '</button>';
+    }).join('');
+  }
+  function kbFeed() {
+    var now = Date.now(), items = KBD.feed.filter(function (x) { return now - x.t < 600000; }).slice(0, 4);
+    return items.length ? '<div class="kb-feed"><b>Just now:</b> ' + items.map(function (x) { return '<span>' + x.html + '</span>'; }).join('') + '</div>' : '';
+  }
+  function kbBody() {
+    if (!DATA.funrun.runners.length) return empty('🎽', 'Runners appear here once they have a race bib.');
+    if (!KBD.wide) {
+      var q = norm(KBD.q).trim();
+      var list = kbList(KBD.cat).filter(function (r) { return !q || String(r.bib).indexOf(q) === 0 || norm(r.name).indexOf(q) !== -1; });
+      return list.length ? '<div class="kb-grid">' + list.map(kbTile).join('') + '</div>'
+        : '<div class="hint">No runner matches “' + esc(KBD.q) + '”. Registered just now? Check again in a few minutes.</div>';
+    }
+    var pages = kbPages();
+    if (KBD.page >= pages.length) KBD.page = 0;
+    var p = pages[KBD.page];
+    return '<div class="kb-page"><h2><span class="dot bg-' + catKey(p.cat) + '"></span>' + esc(p.cat) +
+      (p.n > 1 ? ' <span class="muted">· page ' + (p.i + 1) + ' of ' + p.n + '</span>' : '') + '</h2>' +
+      (pages.length > 1 ? '<div class="kb-dots" aria-hidden="true">' + pages.map(function (x, i) { return '<i' + (i === KBD.page ? ' class="on"' : '') + '></i>'; }).join('') + '</div>' : '') +
+      '</div><div class="kb-grid" id="kb-grid">' + p.list.map(kbTile).join('') + '</div>';
+  }
+  function kbRedraw() {
+    var b = $('#kb-body'); if (b) b.innerHTML = kbBody();
+    var fd = $('#kb-feed'); if (fd) fd.innerHTML = kbFeed();
+  }
+  function kbFit() {                              // as many tiles per page as fit on the screen, no scrolling
+    if (state.page !== 'kits' || !KBD.wide) return;
+    var g = $('#kb-grid'), first = g && g.firstElementChild;
+    if (!first) return;
+    var cs = getComputedStyle(g), gap = parseFloat(cs.rowGap) || 8;
+    var cols = cs.gridTemplateColumns.split(' ').filter(Boolean).length || 1;
+    var top = g.getBoundingClientRect().top + window.scrollY;
+    var rows = Math.max(1, Math.floor((window.innerHeight - top - 14 + gap) / (first.offsetHeight + gap)));
+    if (cols * rows !== KBD.per) { KBD.per = cols * rows; kbRedraw(); }
+  }
+  function kbTurn() {
+    clearInterval(KBD.timer);
+    KBD.timer = setInterval(function () {
+      if (state.page !== 'kits' || !KBD.wide || document.visibilityState === 'hidden') return;
+      var n = kbPages().length;
+      if (n > 1) { KBD.page = (KBD.page + 1) % n; kbRedraw(); }
+    }, 12000);
+  }
+  function viewKits() {
+    KBD.wide = kbWide();
+    if (!KBD.prev) kbNoteChanges();
+    return '<section class="sec kit-board"><div class="lb-head">' +
+      (DATA.info.logo ? '<img class="lb-logo" src="' + safeUrl(DATA.info.logo) + '" alt="" referrerpolicy="no-referrer" onerror="this.remove()">' : '') +
+      '<div><div class="eyebrow">' + esc(DATA.info.eventName) + '</div><h1>🎽 Race kit &amp; payment board</h1></div>' +
+      '<div class="tabs" id="kb-tabs">' + kbTabs() + '</div>' +
+      '<span class="muted" id="kb-upd">' + 'Updated ' + rel(DATA.checkedMs || DATA.generatedMs) + '</span>' +
+      '<a href="#" class="btn ghost" data-page="funrun">← Fun Run page</a></div>' +
+      (KBD.wide ? '' : '<input class="search" id="kbq" type="search" autocomplete="off" placeholder="Find your bib number or name" value="' + esc(KBD.q) + '" style="margin-bottom:10px">') +
+      '<div class="kb-sum" id="kb-sum">' + kbSummary() + '</div>' +
+      '<div class="kb-legend"><span class="kb-chip ok">💳 Verified</span> payment checked <span class="kb-chip wait">💳 To verify</span> not checked yet' +
+      ' <span class="kb-chip ok">🎽 Claimed</span> race bib &amp; kit received <span class="kb-chip no">🎽 Not yet</span> not claimed yet</div>' +
+      '<div id="kb-feed">' + kbFeed() + '</div>' +
+      '<div id="kb-body">' + kbBody() + '</div></section>';
+  }
+
   // Remembers each runner's stage, so runners who just moved can be highlighted after a refresh.
   function trkNoteMoves() {
     if (!DATA.race || !DATA.funrun) return;
@@ -1312,6 +1473,7 @@ window.__startApp = function () {
   }
   function racePollEvery() {                    // big-screen board every 2 s; race pages every 3 s on race day; other pages 5 s
     if (state.page === 'live') return 2000;
+    if (state.page === 'kits') return 3000;     // kit & payment board: a claim or payment shows within seconds
     return wantRace() && raceActive() ? 3000 : 5000;
   }
 
@@ -1651,7 +1813,7 @@ window.__startApp = function () {
 
   var wakeLock = null;
   function keepAwake() {
-    if ((state.page !== 'marshal' && state.page !== 'live') || !navigator.wakeLock || wakeLock) return;   // keep the screen on
+    if ((state.page !== 'marshal' && state.page !== 'live' && state.page !== 'kits') || !navigator.wakeLock || wakeLock) return;   // keep the screen on
     navigator.wakeLock.request('screen').then(function (l) { wakeLock = l; l.addEventListener('release', function () { wakeLock = null; }); }).catch(function () {});
   }
 
@@ -2319,14 +2481,14 @@ window.__startApp = function () {
     volleyball: function () { return viewSport('volleyball'); },
     pickleball: function () { return viewSport('pickleball'); },
     mlbb: function () { return viewSport('mlbb'); },
-    bingo: viewBingo, trees: viewTrees, mentors: viewMentors, marshal: viewMarshal, qrcodes: viewQr, live: viewLive,
+    bingo: viewBingo, trees: viewTrees, mentors: viewMentors, marshal: viewMarshal, qrcodes: viewQr, live: viewLive, kits: viewKits,
     parade: function () { return viewProgramPage('parade'); }, ball: function () { return viewProgramPage('ball'); }
   };
 
   function render() {
     if (state.page !== 'marshal' && CAM.on) camStop();
     document.body.classList.toggle('marshal-mode', state.page === 'marshal');
-    document.body.classList.toggle('board-mode', state.page === 'live');
+    document.body.classList.toggle('board-mode', state.page === 'live' || state.page === 'kits');
     renderNav();
     $('#app').innerHTML = (VIEWS[state.page] || viewHome)();
     renderFooter();
@@ -2351,6 +2513,7 @@ window.__startApp = function () {
     }
     if (state.page === 'qrcodes') drawQrs();
     if (state.page === 'live') keepAwake();
+    if (state.page === 'kits') { keepAwake(); kbFit(); kbTurn(); }
     if (state.page === 'live' || state.page === 'funrun') refreshRace();   // check for new check-ins right away
     if (state.page === 'funrun' && state.scrollToBib && $('#bibq')) { state.scrollToBib = false; $('#bibq').scrollIntoView({ block: 'center' }); }
   }
@@ -2378,6 +2541,8 @@ window.__startApp = function () {
   function tick() {
     var up = $('#updated');
     if (up) up.textContent = 'Updated ' + rel(DATA.checkedMs || DATA.generatedMs);
+    var ku = $('#kb-upd');
+    if (ku) ku.textContent = 'Updated ' + rel(DATA.checkedMs || DATA.generatedMs);
     var ru = $('#race-upd');
     if (ru && (raceActive() || state.page === 'live')) ru.textContent = raceUpdated();
     document.querySelectorAll('.bd-clock[data-gun]').forEach(function (el) {
@@ -2406,6 +2571,8 @@ window.__startApp = function () {
     if (t) { state.runnerLimit += 60; $('#runlist').innerHTML = runnerList(); return; }
     t = e.target.closest('[data-lane]');
     if (t) { var lk = t.getAttribute('data-lane'); TRK.open[lk] = !TRK.open[lk]; $('#trk-body').innerHTML = trackBody(); return; }
+    t = e.target.closest('[data-kbcat]');
+    if (t) { KBD.cat = t.getAttribute('data-kbcat'); KBD.page = 0; $('#kb-tabs').innerHTML = kbTabs(); $('#kb-sum').innerHTML = kbSummary(); kbRedraw(); kbFit(); return; }
     t = e.target.closest('[data-trkcat]');
     if (t) { state.trackCat = t.getAttribute('data-trkcat'); $('#trk-tabs').innerHTML = trackTabs(); $('#trk-body').innerHTML = trackBody(); return; }
     t = e.target.closest('[data-pick]');
@@ -2451,6 +2618,11 @@ window.__startApp = function () {
       camStop(); M.pin = ''; M.pick = ''; M.station = null; M.error = ''; kitReset(); payReset(); B.data = null; B.msg = ''; mSave(); render();
     }
   });
+  window.addEventListener('resize', function () {   // TV / window resized or phone turned: re-fit the kit board
+    if (state.page !== 'kits') return;
+    clearTimeout(KBD.rs);
+    KBD.rs = setTimeout(function () { if (kbWide() !== KBD.wide) render(); else kbFit(); }, 250);
+  });
   document.addEventListener('submit', function (e) {
     if (e.target.id === 'm-form') { e.preventDefault(); mSubmit(); }
     if (e.target.id === 'm-login') { e.preventDefault(); mLogin(); }
@@ -2459,6 +2631,7 @@ window.__startApp = function () {
   document.addEventListener('input', function (e) {
     if (e.target.id === 'bibq') { state.bibQuery = e.target.value; $('#bibres').innerHTML = bibResults(); }
     if (e.target.id === 'runq') { state.runnerQuery = e.target.value; state.runnerLimit = 60; $('#runlist').innerHTML = runnerList(); }
+    if (e.target.id === 'kbq') { KBD.q = e.target.value; $('#kb-body').innerHTML = kbBody(); }
     if (e.target.id === 'trackq') { state.trackQuery = e.target.value; $('#trk-body').innerHTML = trackBody(); }
     if (e.target.id === 'm-bib') {                 // Bluetooth/USB scanner typed into the box: record it without Enter
       var lk = parseQrLink(e.target.value), now = Date.now(), v = e.target.value.trim();
@@ -2487,6 +2660,7 @@ window.__startApp = function () {
       try { DATA = JSON.parse(txt); } catch (err) { return; }
       RP.ver = DATA.raceVer || ''; RP.site = DATA.siteVer || '';   // the live updates continue from this copy
       DATA.checkedMs = Date.now();
+      if (KBD.prev) kbNoteChanges();
       if (state.page === 'marshal' || state.page === 'qrcodes') return;   // never redraw staff screens or the print sheet
       var a = document.activeElement, id = a && a.id, pos = a && a.selectionStart;
       var y = window.scrollY;
