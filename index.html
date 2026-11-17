@@ -8,7 +8,7 @@
 <meta property="og:title" content="Ohtentic Paskoriyuhan 2026">
 <meta property="og:description" content="Live event updates, schedules, scores and results.">
 <meta property="og:type" content="website">
-<meta name="theme-color" content="#0f3d2e">
+<meta name="theme-color" content="#7a0e14">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%84%3C/text%3E%3C/svg%3E">
 <script>
   // ===== CONNECTION TO YOUR GOOGLE SHEET =====================================
@@ -21,14 +21,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --pine: #0f3d2e; --pine2: #17563f; --pine-ink: #0b2b21;
-    --gold: #f2b705; --gold-soft: #fff4cf; --red: #c62828;
-    --bg: #f7f4ec; --card: #ffffff; --line: #e6e0d2; --line2: #f0ebdf;
-    --ink: #1c2621; --ink2: #46544d; --muted: #6b7a72;
+    /* theme: red & gold (--pine… are the brand colours; --ok stays green for "done / verified") */
+    --pine: #7a0e14; --pine2: #a8141c; --pine-ink: #3f0609;
+    --gold: #f2b705; --gold-soft: #fff4cf; --red: #c62828; --ok: #1f7a43;
+    --bg: #f8f4ec; --card: #ffffff; --line: #e8dfd2; --line2: #f2ebe0;
+    --ink: #261a1b; --ink2: #574546; --muted: #725f60;
     --c5km: #2e7d32; --c8km: #2f5fb3; --c12km: #c62828;
     --c5km-soft: #e3f1e4; --c8km-soft: #e2eaf7; --c12km-soft: #f8e1e1;
     --radius: 16px;
-    --shadow: 0 1px 2px rgba(16, 40, 30, .06), 0 6px 18px rgba(16, 40, 30, .06);
+    --shadow: 0 1px 2px rgba(63, 6, 9, .06), 0 6px 18px rgba(63, 6, 9, .07);
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; }
@@ -48,6 +49,8 @@
   .top-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 10px; padding-bottom: 8px; }
   .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; min-width: 0; color: #fff; }
   .brand-mark { width: 36px; height: 36px; border-radius: 11px; background: var(--gold); display: grid; place-items: center; font-size: 19px; flex: none; }
+  .brand-mark.logo { background: #fff; padding: 2px; border-radius: 50%; box-shadow: 0 0 0 2px var(--gold); overflow: hidden; }
+  .brand-mark.logo img { width: 100%; height: 100%; object-fit: contain; border-radius: 50%; display: block; }
   .brand-text { min-width: 0; }
   .brand-text b { display: block; font-size: 15px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .brand-text small { display: block; font-size: 11px; opacity: .72; }
@@ -69,8 +72,17 @@
     background:
       radial-gradient(circle, rgba(242,183,5,.35) 0 1.5px, transparent 2.5px) 0 0 / 44px 44px,
       radial-gradient(circle, rgba(255,255,255,.18) 0 1px, transparent 2px) 22px 22px / 44px 44px,
-      linear-gradient(135deg, #0f3d2e 0%, #17563f 55%, #0b2b21 100%);
+      linear-gradient(135deg, #7a0e14 0%, #a8141c 55%, #3f0609 100%);
   }
+  .hero-logo { display: block; width: 84px; height: 84px; border-radius: 50%; object-fit: contain; background: #fff; padding: 4px;
+    box-shadow: 0 0 0 3px var(--gold), 0 8px 24px rgba(0,0,0,.3); margin-bottom: 14px; position: relative; z-index: 1; }
+  .hero.has-logo::after { display: none; }
+  @media (min-width: 760px) {
+    .hero.has-logo { padding-right: 210px; }
+    .hero-logo { position: absolute; right: 36px; top: 50%; transform: translateY(-50%); width: 148px; height: 148px; margin: 0; }
+  }
+  .foot-logo { width: 44px; height: 44px; border-radius: 50%; object-fit: contain; background: #fff; padding: 2px; vertical-align: middle; margin-right: 10px; box-shadow: 0 0 0 2px var(--gold); }
+  .lb-logo { width: 58px; height: 58px; border-radius: 50%; object-fit: contain; background: #fff; padding: 3px; box-shadow: 0 0 0 3px var(--gold); flex: none; }
   .hero::after { content: '⭐'; position: absolute; right: 22px; top: 18px; font-size: 34px; opacity: .9; filter: drop-shadow(0 0 12px rgba(242,183,5,.7)); }
   .eyebrow { text-transform: uppercase; letter-spacing: .14em; font-size: 12px; font-weight: 700; color: var(--gold); }
   .hero h1 { font-size: clamp(32px, 7vw, 58px); line-height: 1.03; margin: 8px 0 10px; font-weight: 800; }
@@ -160,7 +172,7 @@
     background-repeat: no-repeat; background-position: 14px center;
   }
   .search.plain { background-image: none; padding-left: 14px; }
-  .search:focus { border-color: var(--pine2); box-shadow: 0 0 0 3px rgba(23,86,63,.12); }
+  .search:focus { border-color: var(--pine2); box-shadow: 0 0 0 3px rgba(168,20,28,.12); }
   .tabs { display: inline-flex; background: #ece6d7; border-radius: 12px; padding: 3px; gap: 3px; flex-wrap: wrap; }
   .tab { border: 0; background: transparent; padding: 7px 14px; border-radius: 9px; font: inherit; font-weight: 700; font-size: 14px; cursor: pointer; color: var(--ink2); display: inline-flex; align-items: center; gap: 6px; }
   .tab.on { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.1); }
@@ -312,7 +324,7 @@
   .course { display: flex; align-items: flex-start; padding: 30px 12px 6px; }
   .cs-node { flex: none; width: 88px; display: grid; justify-items: center; text-align: center; position: relative; z-index: 1; }
   .cs-dot { width: 18px; height: 18px; border-radius: 50%; background: #fff; border: 4px solid var(--cc); margin-bottom: 4px; }
-  .cs-turn .cs-dot { border-color: var(--gold); } .cs-fin .cs-dot { border-color: var(--pine2); background: var(--pine2); }
+  .cs-turn .cs-dot { border-color: var(--gold); } .cs-fin .cs-dot { border-color: var(--ok); background: var(--ok); }
   .cs-lbl { font-size: 12px; font-weight: 700; color: var(--ink2); white-space: nowrap; }
   .cs-n { font-size: 26px; font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; }
   .cs-node small { font-size: 11px; color: var(--muted); }
@@ -323,12 +335,12 @@
   .lanes { display: grid; gap: 10px; padding: 6px 14px 14px; }
   @container (min-width: 620px) { .lanes { grid-template-columns: repeat(var(--lanes, 3), minmax(0, 1fr)); } }
   .lane { background: var(--bg); border-radius: 12px; border-top: 4px solid #cfc8b6; padding: 10px; min-width: 0; }
-  .lane.ln-back { border-top-color: var(--gold); } .lane.ln-fin { border-top-color: var(--pine2); }
+  .lane.ln-back { border-top-color: var(--gold); } .lane.ln-fin { border-top-color: var(--ok); }
   .lane-h { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin: 0 0 8px; font-size: 13px; font-weight: 800; color: var(--ink2); }
   .lane-h b { font-size: 20px; color: var(--ink); font-variant-numeric: tabular-nums; }
   .lane-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; }
   .rc { display: flex; align-items: center; gap: 8px; min-width: 0; background: #fff; border: 1px solid var(--line); border-radius: 9px; padding: 6px 9px; font-size: 13px; }
-  .rc-rank { font-weight: 800; color: var(--pine2); min-width: 28px; font-variant-numeric: tabular-nums; }
+  .rc-rank { font-weight: 800; color: var(--ok); min-width: 28px; font-variant-numeric: tabular-nums; }
   .rc-bib { font-weight: 800; min-width: 42px; font-variant-numeric: tabular-nums; }
   .rc-name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .rc-time { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -361,7 +373,7 @@
   @media (min-width: 1500px) { .live-board .rc { font-size: 15px; padding: 8px 11px; } .live-board .bd-cat { font-size: 30px; } .live-board .cs-n { font-size: 30px; } }
   @media (prefers-reduced-motion: reduce) { .rc.moved { animation: none; } }
   .pill { font-size: 11px; font-weight: 800; padding: 4px 9px; border-radius: 999px; white-space: nowrap; letter-spacing: .02em; }
-  .pill.s2 { background: var(--pine2); color: #fff; }
+  .pill.s2 { background: var(--ok); color: #fff; }
   .pill.s1 { background: var(--gold); color: #3d2e00; }
   .pill.s0 { background: #ece6d7; color: var(--ink2); }
 
@@ -379,7 +391,7 @@
   .m-bib { width: 100%; font: inherit; font-size: 46px; font-weight: 800; text-align: center; letter-spacing: .08em; padding: 12px; border-radius: 16px;
     border: 2px solid var(--line); background: #fff; color: var(--ink); font-variant-numeric: tabular-nums; outline: none; }
   .m-bib::placeholder { color: #d5cfbf; font-weight: 600; }
-  .m-bib:focus { border-color: var(--pine2); box-shadow: 0 0 0 4px rgba(23,86,63,.15); }
+  .m-bib:focus { border-color: var(--pine2); box-shadow: 0 0 0 4px rgba(168,20,28,.15); }
   .m-go { font: inherit; font-size: 20px; font-weight: 800; padding: 16px; border-radius: 16px; border: 0; background: var(--pine2); color: #fff; cursor: pointer; }
   .m-go:active { transform: translateY(1px); }
   .m-result { border-radius: 16px; padding: 16px; border: 2px solid var(--line); background: #fff; }
@@ -412,7 +424,7 @@
   .m-stations { display: grid; gap: 8px; }
   .m-pick { font: inherit; text-align: left; padding: 14px 16px; border-radius: 14px; border: 2px solid var(--line); background: #fff; cursor: pointer; font-weight: 700; font-size: 16px; color: var(--ink); }
   .m-pick small { display: block; font-weight: 500; color: var(--muted); font-size: 13px; }
-  .m-pick.on { border-color: var(--pine2); background: #eef8f1; }
+  .m-pick.on { border-color: var(--pine2); background: #fbeaea; }
   .m-err { color: #a61b1b; font-weight: 700; font-size: 14px; }
   .m-pin { width: 100%; font: inherit; font-size: 28px; letter-spacing: .3em; text-align: center; padding: 12px; border-radius: 14px; border: 2px solid var(--line); background: #fff; color: var(--ink); }
 
@@ -600,6 +612,11 @@ window.__startApp = function () {
   // ---------------- shell ----------------
   function renderNav() {
     $('#brandName').textContent = DATA.info.eventName;
+    var mark = document.querySelector('.brand-mark');
+    if (mark) {
+      mark.classList.toggle('logo', !!DATA.info.logo);
+      mark.innerHTML = DATA.info.logo ? '<img src="' + safeUrl(DATA.info.logo) + '" alt="" referrerpolicy="no-referrer" onerror="this.parentNode.classList.remove(\'logo\');this.parentNode.textContent=\'🎄\'">' : '🎄';
+    }
     $('#nav').innerHTML = PAGES.map(function (p) {
       return '<a href="#" class="chip' + (p.id === state.page ? ' on' : '') + '" data-page="' + p.id + '"' +
         (p.id === state.page ? ' aria-current="page"' : '') + '><span>' + p.icon + '</span>' + esc(p.label) + '</a>';
@@ -614,7 +631,7 @@ window.__startApp = function () {
     if (i.organizer) bits.push('<span>Organized by ' + esc(i.organizer) + '</span>');
     if (i.contact) bits.push('<span>📞 ' + esc(i.contact) + '</span>');
     if (i.facebook) bits.push('<a href="' + safeUrl(i.facebook) + '" target="_blank" rel="noopener">Facebook page ↗</a>');
-    $('#foot').innerHTML = '<div class="wrap"><b>' + esc(i.eventName) + '</b>' +
+    $('#foot').innerHTML = '<div class="wrap">' + (i.logo ? '<img class="foot-logo" src="' + safeUrl(i.logo) + '" alt="" referrerpolicy="no-referrer" onerror="this.remove()">' : '') + '<b>' + esc(i.eventName) + '</b>' +
       (i.footer ? '<div>' + esc(i.footer) + '</div>' : '') +
       (bits.length ? '<div class="row">' + bits.join('') + '</div>' : '') +
       '<div class="fine">Updated ' + esc(DATA.generatedAt) + ' · new posts appear on this page automatically within seconds.</div></div>';
@@ -724,7 +741,8 @@ window.__startApp = function () {
     var chips = [];
     if (i.dates) chips.push('📅 ' + esc(i.dates));
     if (i.venue) chips.push('📍 ' + esc(i.venue));
-    var hero = '<section class="hero"><div class="eyebrow">Official event updates</div><h1>' + title + '</h1>' +
+    var logo = i.logo ? '<img class="hero-logo" src="' + safeUrl(i.logo) + '" alt="' + esc(i.organizer || 'Logo') + '" referrerpolicy="no-referrer" onerror="this.remove()">' : '';
+    var hero = '<section class="hero' + (logo ? ' has-logo' : '') + '">' + logo + '<div class="eyebrow">' + esc(i.organizer || 'Official event updates') + '</div><h1>' + title + '</h1>' +
       (i.tagline ? '<p>' + esc(i.tagline) + '</p>' : '') +
       (chips.length ? '<div class="meta">' + chips.map(function (c) { return '<span>' + c + '</span>'; }).join('') + '</div>' : '') +
       (i.countdownMs ? '<div class="countdown" id="countdown"></div>' : '') + '</section>';
@@ -1260,7 +1278,9 @@ window.__startApp = function () {
     if (!r || !r.stations || !r.stations.length) {
       return '<section class="sec">' + empty('📡', 'The live race board appears once the race stations are set up.') + '</section>';
     }
-    return '<section class="sec live-board"><div class="lb-head"><div><div class="eyebrow">' + esc(DATA.info.eventName) + '</div>' +
+    return '<section class="sec live-board"><div class="lb-head">' +
+      (DATA.info.logo ? '<img class="lb-logo" src="' + safeUrl(DATA.info.logo) + '" alt="" referrerpolicy="no-referrer" onerror="this.remove()">' : '') +
+      '<div><div class="eyebrow">' + esc(DATA.info.eventName) + '</div>' +
       '<h1>📡 Live race board <span id="race-badge">' + raceBadge() + '</span></h1></div>' +
       '<div class="tabs" id="trk-tabs">' + trackTabs() + '</div>' +
       '<span class="muted" id="race-upd">' + raceUpdated() + '</span>' +
@@ -1552,7 +1572,7 @@ window.__startApp = function () {
     if (/HTTP 40[13]|authoriz|permission|access denied|not allowed|log ?in|sign ?in/i.test(msg)) return 'this phone is not allowed to use the website – open the marshal link that ends in /exec?page=marshal, and the organizer must set Deploy → Who has access: Anyone';
     if (/HTTP 5\d\d|server error|internal error/i.test(msg)) return 'Google’s server had a short hiccup (this is not your internet)';
     if (/timed? ?out|exceeded maximum execution/i.test(msg)) return 'the spreadsheet took too long to answer';
-    if (/function not found|is not defined/i.test(msg)) return 'the website needs a new deployment – the organizer must use Deploy → Manage deployments → New version';
+    if (/function not found|is not defined|unknown request/i.test(msg)) return 'the website link is running an older version of the script – the organizer must use Apps Script → Deploy → Manage deployments → ✏️ Edit → Version: New version → Deploy';
     if (/too many times|quota|rate/i.test(msg)) return 'Google’s usage limit was reached – wait a minute';
     return (msg || 'unknown error').slice(0, 140);
   }
@@ -2342,7 +2362,10 @@ window.__startApp = function () {
       google.script.run.withSuccessHandler(function (txt) {
         try { DATA = JSON.parse(txt); } catch (err) { return; }
         go(page);
-      }).withFailureHandler(function () { $('#app').innerHTML = '<section class="sec">' + empty('📶', 'Could not load the website. Check the internet and try again.') + '</section>'; })
+      }).withFailureHandler(function (err) {
+        var why = navigator.onLine === false ? 'there is no internet connection on this device' : friendlyError(String((err && err.message) || err || ''));
+        $('#app').innerHTML = '<section class="sec">' + empty('📶', 'Could not load the website: ' + esc(why) + '. Then try again.') + '</section>';
+      })
         .getSiteData();
       return;
     }
@@ -2522,7 +2545,10 @@ window.__startApp = function () {
       .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
       .then(function (t) {
         var res;
-        try { res = JSON.parse(t); } catch (e) { throw new Error('access denied – the Apps Script link did not answer. Check Deploy → Who has access: Anyone, and deploy a new version'); }
+        try { res = JSON.parse(t); } catch (e) {
+          if (/function not found|doPost/i.test(t)) throw new Error('Unknown request (the script has no doPost)');
+          throw new Error('access denied – the Apps Script link answered with a Google page instead of data');
+        }
         if (!res || !res.ok) throw new Error((res && res.error) || 'The website did not answer properly');
         if (fn === 'getSiteData') { try { localStorage.setItem(KEY, res.value); } catch (e) {} }
         ok(res.value);
@@ -2570,12 +2596,35 @@ window.__startApp = function () {
     started = true;
     window.INITIAL_DATA = data;
     try { if (data.info && data.info.eventName) document.title = data.info.eventName; } catch (e) {}
+    try {                                                  // the logo as the browser-tab icon
+      if (data.info && data.info.logo) {
+        var ic = document.querySelector('link[rel="icon"]') || document.head.appendChild(document.createElement('link'));
+        ic.rel = 'icon'; ic.href = data.info.logo;
+      }
+    } catch (e) {}
     window.__startApp();
   }
   function done() { if (--waiting <= 0) start(); }
+  // What went wrong, in plain words, and how to fix it
+  function reason(err) {
+    var m = String((err && err.message) || err || '');
+    if (navigator.onLine === false) return ['There is no internet connection on this device.', 'Connect to Wi-Fi or mobile data, then tap Try again.'];
+    if (/unknown request/i.test(m)) return ['The spreadsheet link is still running an older version of the script.',
+      'In Apps Script: paste the latest Website.gs, then Deploy → Manage deployments → ✏️ Edit → Version: New version → Deploy (do not use New deployment – that makes a different link). Then reload this page.'];
+    if (/access denied|HTTP 40[13]/i.test(m)) return ['The spreadsheet link is not open to everyone.',
+      'Apps Script → Deploy → Manage deployments → ✏️ Edit → Execute as: Me, Who has access: Anyone → Deploy.'];
+    if (/HTTP 404/i.test(m)) return ['The spreadsheet link in this page does not exist.',
+      'Copy the Web app link (ends in /exec) from Apps Script → Deploy → Manage deployments into API_URL near the top of index.html.'];
+    if (/HTTP 5\d\d|server error|lock|timed? ?out|exceeded/i.test(m)) return ['Google’s server could not answer right now.', 'Wait a minute, then tap Try again.'];
+    if (/failed to fetch|load failed|networkerror|network request failed/i.test(m)) return ['The spreadsheet link could not be reached.',
+      'Open the link in API_URL (near the top of index.html) in a browser. If it shows the event website, wait a minute and try again. If Google shows a message instead, deploy a new version of the script (Deploy → Manage deployments → ✏️ Edit → New version).'];
+    return ['The spreadsheet answered with an error.', ''];
+  }
   function failed(err) {
-    show('<span class="big">📶</span>Could not load the event website' + (err && /access denied|HTTP 40/.test(String(err.message)) ? ' – the spreadsheet link is not open to everyone yet (Deploy → Who has access: Anyone).' : '. Check the internet connection.') +
-      '<br><br><button class="btn" type="button" onclick="location.reload()">Try again</button>');
+    var r = reason(err);
+    show('<span class="big">📶</span><b>Could not load the event website.</b><br>' + r[0] + (r[1] ? '<br><br>' + r[1] : '') +
+      '<br><br><button class="btn" type="button" onclick="location.reload()">Try again</button>' +
+      '<br><small style="opacity:.6">Details: ' + String((err && err.message) || err || 'no answer').replace(/[<>&]/g, '') + '</small>');
   }
   var staff = window.INITIAL_PAGE === 'marshal';
   var cached = null;
