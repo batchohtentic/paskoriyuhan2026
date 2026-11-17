@@ -356,6 +356,7 @@
   .dns-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; font-size: 12px; }
   .dns-list span { background: #f1ece0; border-radius: 999px; padding: 3px 10px; }
   .big-btn { padding: 7px 12px; font-size: 13px; }
+  #updated, #race-upd, #kb-upd { cursor: pointer; }
   /* big-screen board (?page=live) */
   body.board-mode .top, body.board-mode .updated, body.board-mode .foot { display: none; }
   body.board-mode .wrap { max-width: 1920px; }
@@ -585,7 +586,7 @@
       <span class="brand-mark">🎄</span>
       <span class="brand-text"><b id="brandName"></b><small>Event updates</small></span>
     </a>
-    <span class="updated" id="updated"></span>
+    <span class="updated" id="updated" title="Tap to check for updates now"></span>
   </div>
   <nav class="nav wrap" id="nav" aria-label="Pages"></nav>
 </header>
@@ -1326,7 +1327,7 @@ window.__startApp = function () {
       '<div><div class="eyebrow">' + esc(DATA.info.eventName) + '</div>' +
       '<h1>📡 Live race board <span id="race-badge">' + raceBadge() + '</span></h1></div>' +
       '<div class="tabs" id="trk-tabs">' + trackTabs() + '</div>' +
-      '<span class="muted" id="race-upd">' + raceUpdated() + '</span>' +
+      '<span class="muted" id="race-upd" title="Tap to check for updates now">' + raceUpdated() + '</span>' +
       '<a href="#" class="btn ghost" data-page="funrun">← Fun Run page</a></div>' +
       '<div id="trk-feed">' + feedHtml() + '</div>' +
       '<div id="trk-body">' + trackBody() + '</div></section>';
@@ -1440,7 +1441,7 @@ window.__startApp = function () {
       (DATA.info.logo ? '<img class="lb-logo" src="' + safeUrl(DATA.info.logo) + '" alt="" referrerpolicy="no-referrer" onerror="this.remove()">' : '') +
       '<div><div class="eyebrow">' + esc(DATA.info.eventName) + '</div><h1>🎽 Race kit &amp; payment board</h1></div>' +
       '<div class="tabs" id="kb-tabs">' + kbTabs() + '</div>' +
-      '<span class="muted" id="kb-upd">' + 'Updated ' + rel(DATA.checkedMs || DATA.generatedMs) + '</span>' +
+      '<span class="muted" id="kb-upd" title="Tap to check for updates now">' + 'Updated ' + rel(DATA.checkedMs || DATA.generatedMs) + '</span>' +
       '<a href="#" class="btn ghost" data-page="funrun">← Fun Run page</a></div>' +
       (KBD.wide ? '' : '<input class="search" id="kbq" type="search" autocomplete="off" placeholder="Find your bib number or name" value="' + esc(KBD.q) + '" style="margin-bottom:10px">') +
       '<div class="kb-sum" id="kb-sum">' + kbSummary() + '</div>' +
@@ -1471,10 +1472,12 @@ window.__startApp = function () {
   function wantRace() {
     return state.page === 'live' || ((state.page === 'funrun' || state.page === 'home') && !!(DATA.race && DATA.race.stations && DATA.race.stations.length));
   }
-  function racePollEvery() {                    // big-screen board every 2 s; race pages every 3 s on race day; other pages 5 s
-    if (state.page === 'live') return 2000;
-    if (state.page === 'kits') return 3000;     // kit & payment board: a claim or payment shows within seconds
-    return wantRace() && raceActive() ? 3000 : 5000;
+  function racePollEvery() {                    // how often the page asks "anything new?" (a tiny question)
+    if (state.page === 'live') return 1000;      // big-screen race board: every second
+    if (state.page === 'kits') return 2000;      // kit & payment board
+    if (wantRace() && raceActive()) return 2000; // race pages while the race is on
+    if (state.page === 'funrun') return 3000;    // Fun Run page: new registrations
+    return 5000;
   }
 
   function refreshRace(now) {
@@ -1482,7 +1485,7 @@ window.__startApp = function () {
     if (!livePollWanted()) { RP.timer = setTimeout(refreshRace, 3000); return; }
     if (RP.busy) return;
     RP.busy = true; RP.n++;
-    var race = wantRace(), full = now === true || RP.n % 20 === 0;   // about once a minute: full race download anyway
+    var race = wantRace(), full = now === true || RP.n % Math.max(1, Math.round(60000 / racePollEvery())) === 0;   // about once a minute: full race download anyway
     google.script.run.withSuccessHandler(function (txt) {
       RP.busy = false;
       var d = null;
@@ -2561,7 +2564,9 @@ window.__startApp = function () {
 
   // ---------------- events ----------------
   document.addEventListener('click', function (e) {
-    var t = e.target.closest('[data-page]');
+    var t = e.target.closest('#updated, #race-upd, #kb-upd');
+    if (t) { t.textContent = 'Checking…'; refreshData.busy = 0; refreshData(); refreshRace(true); return; }   // one tap: update now
+    t = e.target.closest('[data-page]');
     if (t) { e.preventDefault(); go(t.getAttribute('data-page')); return; }
     t = e.target.closest('[data-runcat]');
     if (t) { state.runnerCat = t.getAttribute('data-runcat'); state.runnerLimit = 60; $('#runtabs').innerHTML = runTabs(); $('#runlist').innerHTML = runnerList(); return; }
