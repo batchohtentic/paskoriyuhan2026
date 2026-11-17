@@ -557,6 +557,52 @@
     .racebib .qr { width: 36mm; }
   }
 
+  /* ---------- race bibs on your own design (tab "My design") ---------- */
+  .mb-editor { display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr) 310px; align-items: start; margin: 0 0 18px; }
+  @media (max-width: 860px) { .mb-editor { grid-template-columns: 1fr; } }
+  .mb-panel { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; display: grid; gap: 10px; font-size: 14px; }
+  .mb-panel h3 { margin: 0; font-size: 15px; }
+  .mb-row { display: grid; grid-template-columns: 22px 1fr auto; gap: 2px 8px; align-items: center; }
+  .mb-row input[type=range] { grid-column: 2 / 4; width: 100%; }
+  .mb-row input[type=color] { width: 30px; height: 24px; padding: 0; border: 1px solid var(--line); border-radius: 6px; background: none; }
+  .mb-row small { grid-column: 2 / 4; color: var(--muted); margin-top: -2px; }
+  .mb-num { width: 74px; font: inherit; padding: 4px 6px; border: 1px solid var(--line); border-radius: 8px; }
+  .mb-warn { font-size: 13px; line-height: 1.4; } .mb-warn .ok { color: var(--ok); } .mb-warn .bad { color: #a4400b; font-weight: 700; }
+  .mb-drop { display: grid; place-items: center; text-align: center; gap: 8px; padding: 34px 16px; border: 2px dashed var(--line); border-radius: 14px; background: #fff; }
+  .mybibs { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+  .mybib { position: relative; overflow: hidden; container-type: inline-size; aspect-ratio: var(--bib-ar, 1.42); background: #fff; border: 1px solid var(--line); color: #111; }
+  .mybib > img.mb-bg { position: absolute; left: 0; top: 0; width: 100%; height: var(--mb-imgh, 100%); display: block; }
+  .mb-designs { display: grid; gap: 6px; }
+  .mb-drow { display: grid; grid-template-columns: 64px 1fr auto auto; gap: 8px; align-items: center; font-size: 13.5px; }
+  .mb-drow img { width: 64px; height: 42px; object-fit: contain; background: #f3f3f3; border-radius: 6px; border: 1px solid var(--line); }
+  .mb-none { width: 64px; height: 42px; display: grid; place-items: center; color: var(--muted); background: #f6f4ef; border-radius: 6px; border: 1px dashed var(--line); }
+  .mb-drop .mb-designs { width: min(460px, 100%); text-align: left; }
+  .mybib.mb-missing { background: #f6f4ef; border: 2px dashed var(--line); display: grid; place-items: center; }
+  .mb-miss { padding: 8%; text-align: center; font-size: 13px; color: var(--ink2); }
+  @media print { .mybib.mb-missing { display: none !important; } }
+  .mb-f { position: absolute; transform: translate(-50%, -50%); }
+  .mb-qr { left: var(--qr-x); top: var(--qr-y); width: var(--qr-w); }
+  .mb-qr .qr { min-height: 0; } .mb-qr .qr img { max-width: none; width: 100%; display: block; }
+  .mb-bc { left: var(--bc-x); top: var(--bc-y); width: var(--bc-w); height: var(--bc-h); }
+  .mb-bc svg { display: block; width: 100%; height: 100%; }
+  .mb-white .mb-qr { background: #fff; padding: calc(var(--qr-w) * .1); }
+  .mb-white .mb-bc { background: #fff; }
+  .mb-t { white-space: nowrap; font-weight: 800; line-height: 1; text-align: center; }
+  .mb-no { left: var(--no-x); top: var(--no-y); font-size: calc(var(--no-s) * 1cqw); color: var(--no-c); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+  .mb-first { left: var(--first-x); top: var(--first-y); font-size: calc(var(--first-s) * 1cqw); color: var(--first-c); text-transform: uppercase; }
+  .mb-name { left: var(--name-x); top: var(--name-y); font-size: calc(var(--name-s) * 1cqw); color: var(--name-c); }
+  .mb-cat { left: var(--cat-x); top: var(--cat-y); font-size: calc(var(--cat-s) * 1cqw); color: var(--cat-c); }
+  .mb-size { left: var(--size-x); top: var(--size-y); font-size: calc(var(--size-s) * 1cqw); color: var(--size-c); font-weight: 700; }
+  [data-hide~="qr"] .mb-qr, [data-hide~="bc"] .mb-bc, [data-hide~="no"] .mb-no, [data-hide~="first"] .mb-first,
+  [data-hide~="name"] .mb-name, [data-hide~="cat"] .mb-cat, [data-hide~="size"] .mb-size { display: none; }
+  .mb-edit .mb-f { cursor: move; outline: 1.5px dashed rgba(122, 14, 20, .75); outline-offset: 2px; touch-action: none; user-select: none; }
+  .mb-edit { box-shadow: var(--shadow); }
+  @media print {
+    .mybibs { display: block; }
+    .mybib { border: 0; break-after: page; page-break-after: always; aspect-ratio: auto; }
+    .mybib:last-child { break-after: auto; page-break-after: auto; }
+  }
+
   /* ---------- in-page QR camera scanner ---------- */
   .cam-wrap { display: grid; gap: 8px; }
   .cam-btn { justify-content: center; }
@@ -2176,11 +2222,12 @@ window.__startApp = function () {
     var link = function (b) { return d.url + '?bib=' + b.bib + '&c=' + b.code; };
     var tools = '<div class="toolbar no-print"><div class="tabs">' +
       '<button type="button" class="tab' + (B.layout === 'bib' ? ' on' : '') + '" data-blayout="bib">Race bibs (2 per page)</button>' +
-      '<button type="button" class="tab' + (B.layout === 'stub' ? ' on' : '') + '" data-blayout="stub">Small claim stubs</button></div>' +
+      '<button type="button" class="tab' + (B.layout === 'stub' ? ' on' : '') + '" data-blayout="stub">Small claim stubs</button>' +
+      '<button type="button" class="tab' + (B.layout === 'mine' ? ' on' : '') + '" data-blayout="mine">🎨 My design</button></div>' +
       '<div class="tabs">' + ['All'].concat(d.categories).map(function (c) {
         return '<button type="button" class="tab' + (B.cat === c ? ' on' : '') + '" data-qrcat="' + esc(c) + '">' + esc(c) + '</button>';
       }).join('') + '</div><span class="muted">' + plural(list.length, 'bib') + '</span></div>';
-    var body = B.layout === 'bib'
+    var body = B.layout === 'mine' ? mbBody(list, d, link) : B.layout === 'bib'
       ? '<div class="racebibs">' + list.map(function (b) {
           return '<div class="racebib"><i class="pin tl"></i><i class="pin tr"></i><i class="pin bl"></i><i class="pin br"></i>' +
             '<div class="rb-band bg-' + catKey(b.cat) + '"><span>' + esc(d.eventName) + '</span><b>' + esc(b.cat) + '</b></div>' +
@@ -2196,6 +2243,311 @@ window.__startApp = function () {
         }).join('') + '</div>';
     return head + '<section class="sec">' + tools + body + '</section>';
   }
+
+  // ---------------- RACE BIBS ON YOUR OWN DESIGN ----------------
+  // Upload the bib artwork (one for all categories, or one per category), drag the QR code, barcode and text
+  // onto it – or into a white strip under it – and print. The designs stay on this computer (browser storage).
+  var MB_FIELDS = [
+    ['no', 'Bib number', 'text', 8, 45, 0.5], ['first', 'First name', 'text', 2, 15, 0.25], ['name', 'Full name', 'text', 1.5, 10, 0.25],
+    ['cat', 'Category', 'text', 1.5, 15, 0.25], ['size', 'Singlet size', 'text', 1.5, 8, 0.25],
+    ['qr', 'QR code', 'qr', 8, 40, 0.5], ['bc', 'Barcode', 'bc', 15, 85, 0.5]
+  ];
+  var MB_DEFAULT = { w: 21, white: true, strip: 0, hide: ['name', 'cat', 'size'], f: {
+    no: { x: 50, y: 40, s: 24, c: '#111111', m: 80 }, first: { x: 50, y: 66, s: 6, c: '#111111', m: 46 }, name: { x: 30, y: 74, s: 3, c: '#111111', m: 46 },
+    cat: { x: 50, y: 12, s: 5, c: '#111111', m: 40 }, size: { x: 30, y: 80, s: 2.5, c: '#111111', m: 30 },
+    qr: { x: 84, y: 74, w: 19 }, bc: { x: 30, y: 86, w: 44, h: 13 } } };
+  var MB = { urls: {}, ars: {}, pxs: {}, msg: '', note: '', tried: false, drag: null };
+  (function () {                                       // the layout saved on this computer
+    var saved = null;
+    try { saved = JSON.parse(localStorage.getItem('funrun-bibdesign') || 'null'); } catch (err) {}
+    var d = JSON.parse(JSON.stringify(MB_DEFAULT));
+    if (saved) {
+      ['w', 'white', 'hide', 'strip'].forEach(function (k) { if (saved[k] !== undefined) d[k] = saved[k]; });
+      Object.keys(d.f).forEach(function (k) { if (saved.f && saved.f[k]) Object.keys(saved.f[k]).forEach(function (p) { d.f[k][p] = saved.f[k][p]; }); });
+      if (saved.ars) MB.ars = saved.ars; else if (saved.ar) MB.ars = { All: saved.ar };
+      if (saved.pxs) MB.pxs = saved.pxs; else if (saved.px) MB.pxs = { All: saved.px };
+    }
+    MB.w = d.w; MB.white = d.white; MB.hide = d.hide; MB.f = d.f; MB.strip = d.strip || 0;
+  })();
+  function mbSave() {
+    try {
+      localStorage.setItem('funrun-bibdesign', JSON.stringify({ w: MB.w, white: MB.white, hide: MB.hide, f: MB.f, strip: MB.strip, ars: MB.ars, pxs: MB.pxs }));
+    } catch (err) {}
+  }
+  function mbKeys() { return ['All'].concat((B.data && B.data.categories) || []); }
+  function mbMain() {                                  // the design that sets the page shape: "All", else the first one uploaded
+    var k = mbKeys().filter(function (x) { return MB.urls[x]; })[0];
+    return k || '';
+  }
+  function mbAr() { var k = mbMain(); return (k && MB.ars[k]) || 1.42; }            // width ÷ height of the artwork
+  function mbTotalAr() { return mbAr() / (1 + MB.strip / 100); }                   // … with the code strip under it
+  function mbDesignFor(cat) { return MB.urls[cat] || MB.urls.All || ''; }   // never another category's artwork
+  function mbIdb(mode, fn) {                           // the design images (too big for localStorage)
+    try {
+      var r = indexedDB.open('funrun-bibdesign', 1);
+      r.onupgradeneeded = function () { r.result.createObjectStore('kv'); };
+      r.onsuccess = function () { try { fn(r.result.transaction('kv', mode).objectStore('kv')); } catch (err) { fn(null); } };
+      r.onerror = function () { fn(null); };
+    } catch (err) { fn(null); }
+  }
+  function mbLoadImage() {
+    if (MB.tried) return;
+    MB.tried = true;
+    var keys = mbKeys();
+    mbIdb('readonly', function (st) {
+      if (!st) return;
+      var left = keys.length + 1, done = function () { if (--left === 0 && B.layout === 'mine' && state.page === 'qrcodes') render(); };
+      keys.concat(['design']).forEach(function (k) {   // 'design' = saved by the first version (one design for all)
+        var g = st.get(k === 'design' ? 'design' : 'design:' + k);
+        g.onsuccess = function () {
+          var key = k === 'design' ? 'All' : k;
+          if (g.result && !MB.urls[key]) MB.urls[key] = URL.createObjectURL(g.result);
+          done();
+        };
+        g.onerror = done;
+      });
+    });
+  }
+  // White or see-through space around the artwork is trimmed, so the printed bib is the artwork itself.
+  function mbTrim(img, cb) {
+    try {
+      var W = img.naturalWidth, H = img.naturalHeight;
+      if (W * H > 40e6) { cb(null); return; }
+      var cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+      var cx = cv.getContext('2d'); cx.drawImage(img, 0, 0);
+      var px = cx.getImageData(0, 0, W, H).data;
+      var ink = function (i) { return px[i + 3] > 16 && !(px[i] > 242 && px[i + 1] > 242 && px[i + 2] > 242); };
+      var rowInk = function (y) { var n = 0; for (var x = 0; x < W; x += 2) if (ink((y * W + x) * 4)) n++; return n > W * 0.002; };
+      var colInk = function (x) { var n = 0; for (var y = 0; y < H; y += 2) if (ink((y * W + x) * 4)) n++; return n > H * 0.002; };
+      var t = 0, b = H - 1, l = 0, r = W - 1;
+      while (t < b && !rowInk(t)) t++;
+      while (b > t && !rowInk(b)) b--;
+      while (l < r && !colInk(l)) l++;
+      while (r > l && !colInk(r)) r--;
+      var w = r - l + 1, h = b - t + 1;
+      if (w < W * 0.3 || h < H * 0.3 || (w > W * 0.985 && h > H * 0.985)) { cb(null); return; }   // nothing (sensible) to trim
+      var out = document.createElement('canvas'); out.width = w; out.height = h;
+      out.getContext('2d').drawImage(cv, l, t, w, h, 0, 0, w, h);
+      out.toBlob(function (blob) { cb(blob, w, h, W, H); }, 'image/png');
+    } catch (err) { cb(null); }
+  }
+  function mbUpload(file, key) {
+    key = key || 'All';
+    if (!file || !/^image\/(png|jpe?g|webp)$/i.test(file.type)) { MB.msg = 'Pick a PNG or JPG image of your bib design.'; render(); return; }
+    var url = URL.createObjectURL(file), img = new Image();
+    img.onload = function () {
+      mbTrim(img, function (blob, w, h, W0, H0) {
+        var keep = blob || file;
+        if (blob) { URL.revokeObjectURL(url); url = URL.createObjectURL(blob); }
+        if (MB.urls[key]) URL.revokeObjectURL(MB.urls[key]);
+        MB.urls[key] = url;
+        MB.ars[key] = (blob ? w / h : img.naturalWidth / img.naturalHeight);
+        MB.pxs[key] = blob ? [w, h] : [img.naturalWidth, img.naturalHeight];
+        MB.msg = '';
+        MB.note = blob ? 'Trimmed the empty border around the ' + (key === 'All' ? '' : key + ' ') + 'design (' + W0 + ' × ' + H0 + ' → ' + w + ' × ' + h + ' px).' : '';
+        mbIdb('readwrite', function (st) { if (st) st.put(keep, 'design:' + key); });
+        mbSave(); render();
+      });
+    };
+    img.onerror = function () { MB.msg = 'That file could not be opened as an image. Export it again as PNG or JPG.'; render(); };
+    img.src = url;
+  }
+  function mbRemove(key) {
+    if (MB.urls[key]) URL.revokeObjectURL(MB.urls[key]);
+    delete MB.urls[key]; delete MB.ars[key]; delete MB.pxs[key];
+    mbIdb('readwrite', function (st) { if (st) { st.delete('design:' + key); if (key === 'All') st.delete('design'); } });
+    mbSave(); render();
+  }
+  function mbVars() {
+    var v = ['--bib-ar:' + mbTotalAr(), '--mb-imgh:' + (100 / (1 + MB.strip / 100)) + '%'];
+    Object.keys(MB.f).forEach(function (k) {
+      var p = MB.f[k];
+      v.push('--' + k + '-x:' + p.x + '%', '--' + k + '-y:' + p.y + '%');
+      if (p.w !== undefined) v.push('--' + k + '-w:' + p.w + '%');
+      if (p.h !== undefined) v.push('--' + k + '-h:' + p.h + '%');
+      if (p.s !== undefined) v.push('--' + k + '-s:' + p.s);
+      if (p.c) v.push('--' + k + '-c:' + p.c);
+    });
+    return v.join(';');
+  }
+  function mbHeightCm() { return Math.round(MB.w / mbTotalAr() * 10) / 10; }
+  function mbWarn() {                                  // will it print sharp, and will the codes scan?
+    var out = [], qrCm = MB.f.qr.w / 100 * MB.w, bcCm = MB.f.bc.w / 100 * MB.w;
+    if (MB.hide.indexOf('qr') === -1) out.push(qrCm >= 3 ? '<span class="ok">✓ QR code ' + qrCm.toFixed(1) + ' cm wide – scans easily</span>'
+      : qrCm >= 2.4 ? '<span class="ok">✓ QR code ' + qrCm.toFixed(1) + ' cm wide – scans from up close (3 cm or more is easier)</span>'
+        : '<span class="bad">⚠ QR code only ' + qrCm.toFixed(1) + ' cm wide – make it at least 2.5 cm</span>');
+    if (MB.hide.indexOf('bc') === -1) out.push(bcCm >= 4.5 ? '<span class="ok">✓ Barcode ' + bcCm.toFixed(1) + ' cm wide</span>'
+      : '<span class="bad">⚠ Barcode only ' + bcCm.toFixed(1) + ' cm wide – make it at least 4.5 cm</span>');
+    if (!MB.white) out.push('<span class="bad">⚠ No white box: the codes scan only if your design is plain and light behind them</span>');
+    var main = mbMain();
+    if (!MB.urls.All && B.data) {
+      var miss = (B.data.categories || []).filter(function (c) { return !MB.urls[c]; });
+      miss.forEach(function (c) {
+        var n = B.data.bibs.filter(function (x) { return x.cat === c; }).length;
+        if (n) out.push('<span class="bad">⚠ No ' + esc(c) + ' design: its ' + plural(n, 'bib') + ' will not print. Upload it, or one for All categories</span>');
+      });
+    }
+    mbKeys().forEach(function (k) {
+      if (!MB.urls[k] || !MB.pxs[k]) return;
+      var dpi = Math.round(MB.pxs[k][0] / (MB.w / 2.54)), name = k === 'All' ? 'Design' : k + ' design';
+      if (dpi < 200) out.push('<span class="bad">⚠ ' + name + ' is only ' + dpi + ' dpi at this size – it may print blurry. Export it ' + Math.round(MB.w / 2.54 * 300) + ' px wide (300 dpi)</span>');
+      else out.push('<span class="ok">✓ ' + name + ' ' + MB.pxs[k][0] + ' × ' + MB.pxs[k][1] + ' px = ' + dpi + ' dpi</span>');
+      if (k !== main && Math.abs(MB.ars[k] / mbAr() - 1) > 0.03) out.push('<span class="bad">⚠ ' + name + ' has a different shape from the others – it will be stretched to the same size</span>');
+    });
+    return out.join('<br>');
+  }
+  function mbBib(b, d, link, edit) {
+    var f = function (k, cls, inner) { return '<div class="mb-f ' + cls + '" data-k="' + k + '">' + inner + '</div>'; };
+    if (!mbDesignFor(b.cat)) {                         // no artwork for this category: shown, but not printed
+      return '<div class="mybib mb-missing"><div class="mb-miss">No ' + esc(b.cat) + ' design yet – bib ' + esc(b.bib) +
+        ' is left out of printing.<br>Upload the ' + esc(b.cat) + ' design, or one for All categories.</div></div>';
+    }
+    return '<div class="mybib' + (edit ? ' mb-edit' : '') + '"' + (edit ? ' id="mb-preview"' : '') + '>' +
+      '<img class="mb-bg" src="' + mbDesignFor(b.cat) + '" alt="">' +
+      f('bc', 'mb-bc', '<svg class="bc bc-my" data-bc="' + esc(b.bib) + '"></svg>') +
+      f('qr', 'mb-qr', '<div class="qr" data-qr="' + esc(link(b)) + '"></div>') +
+      f('no', 'mb-t mb-no', esc(b.bib)) + f('first', 'mb-t mb-first', esc(b.first || b.name)) + f('name', 'mb-t mb-name', esc(b.name)) +
+      f('cat', 'mb-t mb-cat', esc(b.cat)) + f('size', 'mb-t mb-size', 'Singlet ' + esc(b.size || '—')) + '</div>';
+  }
+  function mbDesigns() {
+    return '<div class="mb-designs">' + mbKeys().map(function (k) {
+      var u = MB.urls[k];
+      return '<div class="mb-drow">' + (u ? '<img src="' + u + '" alt="">' : '<span class="mb-none">—</span>') +
+        '<b>' + (k === 'All' ? 'All categories' : esc(k)) + '</b>' +
+        '<label class="btn ghost big-btn">' + (u ? 'Change' : 'Upload') + '<input type="file" data-mbup="' + esc(k) + '" accept="image/png,image/jpeg,image/webp" hidden></label>' +
+        (u ? '<button type="button" class="btn ghost big-btn" data-mbdel="' + esc(k) + '" aria-label="Remove">✕</button>' : '') + '</div>';
+    }).join('') + '</div>';
+  }
+  function mbPanel(n) {
+    var rows = MB_FIELDS.map(function (x) {
+      var k = x[0], p = MB.f[k], on = MB.hide.indexOf(k) === -1;
+      var head = '<input type="checkbox" data-mbshow="' + k + '"' + (on ? ' checked' : '') + ' aria-label="Show ' + esc(x[1]) + '"><b>' + esc(x[1]) + '</b>' +
+        (x[2] === 'text' ? '<input type="color" data-mbcolor="' + k + '" value="' + esc(p.c) + '" aria-label="' + esc(x[1]) + ' colour">' : '<span></span>');
+      var slider = function (prop, min, max, step, label) {
+        return '<input type="range" data-mbsize="' + k + '.' + prop + '" min="' + min + '" max="' + max + '" step="' + step + '" value="' + p[prop] + '" aria-label="' + label + '">';
+      };
+      var body = x[2] === 'text' ? slider('s', x[3], x[4], x[5], x[1] + ' size') + '<small>size</small>' +
+          slider('m', 15, 96, 1, x[1] + ' maximum width') + '<small>max width – longer text shrinks to fit</small>'
+        : x[2] === 'qr' ? slider('w', x[3], x[4], x[5], 'QR code size')
+          : slider('w', x[3], x[4], x[5], 'Barcode width') + '<small>width</small>' + slider('h', 5, 30, 0.5, 'Barcode height') + '<small>height</small>';
+      return '<div class="mb-row">' + head + body + '</div>';
+    }).join('');
+    return '<div class="mb-panel"><h3>🎨 Your bib designs</h3>' +
+      '<span class="muted" style="font-size:13px">One design for all categories, or one per category – each bib uses its own category\'s design.</span>' +
+      mbDesigns() +
+      (MB.note ? '<div class="hint" style="margin:0">✂️ ' + esc(MB.note) + '</div>' : '') +
+      '<label>Printed width <input class="mb-num" type="number" id="mb-w" min="8" max="45" step="0.5" value="' + MB.w + '"> cm' +
+      ' <span class="muted">× <span id="mb-h">' + mbHeightCm() + '</span> cm high</span></label>' +
+      '<div class="mb-row"><span></span><b>Strip under the design</b><span id="mb-stripv" class="muted">' + (MB.strip ? MB.strip + '%' : 'none') + '</span>' +
+      '<input type="range" id="mb-strip" min="0" max="45" step="1" value="' + MB.strip + '" aria-label="Height of the white strip under the design">' +
+      '<small>a white band under your artwork for the QR code, barcode and name, when the design has no room for them</small></div>' +
+      '<button type="button" class="btn ghost" data-mbpreset="strip">Put the codes and name in the strip</button>' +
+      '<label><input type="checkbox" id="mb-white"' + (MB.white ? ' checked' : '') + '> White box behind the codes (best for scanning)</label>' +
+      '<h3>Show, size and colour</h3>' + rows +
+      '<div class="mb-warn" id="mb-warn">' + mbWarn() + '</div>' +
+      '<button type="button" class="btn" data-print="1">🖨 Print ' + plural(n, 'bib') + '</button>' +
+      '<div class="hint" style="margin:0">Each bib prints on its own page at ' + MB.w + ' × <span class="mb-hh">' + mbHeightCm() + '</span> cm. In the print window choose ' +
+      '<b>Margins: None</b> and <b>Scale 100%</b>, or <b>Save as PDF</b> for the print shop.</div>' +
+      '<button type="button" class="btn ghost" data-mbreset="1">Reset the layout</button></div>';
+  }
+  function mbUploadPrompt() {
+    return '<div class="mb-drop no-print"><span class="big">🎨</span><b>Use your own race bib design</b>' +
+      '<span class="muted">Upload the artwork as PNG or JPG, <b>without</b> bib numbers or names (they are added per runner). ' +
+      'Best: exported at 300 dpi (about 2480 px wide for a 21 cm bib). Empty white space around it is trimmed automatically.</span>' +
+      mbDesigns() + (MB.msg ? '<div class="m-err">' + esc(MB.msg) + '</div>' : '') + '</div>';
+  }
+  function mbBody(list, d, link) {
+    mbLoadImage();
+    if (!mbMain()) return mbUploadPrompt();
+    if (!list.length) return empty('🎽', 'No bibs in this category yet.');
+    var ready = list.filter(function (b) { return mbDesignFor(b.cat); });
+    if (!ready.length) return mbUploadPrompt();
+    var longest = ready.reduce(function (a, b) { return String(b.first || b.name).length > String(a.first || a.name).length ? b : a; }, ready[0]);
+    return '<div id="mb-scope" class="' + (MB.white ? 'mb-white' : '') + '" style="' + mbVars() + '" data-hide="' + MB.hide.join(' ') + '">' +
+      '<div class="mb-editor no-print"><div>' + mbBib(longest, d, link, true) +
+      '<div class="hint">Drag the QR code, barcode and text into place. Every runner\'s bib uses the same layout. ' +
+      'The preview shows the longest name (' + esc(longest.first || longest.name) + ', ' + esc(longest.cat) + '), so you can check it fits; a name longer than its max width shrinks to fit.</div>' +
+      (MB.msg ? '<div class="m-err">' + esc(MB.msg) + '</div>' : '') + '</div>' + mbPanel(ready.length) + '</div>' +
+      '<div class="mybibs">' + list.map(function (b) { return mbBib(b, d, link, false); }).join('') + '</div></div>';
+  }
+  function mbApply() {                                 // new positions / sizes: every bib follows at once (CSS variables)
+    var sc = $('#mb-scope');
+    if (sc) {
+      sc.setAttribute('style', mbVars());
+      sc.setAttribute('data-hide', MB.hide.join(' '));
+      sc.classList.toggle('mb-white', MB.white);
+    }
+    var h = $('#mb-h'); if (h) h.textContent = mbHeightCm();
+    document.querySelectorAll('.mb-hh').forEach(function (el) { el.textContent = mbHeightCm(); });
+    var sv = $('#mb-stripv'); if (sv) sv.textContent = MB.strip ? MB.strip + '%' : 'none';
+    var w = $('#mb-warn'); if (w) w.innerHTML = mbWarn();
+    mbPrintStyle();
+    mbFit();
+  }
+  function mbFit() {                                   // a long name never runs past its max width: it shrinks to fit
+    document.querySelectorAll('.mybib .mb-t').forEach(function (el) {
+      el.style.transform = '';
+      var p = MB.f[el.getAttribute('data-k')] || {};
+      var max = el.parentNode.clientWidth * (p.m || 92) / 100, wid = el.offsetWidth;
+      if (wid > max && max > 0) el.style.transform = 'translate(-50%, -50%) scale(' + (max / wid).toFixed(3) + ')';
+    });
+  }
+  function mbPrintStyle() {                            // each bib = one page of exactly the bib's size
+    var el = document.getElementById('mb-print');
+    if (!(state.page === 'qrcodes' && B.layout === 'mine' && mbMain())) { if (el) el.remove(); return; }
+    if (!el) { el = document.createElement('style'); el.id = 'mb-print'; document.head.appendChild(el); }
+    el.textContent = '@media print { @page { size: ' + MB.w + 'cm ' + mbHeightCm() + 'cm; margin: 0; } ' +
+      '.mybib { width: ' + MB.w + 'cm !important; height: ' + mbHeightCm() + 'cm !important; } }';
+  }
+  function mbPresetStrip() {                           // codes and name in a white band under the artwork
+    if (MB.strip < 20) MB.strip = 28;
+    var top = 100 / (1 + MB.strip / 100), mid = (top + 100) / 2, band = 100 - top;        // % of the whole bib height
+    var qrW = Math.min(18, band / 100 * 0.84 * (1 / mbTotalAr()) * 100);                  // square QR that fits the band
+    MB.f.qr = { x: 100 - qrW / 2 - 3, y: mid, w: Math.round(qrW * 10) / 10 };
+    MB.f.bc = { x: 58, y: mid, w: 36, h: Math.round(band * 0.55 * 10) / 10 };
+    MB.f.first.x = 21; MB.f.first.y = mid; MB.f.first.m = 34; MB.f.first.s = Math.min(MB.f.first.s, 5);
+    MB.f.no.x = 50; MB.f.no.y = Math.round(top * 0.675 * 10) / 10; MB.f.no.s = 25; MB.f.no.m = 76;   // the usual number area of a bib
+    MB.hide = MB.hide.filter(function (k) { return k !== 'no'; });
+    MB.hide = MB.hide.filter(function (k) { return ['qr', 'bc', 'first'].indexOf(k) === -1; });
+    if (MB.hide.indexOf('cat') === -1) MB.hide.push('cat');                                // the design shows the category
+    mbSave(); render();
+  }
+  function mbDragStart(e) {
+    var el = e.target.closest('#mb-preview .mb-f');
+    if (!el) return;
+    e.preventDefault();
+    var box = $('#mb-preview').getBoundingClientRect(), k = el.getAttribute('data-k'), p = MB.f[k];
+    MB.drag = { k: k, box: box, dx: (e.clientX - box.left) / box.width * 100 - p.x, dy: (e.clientY - box.top) / box.height * 100 - p.y };
+    try { el.setPointerCapture(e.pointerId); } catch (err) {}
+  }
+  function mbDragMove(e) {
+    if (!MB.drag) return;
+    var g = MB.drag, p = MB.f[g.k];
+    p.x = Math.max(0, Math.min(100, Math.round(((e.clientX - g.box.left) / g.box.width * 100 - g.dx) * 10) / 10));
+    p.y = Math.max(0, Math.min(100, Math.round(((e.clientY - g.box.top) / g.box.height * 100 - g.dy) * 10) / 10));
+    mbApply();
+  }
+  document.addEventListener('pointerdown', mbDragStart);
+  document.addEventListener('pointermove', mbDragMove);
+  document.addEventListener('pointerup', function () { if (MB.drag) { MB.drag = null; mbSave(); } });
+  document.addEventListener('change', function (e) {
+    var t = e.target, k;
+    if (t.id === 'mb-file') { mbUpload(t.files && t.files[0], 'All'); return; }
+    if ((k = t.getAttribute && t.getAttribute('data-mbup'))) { mbUpload(t.files && t.files[0], k); return; }
+    if (t.id === 'mb-white') { MB.white = t.checked; mbApply(); mbSave(); return; }
+    if ((k = t.getAttribute && t.getAttribute('data-mbshow'))) {
+      MB.hide = MB.hide.filter(function (x) { return x !== k; });
+      if (!t.checked) MB.hide.push(k);
+      mbApply(); mbSave();
+    }
+  });
+  document.addEventListener('input', function (e) {
+    var t = e.target, k;
+    if (t.id === 'mb-w') { var w = Number(t.value); if (w >= 8 && w <= 45) { MB.w = w; mbApply(); mbSave(); } return; }
+    if (t.id === 'mb-strip') { MB.strip = Number(t.value); mbApply(); mbSave(); return; }
+    if ((k = t.getAttribute && t.getAttribute('data-mbsize'))) { var a = k.split('.'); MB.f[a[0]][a[1]] = Number(t.value); mbApply(); mbSave(); return; }
+    if ((k = t.getAttribute && t.getAttribute('data-mbcolor'))) { MB.f[k].c = t.value; mbApply(); mbSave(); }
+  });
 
   function bibLoad() {
     if (!hasGas()) { B.msg = 'Open this page from the event website link.'; render(); return; }
@@ -2236,10 +2588,11 @@ window.__startApp = function () {
       if (el.getAttribute('data-done')) return;
       try {
         // The barcode holds the race bib number only. Stub barcodes carry their own blank side margins (scanners need them).
-        var sm = el.classList.contains('bc-sm');
+        var sm = el.classList.contains('bc-sm'), my = el.classList.contains('bc-my');
         window.JsBarcode(el, el.getAttribute('data-bc'), { format: 'CODE128', displayValue: false,
-          margin: sm ? 20 : 0, marginTop: 0, marginBottom: 0, width: sm ? 2 : 3, height: sm ? 34 : 46 });
-        el.setAttribute('preserveAspectRatio', sm ? 'xMidYMid meet' : 'xMinYMid meet');   // real size, never stretched
+          margin: my ? 30 : (sm ? 20 : 0), marginTop: my ? 6 : 0, marginBottom: my ? 6 : 0, width: sm ? 2 : 3, height: my ? 100 : (sm ? 34 : 46) });
+        // own design: fills the box you drew (bars and quiet zones stretch together, so it still scans)
+        el.setAttribute('preserveAspectRatio', my ? 'none' : (sm ? 'xMidYMid meet' : 'xMinYMid meet'));
         el.setAttribute('data-done', '1');
       } catch (err) {}
     });
@@ -2597,6 +2950,8 @@ window.__startApp = function () {
       }
     }
     if (state.page === 'qrcodes') drawQrs();
+    mbPrintStyle();                                 // own-design bibs: page size = bib size (removed on other pages)
+    if (state.page === 'qrcodes' && B.layout === 'mine') setTimeout(mbFit, 50);
     if (state.page === 'live') keepAwake();
     if (state.page === 'kits') { keepAwake(); kbFit(); kbTurn(); }
     if (state.page === 'live' || state.page === 'funrun') refreshRace();   // check for new check-ins right away
@@ -2694,6 +3049,15 @@ window.__startApp = function () {
     if (t) { B.cat = t.getAttribute('data-qrcat'); render(); return; }
     t = e.target.closest('[data-blayout]');
     if (t) { B.layout = t.getAttribute('data-blayout'); render(); return; }
+    t = e.target.closest('[data-mbreset]');
+    if (t) {
+      var def = JSON.parse(JSON.stringify(MB_DEFAULT));
+      MB.f = def.f; MB.hide = def.hide; MB.white = def.white; MB.strip = def.strip; mbSave(); render(); return;
+    }
+    t = e.target.closest('[data-mbdel]');
+    if (t) { mbRemove(t.getAttribute('data-mbdel')); return; }
+    t = e.target.closest('[data-mbpreset]');
+    if (t) { mbPresetStrip(); return; }
     t = e.target.closest('[data-mclear]');
     if (t) { mClear(t.getAttribute('data-mclear')); return; }
     t = e.target.closest('[data-sendnow]');
