@@ -13,7 +13,7 @@
 <script>
   // ===== CONNECTION TO YOUR GOOGLE SHEET =====================================
   // Your Apps Script web app link (Deploy → Manage deployments → Web app URL, ends in /exec):
-  var API_URL = 'https://script.google.com/macros/s/AKfycbwJhugkXRvpiXOzMfZjovcFyypb1kJ3fCauQpCcnQH3L-zhgg23XlAqSif4Fug2nmOeRA/exec';
+  var API_URL = 'https://script.google.com/macros/s/AKfycbxdejO7xOXtWAVvni0Ak0QqIQeFLHc4Vv-jytXerG8E2qoEXURTvEdAGRxWY6vjrVhKAQ/exec';
   // ===========================================================================
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -3812,6 +3812,9 @@ window.__startApp = function () {
     }
   } };
 
+  // The live stream overlay (?page=overlay) in OBS: see-through from the start, so the camera is never covered
+  var overlay = window.INITIAL_PAGE === 'overlay';
+  if (overlay) { document.documentElement.classList.add('overlay-mode'); if (document.body) document.body.classList.add('overlay-mode'); }
   function show(html) {
     var a = document.getElementById('app');
     if (a) a.innerHTML = '<section class="sec"><div class="card empty">' + html + '</div></section>';
@@ -3850,11 +3853,25 @@ window.__startApp = function () {
       'Open the link in API_URL (near the top of index.html) in a browser. If it shows the event website, wait a minute and try again. If Google shows a message instead, deploy a new version of the script (Deploy → Manage deployments → ✏️ Edit → New version).'];
     return ['The spreadsheet answered with an error.', ''];
   }
-  function failed(err) {
-    var r = reason(err);
-    show('<span class="big">📶</span><b>Could not load the event website.</b><br>' + r[0] + (r[1] ? '<br><br>' + r[1] : '') +
-      '<br><br><button class="btn" type="button" onclick="location.reload()">Try again</button>' +
-      '<br><small style="opacity:.6">Details: ' + String((err && err.message) || err || 'no answer').replace(/[<>&]/g, '') + '</small>');
+  var tries = 0, tick = null;
+  function failed(err, secs) {
+    var r = reason(err), det = String((err && err.message) || err || 'no answer').replace(/[<>&]/g, '');
+    clearInterval(tick);
+    if (overlay) {                                        // on the stream: a small note in the corner, not a full page
+      var a = document.getElementById('app');
+      if (a) a.innerHTML = '<div style="position:fixed;left:2.5vw;bottom:1.6vw;padding:.5vw 1vw;border-radius:.6vw;background:rgba(20,8,10,.88);' +
+        'color:#fff;font:600 1.1vw/1.3 system-ui,sans-serif">● Live results not connected – trying again <span id="retry-in"></span>' +
+        '<br><small style="opacity:.65;font-weight:400">Attempt ' + tries + ' · ' + det + '</small></div>';
+    } else {
+      show('<span class="big">📶</span><b>Could not load the event website.</b><br>' + r[0] + (r[1] ? '<br><br>' + r[1] : '') +
+        '<br><br><button class="btn" type="button" onclick="location.reload()">Try again now</button>' +
+        (secs ? '<br><small id="retry-wrap">Trying again by itself <span id="retry-in"></span></small>' : '') +
+        '<br><small style="opacity:.6">Details: ' + det + (tries > 1 ? ' · attempt ' + tries : '') + '</small>');
+    }
+    if (!secs) return;
+    var due = Date.now() + secs * 1000;
+    var upd = function () { var el = document.getElementById('retry-in'); if (el) el.textContent = 'in ' + Math.max(0, Math.ceil((due - Date.now()) / 1000)) + ' s'; };
+    upd(); tick = setInterval(upd, 1000);
   }
   var staff = window.INITIAL_PAGE === 'marshal';
   var cached = null;
@@ -3868,10 +3885,18 @@ window.__startApp = function () {
     if (!waiting) start();
   } else {
     waiting++;
-    call(staff ? 'getMarshalPageData' : 'getSiteData', [], function (txt) {
-      try { data = JSON.parse(txt); } catch (e) { data = null; }
-      if (data) done(); else failed();
-    }, failed);
+    (function load() {                                     // a screen nobody touches (OBS, a TV board) heals by itself:
+      call(staff ? 'getMarshalPageData' : 'getSiteData', [], function (txt) {   // tries again after 5 s, 10 s … then every 30 s
+        try { data = JSON.parse(txt); } catch (e) { data = null; }
+        if (data) { clearInterval(tick); done(); } else again();
+      }, again);
+      function again(err) {
+        tries++;
+        var secs = Math.min(30, 5 * tries);
+        failed(err, secs);
+        setTimeout(load, secs * 1000);
+      }
+    })();
   }
 })();
 </script>
