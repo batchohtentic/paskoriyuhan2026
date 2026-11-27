@@ -2,20 +2,6 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ohtentic Paskoriyuhan 2026</title>
-<meta name="description" content="Official event updates: Parade &amp; Opening, Fun Run with live race tracker, sports scores, Bingo Social, Tree Planting, Tribute to Mentors and the Grand Ball.">
-<meta property="og:title" content="Ohtentic Paskoriyuhan 2026">
-<meta property="og:description" content="Live event updates, schedules, scores and results.">
-<meta property="og:type" content="website">
-<meta name="theme-color" content="#7a0e14">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%84%3C/text%3E%3C/svg%3E">
-<script>
-  // ===== CONNECTION TO YOUR GOOGLE SHEET =====================================
-  // Your Apps Script web app link (Deploy → Manage deployments → Web app URL, ends in /exec):
-  var API_URL = 'https://script.google.com/macros/s/AKfycbxdejO7xOXtWAVvni0Ak0QqIQeFLHc4Vv-jytXerG8E2qoEXURTvEdAGRxWY6vjrVhKAQ/exec';
-  // ===========================================================================
-</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -628,6 +614,48 @@
   .mr-back { justify-self: center; font-size: 14px; color: var(--muted); }
   .my-reg p { margin: 0 0 12px; }
   @media (max-width: 420px) { .mr-row { grid-template-columns: 1fr; gap: 2px; } }
+  /* ---------- Race HQ ↔ marshals: messages and station status ---------- */
+  .hq-fab { position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 60; border: 0; border-radius: 999px; padding: 14px 18px;
+    background: var(--pine); color: #fff; font: inherit; font-size: 16px; font-weight: 800; box-shadow: 0 6px 18px rgba(0, 0, 0, .25); cursor: pointer; }
+  .hq-fab i { margin-left: 8px; padding: 1px 8px; border-radius: 999px; background: var(--gold); color: var(--pine-ink); font-style: normal; font-size: 13px; }
+  .hq-banner { position: fixed; left: 12px; right: 12px; top: 12px; z-index: 70; max-width: 560px; margin: 0 auto; display: grid; gap: 10px; padding: 14px 16px;
+    border-radius: 16px; background: #fff8dd; border: 2px solid var(--gold); box-shadow: 0 10px 30px rgba(0, 0, 0, .25); animation: hqIn .3s ease-out; }
+  .hq-btext { margin-top: 4px; font-size: 18px; font-weight: 700; overflow-wrap: anywhere; }
+  .hq-bbtns { display: flex; gap: 8px; }
+  @keyframes hqIn { from { transform: translateY(-20px); opacity: 0; } }
+  .hq-panel { position: fixed; left: 0; right: 0; bottom: 0; z-index: 65; max-width: 640px; max-height: 82vh; margin: 0 auto; display: grid;
+    grid-template-rows: auto auto auto auto minmax(0, 1fr); gap: 10px; padding: 14px 16px calc(16px + env(safe-area-inset-bottom));
+    border-radius: 20px 20px 0 0; background: #fff; box-shadow: 0 -10px 30px rgba(0, 0, 0, .25); }
+  body.hq-panel-open .hq-fab { display: none; }
+  .hq-phead { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .hq-quick { display: flex; flex-wrap: wrap; gap: 6px; }
+  .hq-reply { display: flex; gap: 8px; }
+  .hq-reply input { flex: 1; min-width: 0; padding: 10px 12px; border: 2px solid var(--line); border-radius: 12px; font: inherit; font-size: 16px; }
+  .hq-list { display: grid; gap: 8px; align-content: start; overflow-y: auto; }
+  .hq-msg { max-width: 92%; padding: 8px 12px; border-radius: 12px; background: var(--line2); }
+  .hq-msg.mine { justify-self: end; background: #e3f1e4; }
+  .hq-msg.from-hq { background: #fff4cf; }
+  .hq-meta { font-size: 12px; color: var(--muted); }
+  .hq-text { font-size: 15px; overflow-wrap: anywhere; }
+  .m-wrap.hq-wrap { max-width: 1100px; }
+  .hq-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+  @media (max-width: 860px) { .hq-grid { grid-template-columns: minmax(0, 1fr); } }
+  .hq-h { margin: 6px 0 10px; font-size: 18px; }
+  .hq-h small { font-size: 12px; font-weight: 500; color: var(--muted); }
+  .hq-rows { display: grid; gap: 8px; }
+  .hq-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 12px; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+  .hq-dot { width: 12px; height: 12px; border-radius: 50%; background: #9e9e9e; }
+  .hq-row.on .hq-dot { background: #2e7d32; box-shadow: 0 0 0 4px rgba(46, 125, 50, .15); }
+  .hq-row.late .hq-dot { background: #f2b705; }
+  .hq-row.off .hq-dot { background: #c62828; }
+  .hq-main small { display: block; color: var(--muted); }
+  .hq-bits { margin-top: 2px; font-size: 13px; }
+  .hq-warn { color: #a61b1b; font-weight: 700; }
+  .hq-form { display: grid; gap: 10px; }
+  .hq-form label { display: grid; gap: 4px; font-weight: 700; }
+  .hq-form select, .hq-form textarea { padding: 10px 12px; border: 2px solid var(--line); border-radius: 12px; background: #fff; font: inherit; font-size: 16px; }
+  #hq-log { display: grid; gap: 8px; max-height: 60vh; overflow-y: auto; }
+  @media print { #hq-dock { display: none; } }
   /* big-screen board (?page=live) */
   body.board-mode .top, body.board-mode .updated, body.board-mode .foot { display: none; }
   body.board-mode .wrap { max-width: 1920px; }
@@ -918,11 +946,19 @@
   <nav class="nav wrap" id="nav" aria-label="Pages"></nav>
 </header>
 
-<main id="app" class="wrap"><section class="sec"><div class="card empty"><span class="big">⏳</span>Loading the event website…</div></section></main>
+<main id="app" class="wrap"></main>
 <footer class="foot" id="foot"></footer>
 
 <script>
-window.__startApp = function () {
+  // Filled in by Website.gs (doGet)
+  var INITIAL_DATA = <?!= initialJson ?>;
+  var INITIAL_PAGE = "<?!= initialPage ?>";
+  var INITIAL_BIB = "<?!= initialBib ?>";
+  var INITIAL_CHECK = "<?!= initialCheck ?>";
+  var INITIAL_CODE = "<?!= initialCode ?>";
+</script>
+<script>
+(function () {
   'use strict';
 
   var PAGES = [
@@ -2314,6 +2350,198 @@ window.__startApp = function () {
   function namesHidden() { return !!(DATA.funrun && DATA.funrun.hideNames); }
   function rn(r) { return r && r.name ? r.name : 'Bib ' + (r && r.bib || ''); }
 
+  // ---------------- RACE HQ ↔ MARSHALS: messages and station status ----------------
+  // Every signed-in staff phone pings the spreadsheet every 10 s (Race HQ: every 5 s) with its state – check-ins
+  // still waiting on the phone, last scan, clock, battery – and gets new messages back. Marshals see a 💬 HQ button;
+  // a new message from HQ pops up as a banner with a beep and a vibration. The Race HQ station gets its own screen.
+  var HQ = { msgs: [], last: '', seen: '', unread: 0, open: false, timer: null, busy: false, banner: null, sending: false,
+    board: null, skew: 0, err: '', draft: '', to: 'All', stopped: false, loaded: '' };
+  var BAT = { level: '', charging: false };
+  try {
+    if (navigator.getBattery) navigator.getBattery().then(function (b) {
+      var upd = function () { BAT.level = Math.round(b.level * 100); BAT.charging = !!b.charging; };
+      upd(); b.addEventListener('levelchange', upd); b.addEventListener('chargingchange', upd);
+    }).catch(function () {});
+  } catch (err) {}
+  var HQ_QUICK = ['✅ OK, copy', '📶 Weak signal here', '⏳ Check-ins waiting to send', '🏃 Last runner passed', '🆘 Need help – please call me', '🔋 Low battery'];
+  var HQ_SAY = ['Gun start in 5 minutes – get ready', 'Gun fired – the race is on!', 'Your check-ins are not coming in – check your signal, then tap Send now',
+    'Lead runner on the way to you', 'Is the last runner past you? Please reply', 'All runners are in – thank you! You may close your station'];
+
+  function hqIsHq() { return !!(M.station && stType(M.station) === 'hq'); }
+  function hqSave() {
+    try { localStorage.setItem('funrun-hq', JSON.stringify({ station: M.station && M.station.name, msgs: HQ.msgs.slice(-60), last: HQ.last, seen: HQ.seen })); } catch (err) {}
+  }
+  function hqLoad() {
+    var name = M.station && M.station.name;
+    if (HQ.loaded === name) return;
+    HQ.loaded = name; HQ.msgs = []; HQ.last = ''; HQ.seen = ''; HQ.unread = 0; HQ.banner = null; HQ.board = null; HQ.stopped = false;
+    try {
+      var s = JSON.parse(localStorage.getItem('funrun-hq') || '{}');
+      if (s.station === name) { HQ.msgs = s.msgs || []; HQ.last = s.last || ''; HQ.seen = s.seen || ''; }
+    } catch (err) {}
+  }
+  function hqReset() {
+    clearTimeout(HQ.timer); HQ.timer = null; HQ.loaded = ''; HQ.msgs = []; HQ.last = ''; HQ.seen = ''; HQ.unread = 0; HQ.banner = null; HQ.open = false; HQ.board = null;
+    try { localStorage.removeItem('funrun-hq'); } catch (err) {}
+    hqDock();
+  }
+  function hqStart() {                              // after every marshal-page render: keep the pings going
+    if (state.page !== 'marshal' || !M.station || !M.pin) { hqDock(); return; }
+    hqLoad();
+    if (!HQ.timer && !HQ.busy) mPing();
+    hqDock();
+  }
+  function mPing() {
+    clearTimeout(HQ.timer); HQ.timer = null;
+    var every = hqIsHq() ? 5000 : 10000;
+    if (!M.station || !M.pin || !hasGas() || HQ.stopped) return;
+    if (state.page !== 'marshal' || document.visibilityState === 'hidden') { HQ.timer = setTimeout(mPing, every); return; }
+    if (HQ.busy) return;
+    HQ.busy = true;
+    var r = M.recent[0];
+    google.script.run.withSuccessHandler(function (res) {
+      HQ.busy = false;
+      if (res && res.authError) { HQ.stopped = true; HQ.err = res.error; hqDock(); return; }   // PIN changed: the screen asks again on the next entry
+      if (res && res.ok) {
+        if (res.now) HQ.skew = res.now - Date.now();
+        hqTake(res.messages || []);
+        if (res.board) HQ.board = res.board;
+        hqRefresh();
+      }
+      HQ.timer = setTimeout(mPing, every);
+    }).withFailureHandler(function () { HQ.busy = false; HQ.timer = setTimeout(mPing, every); })
+      .marshalPing(staffReq({ queue: M.queue.length, lastScan: r ? r.clientTime : 0, lastSent: M.lastSent || 0, clockOff: CLK.use ? CLK.off : 0,
+        battery: BAT.level, charging: BAT.charging, since: HQ.last }));
+  }
+  function hqTake(list) {                           // new messages: keep them, and alert for the ones from HQ
+    var me = M.station.name, fresh = [];
+    list.forEach(function (m) {
+      if (HQ.msgs.some(function (x) { return x.id === m.id; })) return;
+      HQ.msgs.push(m);
+      if (m.id > HQ.last) HQ.last = m.id;
+      if (m.fs !== me && (!HQ.seen || m.id > HQ.seen)) fresh.push(m);
+    });
+    HQ.msgs.sort(function (a, b) { return a.id < b.id ? -1 : 1; });
+    HQ.msgs = HQ.msgs.slice(-80);
+    if (fresh.length) {
+      if (HQ.open || hqIsHq()) HQ.seen = HQ.last;
+      else { HQ.unread += fresh.length; HQ.banner = fresh[fresh.length - 1]; hqAlert(); }
+    }
+    hqSave();
+  }
+  function hqAlert() {
+    try { if (navigator.vibrate) navigator.vibrate([250, 120, 250]); } catch (err) {}
+    try {
+      var A = window.AudioContext || window.webkitAudioContext;
+      if (!A) return;
+      HQ.ac = HQ.ac || new A();
+      [0, 0.22].forEach(function (d) {
+        var o = HQ.ac.createOscillator(), g = HQ.ac.createGain(), t = HQ.ac.currentTime + d;
+        o.frequency.value = 880; o.connect(g); g.connect(HQ.ac.destination);
+        g.gain.setValueAtTime(0.3, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+        o.start(t); o.stop(t + 0.2);
+      });
+    } catch (err) {}
+  }
+  function hqSend(text, to, done) {
+    text = String(text || '').trim();
+    if (!text || HQ.sending) return;
+    HQ.sending = true; HQ.err = ''; hqRefresh();
+    google.script.run.withSuccessHandler(function (res) {
+      HQ.sending = false;
+      if (res && res.ok) { hqTake(res.messages || []); HQ.seen = HQ.last; HQ.unread = 0; hqSave(); if (done) done(); }
+      else HQ.err = (res && res.error) || 'Not sent. Try again.';
+      hqRefresh();
+    }).withFailureHandler(function () { HQ.sending = false; HQ.err = 'No signal – the message was not sent. Try again.'; hqRefresh(); })
+      .sendRaceMessage(staffReq({ text: text, to: to || 'HQ', since: HQ.last }));
+  }
+  function hqTo(m) {
+    return m.to === 'All' ? 'everyone' : /^cat:/.test(m.to) ? 'all ' + m.to.slice(4) + ' stations' : m.to === 'HQ' ? 'Race HQ' : m.to;
+  }
+  function hqLogHtml(limit) {
+    if (!HQ.msgs.length) return '<div class="hint">No messages yet.</div>';
+    var me = M.station ? M.station.name : '';
+    return HQ.msgs.slice(-(limit || 60)).reverse().map(function (m) {
+      var mine = m.fs === me, fromHq = /hq/i.test(m.fs) && !mine;
+      return '<div class="hq-msg' + (mine ? ' mine' : '') + (fromHq ? ' from-hq' : '') + '"><div class="hq-meta"><b>' + esc(mine ? 'You' : m.fs) + '</b>' +
+        (m.staff && !mine ? ' (' + esc(m.staff) + ')' : '') + ' → ' + esc(hqTo(m)) + ' · ' + esc(mClock(m.t)) + '</div><div class="hq-text">' + esc(m.text) + '</div></div>';
+    }).join('');
+  }
+
+  // marshal phones: the 💬 HQ button, the pop-up banner and the message panel (outside #app, so redraws keep it)
+  function hqDock() {
+    var d = document.getElementById('hq-dock');
+    var show = state.page === 'marshal' && M.station && M.pin && !hqIsHq();
+    if (!show) { if (d) d.innerHTML = ''; document.body.classList.remove('hq-panel-open'); return; }
+    if (!d) { d = document.createElement('div'); d.id = 'hq-dock'; document.body.appendChild(d); }
+    var b = HQ.banner;
+    var html = (b ? '<div class="hq-banner" role="alert"><div><b>📣 ' + esc(b.fs) + '</b> · ' + esc(mClock(b.t)) + '<div class="hq-btext">' + esc(b.text) + '</div></div>' +
+      '<div class="hq-bbtns"><button type="button" class="btn" data-hq="ack">✅ Got it</button><button type="button" class="btn ghost" data-hq="open">Reply</button></div></div>' : '') +
+      '<button type="button" class="hq-fab" data-hq="open" aria-label="Messages with Race HQ">💬 HQ' + (HQ.unread ? '<i>' + HQ.unread + '</i>' : '') + '</button>';
+    if (HQ.open) {
+      html += '<div class="hq-panel" role="dialog" aria-label="Messages with Race HQ"><div class="hq-phead"><b>💬 Messages with Race HQ</b>' +
+        '<button type="button" class="btn ghost sm" data-hq="close">Close</button></div>' +
+        '<div class="hq-quick">' + HQ_QUICK.map(function (q) { return '<button type="button" class="btn ghost sm" data-hqsay="' + esc(q) + '">' + esc(q) + '</button>'; }).join('') + '</div>' +
+        '<form id="hq-reply" class="hq-reply" autocomplete="off"><input id="hq-rtext" maxlength="300" placeholder="Message to Race HQ…" value="' + esc(HQ.draft) + '">' +
+        '<button class="btn" type="submit">' + (HQ.sending ? '…' : 'Send') + '</button></form>' +
+        (HQ.err ? '<div class="m-err">' + esc(HQ.err) + '</div>' : '') + '<div class="hq-list">' + hqLogHtml(40) + '</div></div>';
+    }
+    d.innerHTML = html;
+    document.body.classList.toggle('hq-panel-open', HQ.open);
+  }
+
+  // the Race HQ station: every station live, and messages to all / a category / one station
+  function viewHq() {
+    var stations = ((DATA.race && DATA.race.stations) || []).filter(function (s) { return stType(s) !== 'hq'; });
+    var opts = [['All', 'All stations']].concat((DATA.funrun.categories || []).map(function (c) { return ['cat:' + c, 'All ' + c + ' stations (turning point, start, finish)']; }))
+      .concat(stations.map(function (s) { return [s.name, s.name]; }));
+    return '<section class="m-wrap hq-wrap">' + stationBar() +
+      '<div class="hq-grid"><div><h2 class="hq-h">📡 Stations <small id="hq-upd"></small></h2><div id="hq-board">' + hqBoardHtml() + '</div></div>' +
+      '<div><h2 class="hq-h">💬 Send a message</h2><form id="hq-form" class="card hq-form" autocomplete="off">' +
+      '<label>To<select id="hq-to">' + opts.map(function (o) { return '<option value="' + esc(o[0]) + '"' + (o[0] === HQ.to ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('') + '</select></label>' +
+      '<textarea id="hq-text" maxlength="300" rows="3" placeholder="Type a message…">' + esc(HQ.draft) + '</textarea>' +
+      '<div class="hq-quick">' + HQ_SAY.map(function (q) { return '<button type="button" class="btn ghost sm" data-hqfill="' + esc(q) + '">' + esc(q) + '</button>'; }).join('') + '</div>' +
+      '<button class="m-go" type="submit" id="hq-sendbtn">' + (HQ.sending ? 'Sending…' : 'Send') + '</button><div class="m-err" id="hq-err">' + esc(HQ.err) + '</div></form>' +
+      '<h2 class="hq-h">Messages</h2><div id="hq-log">' + hqLogHtml() + '</div></div></div></section>';
+  }
+  function hqAgo(ms) {
+    var s = Math.max(0, Math.round(ms / 1000));
+    return s < 60 ? s + ' s ago' : s < 3600 ? Math.floor(s / 60) + ' min ago' : Math.floor(s / 3600) + ' h ago';
+  }
+  function hqBoardHtml() {
+    var b = HQ.board;
+    if (!b) return '<div class="hint">Checking the stations…</div>';
+    var now = Date.now() + HQ.skew;
+    return '<div class="hq-rows">' + b.map(function (s) {
+      var p = s.ping, age = p ? now - p.at : Infinity, cls = age < 45000 ? 'on' : age < 180000 ? 'late' : 'off';
+      var status = !p ? 'Not signed in yet' : cls === 'on' ? 'Online' : cls === 'late' ? 'No contact for ' + hqAgo(age).replace(' ago', '') : 'Offline – last seen ' + hqAgo(age);
+      var bits = [];
+      if (p && p.queue) bits.push('<span class="hq-warn">⏳ ' + p.queue + ' check-in' + (p.queue === 1 ? '' : 's') + ' waiting on the phone</span>');
+      if (s.received !== '') bits.push('📥 ' + s.received + ' received' + (s.lastReceived ? ' · last ' + esc(mClock(s.lastReceived)) : ''));
+      if (p && p.lastScan) bits.push('last scan ' + esc(mClock(p.lastScan)));
+      if (p && Math.abs(p.clock) > 1500) bits.push('⏱ clock ' + Math.round(Math.abs(p.clock) / 1000) + ' s off (corrected)');
+      if (p && p.battery !== '') {
+        var low = p.battery < 20 && !p.charging;
+        bits.push((low ? '<span class="hq-warn">🪫 ' : '🔋 ') + p.battery + '%' + (p.charging ? ' ⚡' : '') + (low ? '</span>' : ''));
+      }
+      return '<div class="hq-row ' + cls + '"><span class="hq-dot" aria-hidden="true"></span><div class="hq-main"><b>' + esc(s.name) + '</b>' +
+        (p && p.staff ? ' <span class="muted">· ' + esc(p.staff) + '</span>' : '') + '<small>' + esc(status) + '</small>' +
+        (bits.length ? '<div class="hq-bits">' + bits.join(' · ') + '</div>' : '') + '</div>' +
+        '<button type="button" class="btn ghost sm" data-hqto="' + esc(s.name) + '">Message</button></div>';
+    }).join('') + '</div>';
+  }
+  function hqRefresh() {
+    if (hqIsHq() && state.page === 'marshal') {
+      if ($('#hq-board')) $('#hq-board').innerHTML = hqBoardHtml();
+      if ($('#hq-log')) $('#hq-log').innerHTML = hqLogHtml();
+      if ($('#hq-upd')) $('#hq-upd').textContent = HQ.board ? 'updated ' + mClock(Date.now()) : '';
+      if ($('#hq-err')) $('#hq-err').textContent = HQ.err;
+      if ($('#hq-sendbtn')) $('#hq-sendbtn').textContent = HQ.sending ? 'Sending…' : 'Send';
+      return;
+    }
+    hqDock();
+  }
+
   // ---------------- RACE KIT & PAYMENT BOARD (?page=kits) ----------------
   // A wide public board for a TV at the kit-claiming area: every runner with a bib, whether the payment is
   // verified and whether the race bib & kit were claimed. Wide screens show one category page at a time and
@@ -2539,6 +2767,7 @@ window.__startApp = function () {
   function viewMarshal() {
     if (!M.station || !M.pin) return marshalLogin();
     var st = M.station, type = stType(st);
+    if (type === 'hq') return viewHq();
     if (type === 'kit') return viewKit();
     if (type === 'payment') return viewPayment();
     return '<section class="m-wrap">' + stationBar() + (type === 'start' ? '<div id="m-gun">' + gunPanel() + '</div>' : '') +
@@ -2920,6 +3149,7 @@ window.__startApp = function () {
     if (!st) return '';
     if (st.type) return st.type;
     var n = String(st.name || '').toLowerCase();
+    if (/\bhq\b|headquarter|race control|command cent|race director/.test(n)) return 'hq';
     if (/finish/.test(n)) return 'finish';
     if (/payment|cashier|treasur/.test(n)) return 'payment';
     if (/kit|claim/.test(n)) return 'kit';
@@ -2928,6 +3158,7 @@ window.__startApp = function () {
   }
   function stSub(s) {
     var t = stType(s);
+    if (t === 'hq') return 'Race HQ · messages & station status';
     if (t === 'finish') return 'Finish line · record finishers';
     if (t === 'start') return 'Start line · check runners in';
     if (t === 'payment') return 'Payment desk · verify payment proofs';
@@ -4090,6 +4321,7 @@ window.__startApp = function () {
       }
     }
     if (state.page === 'qrcodes') drawQrs();
+    hqStart();                                      // Race HQ ↔ marshals: pings, messages, the 💬 HQ button
     mbPrintStyle();                                 // own-design bibs: page size = bib size (removed on other pages)
     if (state.page === 'qrcodes' && B.layout === 'mine') setTimeout(mbFit, 50);
     if (state.page === 'live') keepAwake();
@@ -4233,10 +4465,24 @@ window.__startApp = function () {
     if (t) { var ca = t.getAttribute('data-cam'); if (ca === 'start') camStart(); else if (ca === 'next') camResume(); else camStop(); return; }
     t = e.target.closest('[data-print]');
     if (t) { window.print(); return; }
+    t = e.target.closest('[data-hq]');
+    if (t) {
+      var hqa = t.getAttribute('data-hq');
+      if (hqa === 'open') { HQ.open = true; HQ.unread = 0; HQ.seen = HQ.last; HQ.banner = null; HQ.err = ''; hqSave(); hqDock(); var ri = $('#hq-rtext'); if (ri) ri.focus(); }
+      else if (hqa === 'close') { HQ.open = false; hqDock(); }
+      else if (hqa === 'ack') { HQ.banner = null; HQ.unread = 0; HQ.seen = HQ.last; hqSave(); hqDock(); hqSend('✅ OK, copy', 'HQ'); }
+      return;
+    }
+    t = e.target.closest('[data-hqsay]');
+    if (t) { hqSend(t.getAttribute('data-hqsay'), 'HQ'); return; }
+    t = e.target.closest('[data-hqfill]');
+    if (t) { var ht = $('#hq-text'); if (ht) { ht.value = t.getAttribute('data-hqfill'); HQ.draft = ht.value; ht.focus(); } return; }
+    t = e.target.closest('[data-hqto]');
+    if (t) { HQ.to = t.getAttribute('data-hqto'); var hs = $('#hq-to'); if (hs) hs.value = HQ.to; var hx = $('#hq-text'); if (hx) { hx.scrollIntoView({ block: 'center' }); hx.focus(); } return; }
     t = e.target.closest('[data-m="logout"]');
     if (t) {
       if (M.queue.length) { M.note = M.queue.length + ' check-in(s) still waiting to send. Stay on this station until they are sent.'; mRefresh(); return; }
-      camStop(); M.pin = ''; M.pick = ''; M.station = null; M.error = ''; kitReset(); payReset(); B.data = null; B.msg = ''; mSave(); render();
+      camStop(); M.pin = ''; M.pick = ''; M.station = null; M.error = ''; kitReset(); payReset(); B.data = null; B.msg = ''; hqReset(); mSave(); render();
     }
   });
   window.addEventListener('resize', function () {   // TV / window resized or phone turned: re-fit the kit board
@@ -4249,10 +4495,17 @@ window.__startApp = function () {
     if (e.target.id === 'm-login') { e.preventDefault(); mLogin(); }
     if (e.target.id === 'k-form') { e.preventDefault(); kitSearch(($('#k-q') || {}).value); }
     if (e.target.id === 'mr-form') { e.preventDefault(); mrCheck(); }
+    if (e.target.id === 'hq-reply') { e.preventDefault(); hqSend(($('#hq-rtext') || {}).value, 'HQ', function () { HQ.draft = ''; hqDock(); }); }
+    if (e.target.id === 'hq-form') {
+      e.preventDefault();
+      hqSend(($('#hq-text') || {}).value, ($('#hq-to') || {}).value || 'All', function () { HQ.draft = ''; var x = $('#hq-text'); if (x) x.value = ''; });
+    }
   });
   document.addEventListener('input', function (e) {
     if (e.target.id === 'bibq') { state.bibQuery = e.target.value; $('#bibres').innerHTML = bibResults(); }
     if (/^mr-(name|pin)$/.test(e.target.id)) MR.form[e.target.id] = e.target.value;
+    if (e.target.id === 'hq-rtext' || e.target.id === 'hq-text') HQ.draft = e.target.value;
+    if (e.target.id === 'hq-to') HQ.to = e.target.value;
     if (e.target.id === 'runq') { state.runnerQuery = e.target.value; state.runnerLimit = 60; $('#runlist').innerHTML = runnerList(); }
     if (e.target.id === 'kbq') { KBD.q = e.target.value; $('#kb-body').innerHTML = kbBody(); }
     if (e.target.id === 'trackq') { state.trackQuery = e.target.value; $('#trk-body').innerHTML = trackBody(); }
@@ -4320,152 +4573,6 @@ window.__startApp = function () {
   }
   render();
   mPump();
-};
-</script>
-<script>
-// ---------------- LOADER: connects this page to the spreadsheet (through Apps Script doPost) ----------------
-(function () {
-  'use strict';
-  var KEY = 'paskoriyuhan-site-v1';                       // last copy, so the page opens instantly next time
-  var q = new URLSearchParams(location.search);
-  var bib = String(q.get('bib') || '').replace(/\D/g, '').replace(/^0+(?=\d)/, '').slice(0, 6);
-  window.INITIAL_BIB = bib;                                // opened from a bib QR code
-  window.INITIAL_CODE = String(q.get('c') || '').replace(/[^0-9a-f]/gi, '').slice(0, 10).toUpperCase();
-  window.INITIAL_CHECK = '';
-  window.INITIAL_PAGE = bib ? 'scan' : String(q.get('page') || 'home').replace(/[^a-z]/g, '');
-  window.INITIAL_DATA = null;
-  var connected = /^https:\/\/script\.google\.com\/.+\/exec$/.test(String(API_URL || '').trim());
-
-  // google.script.run, as on the Apps Script website, sent to the web app's doPost
-  function call(fn, args, ok, fail) {
-    if (!connected) { fail(new Error('This website is not connected to the spreadsheet yet.')); return; }
-    fetch(String(API_URL).trim(), { method: 'POST', body: JSON.stringify({ action: 'rpc', fn: fn, args: args }) })
-      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
-      .then(function (t) {
-        var res;
-        try { res = JSON.parse(t); } catch (e) {
-          if (/function not found|doPost/i.test(t)) throw new Error('Unknown request (the script has no doPost)');
-          throw new Error('access denied – the Apps Script link answered with a Google page instead of data');
-        }
-        if (!res || !res.ok) throw new Error((res && res.error) || 'The website did not answer properly');
-        if (fn === 'getSiteData') { try { localStorage.setItem(KEY, res.value); } catch (e) {} }
-        ok(res.value);
-      })
-      .catch(function (err) { fail(err); });
-  }
-  function runner() {
-    var ok = function () {}, fail = function () {};
-    var p = new Proxy({}, { get: function (t, k) {
-      if (k === 'withSuccessHandler') return function (f) { ok = f || ok; return p; };
-      if (k === 'withFailureHandler') return function (f) { fail = f || fail; return p; };
-      if (k === 'withUserObject') return function () { return p; };
-      return function () { call(String(k), Array.prototype.slice.call(arguments), ok, fail); };
-    } });
-    return p;
-  }
-  window.google = { script: {
-    get run() { return runner(); },
-    history: {
-      push: function (st, params) {
-        var u = new URLSearchParams();
-        Object.keys(params || {}).forEach(function (k) { if (params[k] && !(k === 'page' && params[k] === 'home')) u.set(k, params[k]); });
-        try { history.pushState(st || null, '', location.pathname + (String(u) ? '?' + u : '')); } catch (e) {}
-      },
-      setChangeHandler: function (fn) {
-        window.addEventListener('popstate', function (e) {
-          var p = {}; new URLSearchParams(location.search).forEach(function (v, k) { p[k] = v; });
-          fn({ state: e.state, location: { parameter: p } });
-        });
-      }
-    }
-  } };
-
-  // The live stream overlay (?page=overlay) in OBS: see-through from the start, so the camera is never covered
-  var overlay = window.INITIAL_PAGE === 'overlay';
-  if (overlay) { document.documentElement.classList.add('overlay-mode'); if (document.body) document.body.classList.add('overlay-mode'); }
-  function show(html) {
-    var a = document.getElementById('app');
-    if (a) a.innerHTML = '<section class="sec"><div class="card empty">' + html + '</div></section>';
-  }
-  if (!connected) {
-    show('<span class="big">🔌</span>This website is not connected to the spreadsheet yet.<br>Open <b>index.html</b> and paste your Apps Script web app link (it ends in <b>/exec</b>) into <b>API_URL</b> near the top.');
-    return;
-  }
-  var started = false, data = null, waiting = 0;
-  function start() {
-    if (started || !data) return;
-    started = true;
-    window.INITIAL_DATA = data;
-    try { if (data.info && data.info.eventName) document.title = data.info.eventName; } catch (e) {}
-    try {                                                  // the logo as the browser-tab icon
-      if (data.info && data.info.logo) {
-        var ic = document.querySelector('link[rel="icon"]') || document.head.appendChild(document.createElement('link'));
-        ic.rel = 'icon'; ic.href = data.info.logo;
-      }
-    } catch (e) {}
-    window.__startApp();
-  }
-  function done() { if (--waiting <= 0) start(); }
-  // What went wrong, in plain words, and how to fix it
-  function reason(err) {
-    var m = String((err && err.message) || err || '');
-    if (navigator.onLine === false) return ['There is no internet connection on this device.', 'Connect to Wi-Fi or mobile data, then tap Try again.'];
-    if (/unknown request/i.test(m)) return ['The spreadsheet link is still running an older version of the script.',
-      'In Apps Script: paste the latest Website.gs, then Deploy → Manage deployments → ✏️ Edit → Version: New version → Deploy (do not use New deployment – that makes a different link). Then reload this page.'];
-    if (/access denied|HTTP 40[13]/i.test(m)) return ['The spreadsheet link is not open to everyone.',
-      'Apps Script → Deploy → Manage deployments → ✏️ Edit → Execute as: Me, Who has access: Anyone → Deploy.'];
-    if (/HTTP 404/i.test(m)) return ['The spreadsheet link in this page does not exist.',
-      'Copy the Web app link (ends in /exec) from Apps Script → Deploy → Manage deployments into API_URL near the top of index.html.'];
-    if (/HTTP 5\d\d|server error|lock|timed? ?out|exceeded/i.test(m)) return ['Google’s server could not answer right now.', 'Wait a minute, then tap Try again.'];
-    if (/failed to fetch|load failed|networkerror|network request failed/i.test(m)) return ['The spreadsheet link could not be reached.',
-      'Open the link in API_URL (near the top of index.html) in a browser. If it shows the event website, wait a minute and try again. If Google shows a message instead, deploy a new version of the script (Deploy → Manage deployments → ✏️ Edit → New version).'];
-    return ['The spreadsheet answered with an error.', ''];
-  }
-  var tries = 0, tick = null;
-  function failed(err, secs) {
-    var r = reason(err), det = String((err && err.message) || err || 'no answer').replace(/[<>&]/g, '');
-    clearInterval(tick);
-    if (overlay) {                                        // on the stream: a small note in the corner, not a full page
-      var a = document.getElementById('app');
-      if (a) a.innerHTML = '<div style="position:fixed;left:2.5vw;bottom:1.6vw;padding:.5vw 1vw;border-radius:.6vw;background:rgba(20,8,10,.88);' +
-        'color:#fff;font:600 1.1vw/1.3 system-ui,sans-serif">● Live results not connected – trying again <span id="retry-in"></span>' +
-        '<br><small style="opacity:.65;font-weight:400">Attempt ' + tries + ' · ' + det + '</small></div>';
-    } else {
-      show('<span class="big">📶</span><b>Could not load the event website.</b><br>' + r[0] + (r[1] ? '<br><br>' + r[1] : '') +
-        '<br><br><button class="btn" type="button" onclick="location.reload()">Try again now</button>' +
-        (secs ? '<br><small id="retry-wrap">Trying again by itself <span id="retry-in"></span></small>' : '') +
-        '<br><small style="opacity:.6">Details: ' + det + (tries > 1 ? ' · attempt ' + tries : '') + '</small>');
-    }
-    if (!secs) return;
-    var due = Date.now() + secs * 1000;
-    var upd = function () { var el = document.getElementById('retry-in'); if (el) el.textContent = 'in ' + Math.max(0, Math.ceil((due - Date.now()) / 1000)) + ' s'; };
-    upd(); tick = setInterval(upd, 1000);
-  }
-  var staff = window.INITIAL_PAGE === 'marshal';
-  var cached = null;
-  if (!staff) { try { cached = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {} }
-  if (bib) {                                               // check the bib's QR security code first
-    waiting++;
-    call('checkBibQr', [bib, window.INITIAL_CODE], function (v) { window.INITIAL_CHECK = v || ''; done(); }, function () { done(); });
-  }
-  if (cached && cached.info) {
-    data = cached;                                         // open at once; live updates bring it up to date in seconds
-    if (!waiting) start();
-  } else {
-    waiting++;
-    (function load() {                                     // a screen nobody touches (OBS, a TV board) heals by itself:
-      call(staff ? 'getMarshalPageData' : 'getSiteData', [], function (txt) {   // tries again after 5 s, 10 s … then every 30 s
-        try { data = JSON.parse(txt); } catch (e) { data = null; }
-        if (data) { clearInterval(tick); done(); } else again();
-      }, again);
-      function again(err) {
-        tries++;
-        var secs = Math.min(30, 5 * tries);
-        failed(err, secs);
-        setTimeout(load, secs * 1000);
-      }
-    })();
-  }
 })();
 </script>
 </body>
