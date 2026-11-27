@@ -637,8 +637,8 @@
   .hq-btext { margin-top: 4px; font-size: 18px; font-weight: 700; overflow-wrap: anywhere; }
   .hq-bbtns { display: flex; gap: 8px; }
   @keyframes hqIn { from { transform: translateY(-20px); opacity: 0; } }
-  .hq-panel { position: fixed; left: 0; right: 0; bottom: 0; z-index: 65; max-width: 640px; max-height: 82vh; margin: 0 auto; display: grid;
-    grid-template-rows: auto auto auto auto minmax(0, 1fr); gap: 10px; padding: 14px 16px calc(16px + env(safe-area-inset-bottom));
+  .hq-panel { position: fixed; left: 0; right: 0; bottom: 0; z-index: 65; max-width: 640px; max-height: 86vh; margin: 0 auto; display: grid;
+    grid-template-rows: auto auto auto auto auto auto minmax(0, 1fr); gap: 10px; padding: 14px 16px calc(16px + env(safe-area-inset-bottom));
     border-radius: 20px 20px 0 0; background: #fff; box-shadow: 0 -10px 30px rgba(0, 0, 0, .25); }
   body.hq-panel-open .hq-fab { display: none; }
   .hq-phead { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
@@ -670,6 +670,12 @@
   .hq-form select, .hq-form textarea { padding: 10px 12px; border: 2px solid var(--line); border-radius: 12px; background: #fff; font: inherit; font-size: 16px; }
   #hq-log { display: grid; gap: 8px; max-height: 60vh; overflow-y: auto; }
   @media print { #hq-dock { display: none; } }
+  /* 🎤 walkie-talkie */
+  .vox-btn { width: 100%; padding: 16px; border: 0; border-radius: 14px; background: var(--red); color: #fff; font: inherit; font-size: 18px; font-weight: 800;
+    cursor: pointer; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; touch-action: none; }
+  .vox-btn.rec { background: #8e0000; box-shadow: 0 0 0 6px rgba(198, 40, 40, .25); }
+  .vox-msg { min-height: 1em; font-size: 13px; font-weight: 600; color: var(--ink2); }
+  .hq-msg .btn.sm { margin-top: 4px; }
   /* big-screen board (?page=live) */
   body.board-mode .top, body.board-mode .updated, body.board-mode .foot { display: none; }
   body.board-mode .wrap { max-width: 1920px; }
@@ -2397,6 +2403,8 @@ window.__startApp = function () {
     } catch (err) {}
   }
   function hqReset() {
+    if (VOX.rec) voxStop(false);
+    VOX.queue = []; VOX.sounds = {}; VOX.order = []; VOX.msg = ''; try { if (VOX.audio) VOX.audio.pause(); } catch (err) {}
     clearTimeout(HQ.timer); HQ.timer = null; HQ.loaded = ''; HQ.msgs = []; HQ.last = ''; HQ.seen = ''; HQ.unread = 0; HQ.banner = null; HQ.open = false; HQ.board = null;
     try { localStorage.removeItem('funrun-hq'); } catch (err) {}
     hqDock();
@@ -2442,6 +2450,8 @@ window.__startApp = function () {
     if (fresh.length) {
       if (HQ.open || hqIsHq()) HQ.seen = HQ.last;
       else { HQ.unread += fresh.length; HQ.banner = fresh[fresh.length - 1]; hqAlert(); }
+      var soon = Date.now() + HQ.skew - 120000;
+      voxHeard(fresh.filter(function (m) { return m.kind === 'voice' && m.t > soon; }));
     }
     hqSave();
   }
@@ -2480,7 +2490,8 @@ window.__startApp = function () {
     return HQ.msgs.slice(-(limit || 60)).reverse().map(function (m) {
       var mine = m.fs === me, fromHq = /hq/i.test(m.fs) && !mine;
       return '<div class="hq-msg' + (mine ? ' mine' : '') + (fromHq ? ' from-hq' : '') + '"><div class="hq-meta"><b>' + esc(mine ? 'You' : m.fs) + '</b>' +
-        (m.staff && !mine ? ' (' + esc(m.staff) + ')' : '') + ' → ' + esc(hqTo(m)) + ' · ' + esc(mClock(m.t)) + '</div><div class="hq-text">' + esc(m.text) + '</div></div>';
+        (m.staff && !mine ? ' (' + esc(m.staff) + ')' : '') + ' → ' + esc(hqTo(m)) + ' · ' + esc(mClock(m.t)) + '</div><div class="hq-text">' + esc(m.text) + '</div>' +
+        (m.kind === 'voice' ? '<button type="button" class="btn ghost sm" data-vplay="' + esc(m.id) + '">' + (VOX.playing === m.id ? '🔊 Playing…' : '▶ Play') + '</button>' : '') + '</div>';
     }).join('');
   }
 
@@ -2492,11 +2503,13 @@ window.__startApp = function () {
     if (!d) { d = document.createElement('div'); d.id = 'hq-dock'; document.body.appendChild(d); }
     var b = HQ.banner;
     var html = (b ? '<div class="hq-banner" role="alert"><div><b>📣 ' + esc(b.fs) + '</b> · ' + esc(mClock(b.t)) + '<div class="hq-btext">' + esc(b.text) + '</div></div>' +
-      '<div class="hq-bbtns"><button type="button" class="btn" data-hq="ack">✅ Got it</button><button type="button" class="btn ghost" data-hq="open">Reply</button></div></div>' : '') +
+      '<div class="hq-bbtns">' + (b.kind === 'voice' ? '<button type="button" class="btn ghost" data-vplay="' + esc(b.id) + '">' + (VOX.playing === b.id ? '🔊 Playing…' : '▶ Play') + '</button>' : '') +
+      '<button type="button" class="btn" data-hq="ack">✅ Got it</button><button type="button" class="btn ghost" data-hq="open">Reply</button></div></div>' : '') +
       '<button type="button" class="hq-fab" data-hq="open" aria-label="Messages with Race HQ">💬 HQ' + (HQ.unread ? '<i>' + HQ.unread + '</i>' : '') + '</button>';
     if (HQ.open) {
       html += '<div class="hq-panel" role="dialog" aria-label="Messages with Race HQ"><div class="hq-phead"><b>💬 Messages with Race HQ</b>' +
         '<button type="button" class="btn ghost sm" data-hq="close">Close</button></div>' +
+        '<button type="button" class="vox-btn" data-vox="me">' + voxLabel() + '</button><div class="vox-msg">' + esc(VOX.msg) + '</div>' +
         '<div class="hq-quick">' + HQ_QUICK.map(function (q) { return '<button type="button" class="btn ghost sm" data-hqsay="' + esc(q) + '">' + esc(q) + '</button>'; }).join('') + '</div>' +
         '<form id="hq-reply" class="hq-reply" autocomplete="off"><input id="hq-rtext" maxlength="300" placeholder="Message to Race HQ…" value="' + esc(HQ.draft) + '">' +
         '<button class="btn" type="submit">' + (HQ.sending ? '…' : 'Send') + '</button></form>' +
@@ -2517,7 +2530,8 @@ window.__startApp = function () {
       '<label>To<select id="hq-to">' + opts.map(function (o) { return '<option value="' + esc(o[0]) + '"' + (o[0] === HQ.to ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('') + '</select></label>' +
       '<textarea id="hq-text" maxlength="300" rows="3" placeholder="Type a message…">' + esc(HQ.draft) + '</textarea>' +
       '<div class="hq-quick">' + HQ_SAY.map(function (q) { return '<button type="button" class="btn ghost sm" data-hqfill="' + esc(q) + '">' + esc(q) + '</button>'; }).join('') + '</div>' +
-      '<button class="m-go" type="submit" id="hq-sendbtn">' + (HQ.sending ? 'Sending…' : 'Send') + '</button><div class="m-err" id="hq-err">' + esc(HQ.err) + '</div></form>' +
+      '<button class="m-go" type="submit" id="hq-sendbtn">' + (HQ.sending ? 'Sending…' : 'Send') + '</button><div class="m-err" id="hq-err">' + esc(HQ.err) + '</div>' +
+      '<button type="button" class="vox-btn" data-vox="hq">' + voxLabel() + '</button><div class="vox-msg">' + esc(VOX.msg) + '</div></form>' +
       '<h2 class="hq-h">Messages</h2><div id="hq-log">' + hqLogHtml() + '</div></div></div></section>';
   }
   function hqAgo(ms) {
@@ -2557,6 +2571,141 @@ window.__startApp = function () {
     }
     hqDock();
   }
+
+  // ---------------- 🎤 WALKIE-TALKIE: hold to talk, release to send ----------------
+  // Push-to-talk voice messages between Race HQ and the stations (same rules as text messages). The phone records
+  // up to 15 s and makes a small 8 kHz WAV, which every phone can play. A voice message arrives within about 10 s
+  // (the next check-in of the phone) and plays by itself; ▶ Play plays it again.
+  var VOX = { rec: null, sending: false, msg: '', queue: [], playing: '', audio: null, unlocked: false, sounds: {}, order: [] };
+  function voxAudio() { if (!VOX.audio) { VOX.audio = new Audio(); VOX.audio.preload = 'auto'; } return VOX.audio; }
+  function wavBase64(chunks, rate) {               // microphone samples → 8 kHz, 8-bit mono WAV (about 8 KB a second)
+    var total = 0, i, k;
+    chunks.forEach(function (c) { total += c.length; });
+    var all = new Float32Array(total), pos = 0;
+    chunks.forEach(function (c) { all.set(c, pos); pos += c.length; });
+    var ratio = rate / 8000, n = Math.max(1, Math.floor(total / ratio)), out = new Float32Array(n), peak = 0;
+    for (k = 0; k < n; k++) {
+      var a = Math.floor(k * ratio), b = Math.max(a + 1, Math.floor((k + 1) * ratio)), sum = 0;
+      for (i = a; i < b && i < total; i++) sum += all[i];
+      out[k] = sum / Math.max(1, Math.min(b, total) - a);
+      if (Math.abs(out[k]) > peak) peak = Math.abs(out[k]);
+    }
+    var gain = peak > 0.001 ? Math.min(8, 0.9 / peak) : 1;           // even out quiet and loud voices
+    var bytes = new Uint8Array(44 + n), dv = new DataView(bytes.buffer);
+    var put = function (o, s) { for (var j = 0; j < s.length; j++) bytes[o + j] = s.charCodeAt(j); };
+    put(0, 'RIFF'); dv.setUint32(4, 36 + n, true); put(8, 'WAVE'); put(12, 'fmt '); dv.setUint32(16, 16, true);
+    dv.setUint16(20, 1, true); dv.setUint16(22, 1, true); dv.setUint32(24, 8000, true); dv.setUint32(28, 8000, true);
+    dv.setUint16(32, 1, true); dv.setUint16(34, 8, true); put(36, 'data'); dv.setUint32(40, n, true);
+    for (k = 0; k < n; k++) bytes[44 + k] = Math.max(0, Math.min(255, Math.round(out[k] * gain * 127 + 128)));
+    var bin = '';
+    for (k = 0; k < bytes.length; k += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(k, k + 0x8000));
+    return btoa(bin);
+  }
+  var SILENT = 'data:audio/wav;base64,' + wavBase64([new Float32Array(400)], 8000);
+  document.addEventListener('pointerdown', function () {   // phones play sound only after a tap: the first tap unlocks the speaker
+    if (VOX.unlocked || state.page !== 'marshal') return;
+    VOX.unlocked = true;
+    try { var a = voxAudio(); a.src = SILENT; var pr = a.play(); if (pr && pr.catch) pr.catch(function () { VOX.unlocked = false; }); } catch (err) {}
+  }, true);
+
+  function voxStart(to) {
+    if (VOX.rec || VOX.sending) return;
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { VOX.msg = 'This browser cannot record sound. Use Chrome (Android) or Safari (iPhone).'; voxUi(); return; }
+    var A = window.AudioContext || window.webkitAudioContext;
+    var r = VOX.rec = { to: to, chunks: [], started: 0, released: false, ctx: A ? new A() : null };   // made during the tap (iPhone)
+    VOX.msg = ''; voxUi();
+    navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }).then(function (stream) {
+      if (VOX.rec !== r || r.released) {           // let go before the microphone was ready (e.g. the permission question)
+        stream.getTracks().forEach(function (t) { t.stop(); });
+        try { r.ctx.close(); } catch (err) {}
+        if (VOX.rec === r) VOX.rec = null;
+        VOX.msg = 'Microphone ready – now hold the button while you talk.'; voxUi();
+        return;
+      }
+      var ctx = r.ctx;
+      try { if (ctx.resume) ctx.resume(); } catch (err) {}
+      var src = ctx.createMediaStreamSource(stream), proc = ctx.createScriptProcessor(4096, 1, 1);
+      proc.onaudioprocess = function (e) { if (r.started) r.chunks.push(new Float32Array(e.inputBuffer.getChannelData(0))); };
+      src.connect(proc); proc.connect(ctx.destination);
+      r.stream = stream; r.src = src; r.proc = proc; r.rate = ctx.sampleRate; r.started = Date.now();
+      r.timer = setInterval(function () { if ((Date.now() - r.started) / 1000 >= 15) voxStop(true); else voxUi(); }, 250);
+      try { if (navigator.vibrate) navigator.vibrate(40); } catch (err) {}
+      voxUi();
+    }).catch(function () {
+      if (VOX.rec === r) VOX.rec = null;
+      try { r.ctx.close(); } catch (err) {}
+      VOX.msg = 'The microphone is blocked. Allow the microphone for this website (browser settings), then try again.'; voxUi();
+    });
+  }
+  function voxStop(send) {
+    var r = VOX.rec;
+    if (!r) return;
+    r.released = true;
+    if (!r.started) return;                        // still waiting for the microphone – cancelled when it comes
+    clearInterval(r.timer);
+    try { r.proc.disconnect(); r.src.disconnect(); } catch (err) {}
+    try { r.stream.getTracks().forEach(function (t) { t.stop(); }); } catch (err) {}
+    try { r.ctx.close(); } catch (err) {}
+    VOX.rec = null;
+    var secs = (Date.now() - r.started) / 1000;
+    if (!send || secs < 0.7 || !r.chunks.length) { VOX.msg = send ? 'Too short – hold the button while you talk.' : ''; voxUi(); return; }
+    var clip = wavBase64(r.chunks, r.rate);
+    VOX.sending = true; VOX.msg = ''; voxUi();
+    google.script.run.withSuccessHandler(function (res) {
+      VOX.sending = false;
+      if (res && res.ok) {
+        var mine = (res.messages || []).filter(function (m) { return m.kind === 'voice' && m.fs === M.station.name; }).slice(-1)[0];
+        if (mine) VOX.sounds[mine.id] = 'data:audio/wav;base64,' + clip;
+        hqTake(res.messages || []); HQ.seen = HQ.last; hqSave(); VOX.msg = '✓ Voice message sent';
+      } else { if (staffAuthFail(res)) return; VOX.msg = (res && res.error) || 'Not sent. Try again.'; }
+      hqRefresh(); voxUi();
+    }).withFailureHandler(function () { VOX.sending = false; VOX.msg = 'No signal – the voice message was not sent. Try again.'; voxUi(); })
+      .sendVoiceMessage(staffReq({ clip: clip, dur: Math.max(1, Math.round(secs)), to: r.to, since: HQ.last }));
+  }
+  function voxLabel() {
+    if (VOX.rec && VOX.rec.started) return '● Recording ' + Math.floor((Date.now() - VOX.rec.started) / 1000) + ' s – let go to send';
+    if (VOX.rec) return '🎤 Opening the microphone…';
+    if (VOX.sending) return 'Sending…';
+    return '🎤 Hold to talk';
+  }
+  function voxUi() {                               // updates the talk buttons in place (never redraws under the finger)
+    document.querySelectorAll('[data-vox]').forEach(function (b) {
+      b.textContent = voxLabel(); b.classList.toggle('rec', !!(VOX.rec && VOX.rec.started));
+    });
+    document.querySelectorAll('.vox-msg').forEach(function (el) { el.textContent = VOX.msg; });
+    document.querySelectorAll('[data-vplay]').forEach(function (b) {
+      b.textContent = VOX.playing === b.getAttribute('data-vplay') ? '🔊 Playing…' : '▶ Play';
+    });
+  }
+  function voxPlay(id, auto) {
+    if (VOX.sounds[id]) { voxSound(id, auto); return; }
+    VOX.playing = id; voxUi();
+    google.script.run.withSuccessHandler(function (res) {
+      if (res && res.ok) {
+        VOX.sounds[id] = 'data:audio/wav;base64,' + res.clip;
+        VOX.order.push(id);
+        if (VOX.order.length > 12) delete VOX.sounds[VOX.order.shift()];   // keep the phone's memory small
+        voxSound(id, auto);
+      } else { VOX.playing = ''; VOX.msg = (res && res.error) || 'Could not load the voice message.'; voxUi(); voxNext(); }
+    }).withFailureHandler(function () { VOX.playing = ''; VOX.msg = 'No signal – tap ▶ Play again in a moment.'; voxUi(); })
+      .getVoiceClip(staffReq({ id: id }));
+  }
+  function voxSound(id, auto) {
+    var a = voxAudio();
+    VOX.playing = id; voxUi();
+    a.onended = a.onerror = function () { VOX.playing = ''; voxUi(); voxNext(); };
+    a.src = VOX.sounds[id];
+    var pr = a.play();
+    if (pr && pr.catch) pr.catch(function () { VOX.playing = ''; VOX.msg = auto ? '🎤 New voice message – tap ▶ Play' : 'Tap ▶ Play again'; voxUi(); });
+  }
+  function voxNext() { if (VOX.playing || !VOX.queue.length) return; voxPlay(VOX.queue.shift(), true); }
+  function voxHeard(list) {                        // new voice messages from others: play them one after another
+    var me = M.station && M.station.name;
+    list.forEach(function (m) { if (m.kind === 'voice' && m.fs !== me && VOX.queue.indexOf(m.id) === -1) VOX.queue.push(m.id); });
+    voxNext();
+  }
+  document.addEventListener('pointerup', function () { if (VOX.rec) voxStop(true); });
+  document.addEventListener('pointercancel', function () { if (VOX.rec) voxStop(true); });
 
   // ---------------- RACE KIT & PAYMENT BOARD (?page=kits) ----------------
   // A wide public board for a TV at the kit-claiming area: every runner with a bib, whether the payment is
@@ -4507,6 +4656,8 @@ window.__startApp = function () {
     if (t) { var ca = t.getAttribute('data-cam'); if (ca === 'start') camStart(); else if (ca === 'next') camResume(); else camStop(); return; }
     t = e.target.closest('[data-print]');
     if (t) { window.print(); return; }
+    t = e.target.closest('[data-vplay]');
+    if (t) { voxPlay(t.getAttribute('data-vplay'), false); return; }
     t = e.target.closest('[data-hq]');
     if (t) {
       var hqa = t.getAttribute('data-hq');
@@ -4532,6 +4683,13 @@ window.__startApp = function () {
     clearTimeout(KBD.rs);
     KBD.rs = setTimeout(function () { if (kbWide() !== KBD.wide) render(); else kbFit(); }, 250);
   });
+  document.addEventListener('pointerdown', function (e) {   // 🎤 hold to talk
+    var t = e.target.closest && e.target.closest('[data-vox]');
+    if (!t) return;
+    e.preventDefault();
+    voxStart(t.getAttribute('data-vox') === 'hq' ? (($('#hq-to') || {}).value || 'All') : 'HQ');
+  });
+  document.addEventListener('contextmenu', function (e) { if (e.target.closest && e.target.closest('[data-vox]')) e.preventDefault(); });
   document.addEventListener('submit', function (e) {
     if (e.target.id === 'm-form') { e.preventDefault(); mSubmit(); }
     if (e.target.id === 'm-login') { e.preventDefault(); mLogin(); }
