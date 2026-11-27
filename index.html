@@ -2,6 +2,20 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ohtentic Paskoriyuhan 2026</title>
+<meta name="description" content="Official event updates: Parade &amp; Opening, Fun Run with live race tracker, sports scores, Bingo Social, Tree Planting, Tribute to Mentors and the Grand Ball.">
+<meta property="og:title" content="Ohtentic Paskoriyuhan 2026">
+<meta property="og:description" content="Live event updates, schedules, scores and results.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#7a0e14">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%84%3C/text%3E%3C/svg%3E">
+<script>
+  // ===== CONNECTION TO YOUR GOOGLE SHEET =====================================
+  // Your Apps Script web app link (Deploy → Manage deployments → Web app URL, ends in /exec):
+  var API_URL = 'https://script.google.com/macros/s/AKfycbxdejO7xOXtWAVvni0Ak0QqIQeFLHc4Vv-jytXerG8E2qoEXURTvEdAGRxWY6vjrVhKAQ/exec';
+  // ===========================================================================
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -946,19 +960,11 @@
   <nav class="nav wrap" id="nav" aria-label="Pages"></nav>
 </header>
 
-<main id="app" class="wrap"></main>
+<main id="app" class="wrap"><section class="sec"><div class="card empty"><span class="big">⏳</span>Loading the event website…</div></section></main>
 <footer class="foot" id="foot"></footer>
 
 <script>
-  // Filled in by Website.gs (doGet)
-  var INITIAL_DATA = <?!= initialJson ?>;
-  var INITIAL_PAGE = "<?!= initialPage ?>";
-  var INITIAL_BIB = "<?!= initialBib ?>";
-  var INITIAL_CHECK = "<?!= initialCheck ?>";
-  var INITIAL_CODE = "<?!= initialCode ?>";
-</script>
-<script>
-(function () {
+window.__startApp = function () {
   'use strict';
 
   var PAGES = [
@@ -4573,6 +4579,153 @@
   }
   render();
   mPump();
+};
+</script>
+<script>
+// ---------------- LOADER: connects this page to the spreadsheet (through Apps Script doPost) ----------------
+(function () {
+  'use strict';
+  var KEY = 'paskoriyuhan-site-v2';                       // last copy, so the page opens instantly next time
+  try { localStorage.removeItem('paskoriyuhan-site-v1'); } catch (e) {}   // copies saved before runner names were hidden
+  var q = new URLSearchParams(location.search);
+  var bib = String(q.get('bib') || '').replace(/\D/g, '').replace(/^0+(?=\d)/, '').slice(0, 6);
+  window.INITIAL_BIB = bib;                                // opened from a bib QR code
+  window.INITIAL_CODE = String(q.get('c') || '').replace(/[^0-9a-f]/gi, '').slice(0, 10).toUpperCase();
+  window.INITIAL_CHECK = '';
+  window.INITIAL_PAGE = bib ? 'scan' : String(q.get('page') || 'home').replace(/[^a-z]/g, '');
+  window.INITIAL_DATA = null;
+  var connected = /^https:\/\/script\.google\.com\/.+\/exec$/.test(String(API_URL || '').trim());
+
+  // google.script.run, as on the Apps Script website, sent to the web app's doPost
+  function call(fn, args, ok, fail) {
+    if (!connected) { fail(new Error('This website is not connected to the spreadsheet yet.')); return; }
+    fetch(String(API_URL).trim(), { method: 'POST', body: JSON.stringify({ action: 'rpc', fn: fn, args: args }) })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+      .then(function (t) {
+        var res;
+        try { res = JSON.parse(t); } catch (e) {
+          if (/function not found|doPost/i.test(t)) throw new Error('Unknown request (the script has no doPost)');
+          throw new Error('access denied – the Apps Script link answered with a Google page instead of data');
+        }
+        if (!res || !res.ok) throw new Error((res && res.error) || 'The website did not answer properly');
+        if (fn === 'getSiteData') { try { localStorage.setItem(KEY, res.value); } catch (e) {} }
+        ok(res.value);
+      })
+      .catch(function (err) { fail(err); });
+  }
+  function runner() {
+    var ok = function () {}, fail = function () {};
+    var p = new Proxy({}, { get: function (t, k) {
+      if (k === 'withSuccessHandler') return function (f) { ok = f || ok; return p; };
+      if (k === 'withFailureHandler') return function (f) { fail = f || fail; return p; };
+      if (k === 'withUserObject') return function () { return p; };
+      return function () { call(String(k), Array.prototype.slice.call(arguments), ok, fail); };
+    } });
+    return p;
+  }
+  window.google = { script: {
+    get run() { return runner(); },
+    history: {
+      push: function (st, params) {
+        var u = new URLSearchParams();
+        Object.keys(params || {}).forEach(function (k) { if (params[k] && !(k === 'page' && params[k] === 'home')) u.set(k, params[k]); });
+        try { history.pushState(st || null, '', location.pathname + (String(u) ? '?' + u : '')); } catch (e) {}
+      },
+      setChangeHandler: function (fn) {
+        window.addEventListener('popstate', function (e) {
+          var p = {}; new URLSearchParams(location.search).forEach(function (v, k) { p[k] = v; });
+          fn({ state: e.state, location: { parameter: p } });
+        });
+      }
+    }
+  } };
+
+  // The live stream overlay (?page=overlay) in OBS: see-through from the start, so the camera is never covered
+  var overlay = window.INITIAL_PAGE === 'overlay';
+  if (overlay) { document.documentElement.classList.add('overlay-mode'); if (document.body) document.body.classList.add('overlay-mode'); }
+  function show(html) {
+    var a = document.getElementById('app');
+    if (a) a.innerHTML = '<section class="sec"><div class="card empty">' + html + '</div></section>';
+  }
+  if (!connected) {
+    show('<span class="big">🔌</span>This website is not connected to the spreadsheet yet.<br>Open <b>index.html</b> and paste your Apps Script web app link (it ends in <b>/exec</b>) into <b>API_URL</b> near the top.');
+    return;
+  }
+  var started = false, data = null, waiting = 0;
+  function start() {
+    if (started || !data) return;
+    started = true;
+    window.INITIAL_DATA = data;
+    try { if (data.info && data.info.eventName) document.title = data.info.eventName; } catch (e) {}
+    try {                                                  // the logo as the browser-tab icon
+      if (data.info && data.info.logo) {
+        var ic = document.querySelector('link[rel="icon"]') || document.head.appendChild(document.createElement('link'));
+        ic.rel = 'icon'; ic.href = data.info.logo;
+      }
+    } catch (e) {}
+    window.__startApp();
+  }
+  function done() { if (--waiting <= 0) start(); }
+  // What went wrong, in plain words, and how to fix it
+  function reason(err) {
+    var m = String((err && err.message) || err || '');
+    if (navigator.onLine === false) return ['There is no internet connection on this device.', 'Connect to Wi-Fi or mobile data, then tap Try again.'];
+    if (/unknown request/i.test(m)) return ['The spreadsheet link is still running an older version of the script.',
+      'In Apps Script: paste the latest Website.gs, then Deploy → Manage deployments → ✏️ Edit → Version: New version → Deploy (do not use New deployment – that makes a different link). Then reload this page.'];
+    if (/access denied|HTTP 40[13]/i.test(m)) return ['The spreadsheet link is not open to everyone.',
+      'Apps Script → Deploy → Manage deployments → ✏️ Edit → Execute as: Me, Who has access: Anyone → Deploy.'];
+    if (/HTTP 404/i.test(m)) return ['The spreadsheet link in this page does not exist.',
+      'Copy the Web app link (ends in /exec) from Apps Script → Deploy → Manage deployments into API_URL near the top of index.html.'];
+    if (/HTTP 5\d\d|server error|lock|timed? ?out|exceeded/i.test(m)) return ['Google’s server could not answer right now.', 'Wait a minute, then tap Try again.'];
+    if (/failed to fetch|load failed|networkerror|network request failed/i.test(m)) return ['The spreadsheet link could not be reached.',
+      'Open the link in API_URL (near the top of index.html) in a browser. If it shows the event website, wait a minute and try again. If Google shows a message instead, deploy a new version of the script (Deploy → Manage deployments → ✏️ Edit → New version).'];
+    return ['The spreadsheet answered with an error.', ''];
+  }
+  var tries = 0, tick = null;
+  function failed(err, secs) {
+    var r = reason(err), det = String((err && err.message) || err || 'no answer').replace(/[<>&]/g, '');
+    clearInterval(tick);
+    if (overlay) {                                        // on the stream: a small note in the corner, not a full page
+      var a = document.getElementById('app');
+      if (a) a.innerHTML = '<div style="position:fixed;left:2.5vw;bottom:1.6vw;padding:.5vw 1vw;border-radius:.6vw;background:rgba(20,8,10,.88);' +
+        'color:#fff;font:600 1.1vw/1.3 system-ui,sans-serif">● Live results not connected – trying again <span id="retry-in"></span>' +
+        '<br><small style="opacity:.65;font-weight:400">Attempt ' + tries + ' · ' + det + '</small></div>';
+    } else {
+      show('<span class="big">📶</span><b>Could not load the event website.</b><br>' + r[0] + (r[1] ? '<br><br>' + r[1] : '') +
+        '<br><br><button class="btn" type="button" onclick="location.reload()">Try again now</button>' +
+        (secs ? '<br><small id="retry-wrap">Trying again by itself <span id="retry-in"></span></small>' : '') +
+        '<br><small style="opacity:.6">Details: ' + det + (tries > 1 ? ' · attempt ' + tries : '') + '</small>');
+    }
+    if (!secs) return;
+    var due = Date.now() + secs * 1000;
+    var upd = function () { var el = document.getElementById('retry-in'); if (el) el.textContent = 'in ' + Math.max(0, Math.ceil((due - Date.now()) / 1000)) + ' s'; };
+    upd(); tick = setInterval(upd, 1000);
+  }
+  var staff = window.INITIAL_PAGE === 'marshal';
+  var cached = null;
+  if (!staff) { try { cached = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {} }
+  if (bib) {                                               // check the bib's QR security code first
+    waiting++;
+    call('checkBibQr', [bib, window.INITIAL_CODE], function (v) { window.INITIAL_CHECK = v || ''; done(); }, function () { done(); });
+  }
+  if (cached && cached.info) {
+    data = cached;                                         // open at once; live updates bring it up to date in seconds
+    if (!waiting) start();
+  } else {
+    waiting++;
+    (function load() {                                     // a screen nobody touches (OBS, a TV board) heals by itself:
+      call(staff ? 'getMarshalPageData' : 'getSiteData', [], function (txt) {   // tries again after 5 s, 10 s … then every 30 s
+        try { data = JSON.parse(txt); } catch (e) { data = null; }
+        if (data) { clearInterval(tick); done(); } else again();
+      }, again);
+      function again(err) {
+        tries++;
+        var secs = Math.min(30, 5 * tries);
+        failed(err, secs);
+        setTimeout(load, secs * 1000);
+      }
+    })();
+  }
 })();
 </script>
 </body>
