@@ -501,6 +501,133 @@
   /* Facebook live video on the Fun Run page */
   .fb-frame { position: relative; width: 100%; max-width: calc(78vh * 16 / 9); margin: 0 auto; aspect-ratio: 16 / 9; border-radius: var(--radius); overflow: hidden; background: #111; box-shadow: var(--shadow); }
   .fb-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  /* ---------- winners page (?page=winners) ---------- */
+  .win-badge { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 999px; font-size: 13px; font-weight: 800; }
+  .win-badge.ok { background: #e3f1e4; color: var(--ok); }
+  .win-badge.prov { background: var(--gold-soft); color: #6b4a00; }
+  .win-meta { margin-top: 12px; }
+  .win-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+  .win-card h3 { margin: 0 0 12px; font-size: 17px; }
+  .win-ages { margin-top: 14px; }
+  .win-ages h3 { margin: 0 0 10px; font-size: 17px; }
+  .win-ages h3 small { font-size: 12px; font-weight: 600; color: var(--muted); }
+  .pdm { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; gap: 8px; }
+  .pp { display: flex; flex-direction: column; justify-content: flex-end; min-width: 0; text-align: center; }
+  .pp-who { display: grid; gap: 2px; padding: 0 2px 8px; }
+  .pp-medal { font-size: 26px; line-height: 1.1; }
+  .pp-who b { font-size: 15px; line-height: 1.2; overflow-wrap: anywhere; }
+  .pp-who small { font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
+  .pp-who em { font-style: normal; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .pp-block { display: grid; place-items: center; border-radius: 10px 10px 0 0; font-size: 22px; font-weight: 800; }
+  .pp.p1 .pp-block { height: 92px; background: linear-gradient(#f6c945, #d79f00); color: #3f2a00; }
+  .pp.p2 .pp-block { height: 66px; background: linear-gradient(#e6eaef, #aeb7c1); color: #26303a; }
+  .pp.p3 .pp-block { height: 48px; background: linear-gradient(#e7ad78, #b86e34); color: #2b1606; }
+  .pp.pp-none .pp-block { opacity: .35; }
+  .pp-rest { margin: 12px 0 0; padding: 0; list-style: none; display: grid; gap: 4px; font-size: 14px; }
+  .pp-rest span { color: var(--muted); }
+  /* ---------- awarding screen (?page=podium): TV, projector or an OBS scene ---------- */
+  .awd { --u: min(1vh, .75vw); position: fixed; inset: 0; z-index: 5; display: grid; grid-template-rows: auto 1fr auto; overflow: hidden; cursor: pointer;
+    color: #fff; font-variant-numeric: tabular-nums; background: radial-gradient(ellipse at 50% 0%, #a8141c 0%, #5a0a0f 45%, #1f0406 100%); }
+  .aw-top { display: flex; align-items: center; gap: calc(var(--u) * 2.4); padding: calc(var(--u) * 2.4) 3vw 0; }
+  .aw-logo { width: calc(var(--u) * 7); height: calc(var(--u) * 7); border-radius: 50%; background: #fff; object-fit: contain; padding: calc(var(--u) * .3); }
+  .aw-ev { font-size: calc(var(--u) * 2); font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #ffe9a8; }
+  .aw-top h1 { margin: 0; font-size: calc(var(--u) * 4.6); line-height: 1.1; }
+  #aw-badge { margin-left: auto; }
+  .aw-b { display: inline-block; padding: calc(var(--u) * .7) calc(var(--u) * 2); border-radius: 999px; background: rgba(255, 255, 255, .14); font-size: calc(var(--u) * 2); font-weight: 800; }
+  .aw-b.ok { background: rgba(46, 125, 50, .9); }
+  .aw-slide { position: relative; display: flex; justify-content: center; min-height: 0; padding: calc(var(--u) * 1) 4vw 0; }
+  .ps { width: 100%; display: flex; flex-direction: column; min-height: 0; }
+  .ps.enter { animation: psIn .6s ease-out both; }
+  .ps h2 { display: flex; justify-content: center; align-items: center; gap: calc(var(--u) * 2); margin: calc(var(--u) * 1) 0 calc(var(--u) * 2); font-size: calc(var(--u) * 5.2); }
+  .ps-cat { padding: calc(var(--u) * .4) calc(var(--u) * 2.2); border-radius: calc(var(--u) * 1.2); }
+  .awd .pdm { flex: 1; gap: 2.2vw; padding: 0 5vw; }
+  .awd .pp-who { gap: calc(var(--u) * .4); padding-bottom: calc(var(--u) * 2.2); opacity: 0; transform: translateY(calc(var(--u) * 3)); }
+  .awd .pp.on .pp-who { opacity: 1; transform: none; }
+  .awd .pp.pop .pp-who { animation: ppPop .8s cubic-bezier(.2, .8, .2, 1.2) both; }
+  .awd .pp-medal { font-size: calc(var(--u) * 7.5); }
+  .awd .pp-who b { font-size: calc(var(--u) * 4.3); }
+  .awd .pp.p1 .pp-who b { font-size: calc(var(--u) * 5.4); }
+  .awd .pp-who small { font-size: calc(var(--u) * 2.3); color: rgba(255, 255, 255, .75); }
+  .awd .pp-who em { font-size: calc(var(--u) * 4.2); color: #ffe9a8; }
+  .awd .pp-block { font-size: calc(var(--u) * 9); border-radius: calc(var(--u) * 1.6) calc(var(--u) * 1.6) 0 0; box-shadow: inset 0 calc(var(--u) * -1) calc(var(--u) * 3) rgba(0, 0, 0, .18); }
+  .awd .pp.p1 .pp-block { height: calc(var(--u) * 30); }
+  .awd .pp.p2 .pp-block { height: calc(var(--u) * 21); }
+  .awd .pp.p3 .pp-block { height: calc(var(--u) * 15); }
+  .awd .pp-rest { display: flex; flex-wrap: wrap; justify-content: center; gap: calc(var(--u) * .8) 2.4vw; margin-top: calc(var(--u) * 1.6); font-size: calc(var(--u) * 2.6); }
+  .awd .pp-rest span { color: rgba(255, 255, 255, .7); }
+  .aw-foot { display: flex; justify-content: space-between; align-items: center; padding: calc(var(--u) * 1.6) 3vw calc(var(--u) * 2.2); }
+  .aw-dots { display: flex; gap: calc(var(--u) * 1.2); }
+  .aw-dots i { width: calc(var(--u) * 1.2); height: calc(var(--u) * 1.2); border-radius: 50%; background: rgba(255, 255, 255, .25); }
+  .aw-dots i.on { background: var(--gold); }
+  .aw-hint { font-size: calc(var(--u) * 1.8); color: rgba(255, 255, 255, .6); white-space: pre; }
+  .aw-empty { align-self: center; text-align: center; font-size: calc(var(--u) * 4); color: #ffe9a8; }
+  .aw-ages { width: 100%; max-width: 72vw; margin: 0 auto; border-collapse: collapse; font-size: calc(var(--u) * 3); }
+  .aw-ages th { padding: calc(var(--u) * 1) 1.2vw; text-align: left; font-size: calc(var(--u) * 2.4); color: #ffe9a8; border-bottom: calc(var(--u) * .2) solid rgba(255, 255, 255, .3); }
+  .aw-ages td { padding: calc(var(--u) * 1.1) 1.2vw; border-bottom: 1px solid rgba(255, 255, 255, .12); }
+  .aw-ages small { font-size: calc(var(--u) * 2.2); color: rgba(255, 255, 255, .7); }
+  .confetti { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+  .confetti i { position: absolute; top: calc(var(--u) * -4); width: calc(var(--u) * 1); height: calc(var(--u) * 1.8); border-radius: 2px; animation: cfFall linear both; }
+  @keyframes cfFall { from { transform: translateY(0) rotate(0); } to { transform: translateY(110vh) rotate(720deg); } }
+  @keyframes ppPop { 0% { opacity: 0; transform: translateY(calc(var(--u) * 4)) scale(.8); } 60% { opacity: 1; transform: translateY(calc(var(--u) * -1)) scale(1.06); } 100% { opacity: 1; transform: none; } }
+  @keyframes psIn { from { opacity: 0; transform: translateY(calc(var(--u) * 2)); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .confetti { display: none; } .awd .pp.pop .pp-who, .ps.enter { animation: none; } }
+  /* ---------- photos (Site - Photos): cover under the title, gallery, full-screen view ---------- */
+  .cover { position: relative; margin: 0 0 8px; aspect-ratio: 16 / 7; border-radius: 22px; overflow: hidden; background: var(--pine-ink); box-shadow: var(--shadow); }
+  .cover:not(:has(img)) { display: none; }
+  .cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .9s; cursor: zoom-in; }
+  .cover img.on { opacity: 1; }
+  .cover figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 34px 20px 14px; color: #fff; font-weight: 700; pointer-events: none;
+    background: linear-gradient(transparent, rgba(0, 0, 0, .62)); }
+  .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
+  .ph { position: relative; display: block; aspect-ratio: 1; padding: 0; border: 0; border-radius: 14px; overflow: hidden; background: var(--line2); cursor: zoom-in; }
+  .ph img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .3s; }
+  .ph:hover img, .ph:focus-visible img { transform: scale(1.05); }
+  .ph-cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 22px 10px 8px; color: #fff; font-size: 12.5px; font-weight: 600; line-height: 1.3; text-align: left;
+    background: linear-gradient(transparent, rgba(0, 0, 0, .68)); }
+  @media (max-width: 640px) { .cover { aspect-ratio: 4 / 3; border-radius: 16px; } .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; } }
+  body.lb-open { overflow: hidden; }
+  .lb { position: fixed; inset: 0; z-index: 100; display: grid; grid-template-rows: 1fr auto; place-items: center; padding: 16px 16px 10px; background: rgba(12, 4, 5, .94); }
+  .lb img { max-width: 100%; max-height: calc(100vh - 100px); object-fit: contain; border-radius: 8px; }
+  .lb-cap { padding: 10px 56px 4px; color: #fff; font-size: 15px; text-align: center; }
+  .lb-cap small { opacity: .65; margin-left: 6px; }
+  .lb button { position: absolute; width: 46px; height: 46px; border: 0; border-radius: 999px; background: rgba(255, 255, 255, .16); color: #fff; font-size: 26px; line-height: 1; cursor: pointer; }
+  .lb button:hover { background: rgba(255, 255, 255, .28); }
+  .lb .lb-x { top: 14px; right: 14px; font-size: 20px; }
+  .lb .lb-prev { left: 12px; top: calc(50% - 23px); }
+  .lb .lb-next { right: 12px; top: calc(50% - 23px); }
+  /* ---------- runner page (?page=myreg): a sign-in page of its own, like the marshal page ---------- */
+  body.runner-mode .top, body.runner-mode .updated, body.runner-mode .foot, body.runner-mode #sport-bg { display: none; }
+  .mr-shell { max-width: 520px; margin: 0 auto; padding: 18px 0 30px; display: grid; gap: 14px; }
+  .mr-brand { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 18px; background: var(--pine); color: #fff; }
+  .mr-brand img { width: 46px; height: 46px; border-radius: 50%; background: #fff; object-fit: contain; padding: 2px; flex: none; }
+  .mr-ic { width: 46px; height: 46px; border-radius: 50%; background: var(--gold); display: grid; place-items: center; font-size: 24px; flex: none; }
+  .mr-brand small { display: block; font-size: 12px; font-weight: 700; color: #ffe9a8; letter-spacing: .03em; }
+  .mr-brand b { font-size: 20px; }
+  .mr-form { display: grid; gap: 14px; }
+  .mr-form h1 { margin: 0; font-size: 24px; }
+  .mr-lead { margin: -6px 0 0; color: var(--ink2); }
+  .mr-form label { display: grid; gap: 6px; font-weight: 700; }
+  .mr-form label small { font-weight: 500; color: var(--muted); }
+  .mr-form input:not([type=checkbox]) { font: inherit; font-size: 20px; padding: 12px 14px; border: 2px solid var(--line); border-radius: 12px; background: #fff; color: var(--ink); }
+  .mr-form input#mr-pin { letter-spacing: .25em; font-variant-numeric: tabular-nums; }
+  .mr-form input:focus { outline: none; border-color: var(--pine2); }
+  .mr-form .mr-chk { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; margin-top: -6px; }
+  .mr-go { font-size: 18px; padding: 14px; justify-content: center; }
+  .mr-note { margin: 0; font-size: 13px; color: var(--muted); }
+  .mr-bad { padding: 12px 14px; border-radius: 12px; background: #fdecec; }
+  .mr-bad b { color: var(--red); }
+  .mr-bad p { margin: 6px 0 0; font-size: 14px; }
+  .mr-hello { font-size: 20px; font-weight: 800; color: var(--ok); padding: 0 4px; }
+  .mr-card { display: grid; gap: 14px; }
+  .mr-bib { max-width: 320px; }
+  .mr-dl { margin: 0; display: grid; }
+  .mr-row { display: grid; grid-template-columns: 150px 1fr; gap: 10px; padding: 9px 0; border-top: 1px solid var(--line2); }
+  .mr-row dt { color: var(--muted); font-weight: 600; }
+  .mr-row dd { margin: 0; }
+  .mr-out { justify-content: center; font-size: 16px; padding: 12px; }
+  .mr-back { justify-self: center; font-size: 14px; color: var(--muted); }
+  .my-reg p { margin: 0 0 12px; }
+  @media (max-width: 420px) { .mr-row { grid-template-columns: 1fr; gap: 2px; } }
   /* big-screen board (?page=live) */
   body.board-mode .top, body.board-mode .updated, body.board-mode .foot { display: none; }
   body.board-mode .wrap { max-width: 1920px; }
@@ -605,6 +732,7 @@
   .m-gunbtn { border: 0; border-radius: 12px; color: #fff; font: inherit; font-weight: 800; font-size: 17px; padding: 12px 10px; cursor: pointer; display: grid; gap: 2px; }
   .m-gunbtn small { font-weight: 600; font-size: 12px; opacity: .92; }
   .m-gunmsg { font-size: 14px; font-weight: 700; }
+  .m-gunbtn.m-gunall { background: var(--pine); border-bottom: 4px solid var(--gold); font-size: 19px; padding: 14px 10px; }
   #m-clear { display: grid; }
   .m-clear-btn { justify-self: center; }
   .m-clear-box { display: grid; gap: 8px; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; font-size: 14px; }
@@ -822,7 +950,7 @@ window.__startApp = function () {
 
   // ---------------- helpers ----------------
   function $(s) { return document.querySelector(s); }
-  function isPage(p) { return p === 'marshal' || p === 'qrcodes' || p === 'live' || p === 'kits' || p === 'overlay' || PAGES.some(function (x) { return x.id === p; }); }
+  function isPage(p) { return p === 'marshal' || p === 'qrcodes' || p === 'live' || p === 'kits' || p === 'overlay' || p === 'winners' || p === 'podium' || p === 'myreg' || PAGES.some(function (x) { return x.id === p; }); }
   function pageInfo(id) { return PAGES.filter(function (x) { return x.id === id; })[0] || PAGES[0]; }
   function esc(s) {
     return String(s === null || s === undefined ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -895,7 +1023,7 @@ window.__startApp = function () {
       (a && a.desc ? '<p>' + esc(a.desc) + '</p>' : '') +
       (meta.length ? '<div class="meta">' + meta.map(function (m) { return '<span>' + m + '</span>'; }).join('') + '</div>' : '') +
       (actions ? '<div class="actions">' + actions + '</div>' : '') +
-      '</div></section>' + newsSection(id, 3);
+      '</div></section>' + coverHtml(id) + newsSection(id, 3);
   }
 
   function newsCard(n) {
@@ -1037,21 +1165,36 @@ window.__startApp = function () {
       return '<span><span class="dot bg-' + catKey(c) + '"></span>' + esc(c) + ' · ' + fmt(f.counts[c] || 0) + '</span>';
     }).join('') + '</div>' : '';
 
-    var watch = i.fbLive ? '<a class="btn" href="#" data-scrollto="fb-live">🔴 Watch live video</a>' : '';
+    var watch = (i.fbLive ? '<a class="btn" href="#" data-scrollto="fb-live">🔴 Watch live video</a>' : '') +
+      (f.results.length ? '<a class="btn" href="#" data-page="winners">🏆 Winners</a>' : '');
     return pageHeader('funrun', watch + reg) +
       '<section class="sec"><div class="stats">' + tiles + '</div>' + seg + '</section>' +
-      '<section class="sec"><h2>🔎 Find your race bib</h2><div class="card">' +
-      '<input class="search" id="bibq" type="search" autocomplete="off" placeholder="Type your name or bib number" value="' + esc(state.bibQuery) + '">' +
-      '<div id="bibres">' + bibResults() + '</div>' +
-      '<div class="hint"><a href="#" class="btn ghost big-btn" data-page="kits">🎽 Race kit &amp; payment board</a> Payment verified? Race kit claimed? See every runner at a glance.</div></div></section>' +
+      bibSection() +
       fbLiveSection() +
       '<div id="tracker-wrap">' + trackerSection() + '</div>' +
       '<div id="results-sec">' + resultsSection() + '</div>' +
       '<section class="sec"><h2>📋 Registered runners</h2>' +
       '<div class="toolbar"><div class="tabs" id="runtabs">' + runTabs() + '</div>' +
-      '<input class="search" id="runq" type="search" autocomplete="off" placeholder="Filter by name, bib or club" value="' + esc(state.runnerQuery) + '"></div>' +
+      '<input class="search" id="runq" type="search" autocomplete="off" placeholder="' + (namesHidden() ? 'Filter by bib or club' : 'Filter by name, bib or club') + '" value="' + esc(state.runnerQuery) + '"></div>' +
       '<div id="runlist">' + runnerList() + '</div></section>' +
       clubsSection();
+  }
+
+  // "Find your race bib" – or, when runner names are private, a sign-in card: a runner's category, bib and
+  // status show only on the runner page, after their last name + birthday.
+  function bibSection() {
+    var kits = '<div class="hint"><a href="#" class="btn ghost big-btn" data-page="kits">🎽 Race kit &amp; payment board</a> Payment verified? Race kit claimed? See every runner at a glance.</div>';
+    if (namesHidden()) {
+      var scan = state.scanBib ? '<div style="margin-bottom:12px">' + qrBadge(state.scanCheck, state.scanBib, true) + '</div>' : '';
+      return '<section class="sec" id="bib-sec"><h2>🔐 My registration</h2><div class="card my-reg">' + scan +
+        '<p>Registrations are private. Sign in with your <b>last name</b> and your <b>birthday</b> to see your category, race bib number, ' +
+        'singlet size, payment and race kit status.</p>' +
+        '<a href="#" class="btn big-btn" data-page="myreg">🔐 Runner sign-in</a>' + kits + '</div></section>';
+    }
+    return '<section class="sec" id="bib-sec"><h2>🔎 Find your race bib</h2><div class="card">' +
+      '<input class="search" id="bibq" type="search" autocomplete="off" placeholder="Type your name or bib number" value="' + esc(state.bibQuery) + '">' +
+      '<div id="bibres">' + bibResults() + '</div>' + kits +
+      '<div class="hint"><a href="#" class="btn ghost big-btn" data-page="myreg">🔐 Runner page</a> Runners: sign in with your last name and birthday to see your registration, category, bib and singlet size.</div></div></section>';
   }
 
   function bibResults() {
@@ -1085,13 +1228,14 @@ window.__startApp = function () {
     var q = norm(state.runnerQuery).trim();
     var list = DATA.funrun.runners.filter(function (r) {
       if (r.cat !== state.runnerCat) return false;
-      return !q || norm(r.name + ' ' + r.bib + ' ' + r.club).indexOf(q) !== -1;
+      return !q || norm((r.name || '') + ' ' + r.bib + ' ' + r.club).indexOf(q) !== -1;
     });
     if (!list.length) return empty('🏃', q ? 'No runners match your filter.' : 'No runners registered in this category yet.');
     var shown = list.slice(0, state.runnerLimit);
-    return '<div class="tbl-wrap"><table><thead><tr><th class="num">Bib</th><th>Name</th><th>Gender</th><th class="hide-sm">Club / Organization</th></tr></thead><tbody>' +
+    var hid = namesHidden();
+    return '<div class="tbl-wrap"><table><thead><tr><th class="num">Bib</th>' + (hid ? '' : '<th>Name</th>') + '<th>Gender</th><th class="hide-sm">Club / Organization</th></tr></thead><tbody>' +
       shown.map(function (r) {
-        return '<tr><td class="num bibtxt">' + esc(r.bib) + '</td><td>' + esc(r.name) + '</td><td>' + esc(r.gender) + '</td>' +
+        return '<tr><td class="num bibtxt">' + esc(r.bib) + '</td>' + (hid ? '' : '<td>' + esc(r.name) + '</td>') + '<td>' + esc(r.gender) + '</td>' +
           '<td class="hide-sm">' + (r.club ? esc(r.club) : '<span class="muted">—</span>') + '</td></tr>';
       }).join('') + '</tbody></table></div>' +
       (list.length > shown.length ? '<div class="more"><button class="btn ghost" data-more="1">Show more (' + fmt(list.length - shown.length) + ' left)</button></div>' : '');
@@ -1114,8 +1258,8 @@ window.__startApp = function () {
       var top = rs.filter(function (r) { return r.gender === g; }).sort(function (a, b) { return a.genderRank - b.genderRank; }).slice(0, 3);
       return '<div class="card pod"><h3>' + esc(g === 'Male' ? 'Men' : g === 'Female' ? 'Women' : g) + ' · ' + esc(cat) + '</h3>' +
         top.map(function (r, k) {
-          return '<div class="pod-row"><span class="medal">' + medal[k] + '</span><div><b>' + esc(r.name) + '</b><small>Bib ' + esc(r.bib) +
-            (r.club ? ' · ' + esc(r.club) : '') + '</small></div><span class="pod-time">' + esc(r.time || r.clock) + '</span></div>';
+          return '<div class="pod-row"><span class="medal">' + medal[k] + '</span><div><b>' + esc(rn(r)) + '</b><small>' + (r.name ? 'Bib ' + esc(r.bib) : '') +
+            (r.club ? (r.name ? ' · ' : '') + esc(r.club) : '') + '</small></div><span class="pod-time">' + esc(r.time || r.clock) + '</span></div>';
         }).join('') + '</div>';
     }).join('');
 
@@ -1129,12 +1273,13 @@ window.__startApp = function () {
       '<th class="hide-sm">Age bracket</th><th class="hide-sm">Club</th><th class="num">' + (hasTime ? 'Finish time' : 'Arrival') + '</th></tr></thead><tbody>' +
       rs.map(function (r) {
         return '<tr' + (r.rank && r.rank <= 3 ? ' class="lead"' : '') + '><td class="num"><b>' + esc(r.rank) + '</b></td><td class="num bibtxt">' + esc(r.bib) +
-          '</td><td>' + esc(r.name) + '</td><td>' + esc(r.gender) + ' <span class="muted">#' + esc(r.genderRank) + '</span></td>' +
+          '</td><td>' + (r.name ? esc(r.name) : '<span class="muted">—</span>') + '</td><td>' + esc(r.gender) + ' <span class="muted">#' + esc(r.genderRank) + '</span></td>' +
           '<td class="hide-sm">' + esc(r.bracket || '') + '</td><td class="hide-sm">' + (r.club ? esc(r.club) : '<span class="muted">—</span>') + '</td>' +
           '<td class="num">' + esc(r.time || r.clock) + '</td></tr>';
       }).join('') + '</tbody></table></div>' : empty('⏱️', 'No finishers yet in ' + esc(cat) + '.');
 
-    return '<section class="sec"><h2>🏁 Race results <small>' + plural(f.results.length, 'finisher') + '</small></h2>' + tabs +
+    return '<section class="sec"><h2>🏁 Race results <small>' + plural(f.results.length, 'finisher') + '</small></h2>' +
+      '<div class="hint" style="margin:0 0 10px"><a href="#" class="btn" data-page="winners">🏆 Winners page</a> <a href="#" class="btn ghost" data-page="podium">📺 Awarding screen</a></div>' + tabs +
       (podium ? '<div class="podium">' + podium + '</div>' : '') + table + '</section>';
   }
 
@@ -1364,7 +1509,7 @@ window.__startApp = function () {
     var items = (DATA.race.feed || []).slice(0, state.page === 'live' ? 3 : (window.innerWidth < 640 ? 2 : 4));
     if (!items.length) return '';
     return '<div class="trk-feed">' + items.map(function (f) {
-      var who = m[f.bib] ? esc(m[f.bib].name) : 'Runner';
+      var who = m[f.bib] && m[f.bib].name ? esc(m[f.bib].name) : '';
       var what = f.kind === 'finish'
         ? '🏁 <b>Bib ' + esc(f.bib) + '</b> ' + who + ' finished ' + esc(f.cat) + (f.time ? ' in <b>' + esc(f.time) + '</b>' : '') + (f.rank ? ' · #' + esc(f.rank) : '')
         : '↩️ <b>Bib ' + esc(f.bib) + '</b> ' + who + ' passed ' + esc(f.station);
@@ -1499,7 +1644,7 @@ window.__startApp = function () {
 
   function trackerTools() {
     return '<div class="toolbar"><div class="tabs" id="trk-tabs">' + trackTabs() + '</div>' +
-      '<input class="search" id="trackq" type="search" autocomplete="off" placeholder="Find a runner by name or bib" aria-label="Find a runner" value="' + esc(state.trackQuery) + '"></div>';
+      '<input class="search" id="trackq" type="search" autocomplete="off" placeholder="' + (namesHidden() ? 'Find a runner by bib' : 'Find a runner by name or bib') + '" aria-label="Find a runner" value="' + esc(state.trackQuery) + '"></div>';
   }
 
   function trackerSection() {
@@ -1679,7 +1824,7 @@ window.__startApp = function () {
         if (lead.length) {
           body = '<h4>↩️ First at the ' + (isTurn ? 'turn' : 'checkpoint') + '</h4><ol>' + lead.map(function (x, j) {
             var p = x.ps[x.last.name];
-            return '<li><i>' + (j + 1) + '</i><span class="nm">' + esc(x.r.name) + '</span><span class="bb">' + esc(x.r.bib) + '</span>' +
+            return '<li><i>' + (j + 1) + '</i><span class="nm">' + esc(rn(x.r)) + '</span><span class="bb">' + (x.r.name ? esc(x.r.bib) : '') + '</span>' +
               '<span class="tm">' + esc(p.split || p.clock || '') + '</span></li>';
           }).join('') + '</ol>';
         } else if (begun) body = '<p class="ov-msg">🏃 ' + plural(n[1], 'runner') + ' on the course' + (hasCp ? ', heading to the ' + (isTurn ? 'turning point' : 'checkpoint') : '') + '.</p>';
@@ -1688,7 +1833,7 @@ window.__startApp = function () {
     }
     if (v.list.length || (fin && !body)) {
       body = '<h4>🏆 ' + (v.gender ? 'Top ' + esc(ovGender(v.gender)) : 'Top finishers') + '</h4><ol>' + (v.list.length ? v.list.map(function (x, j) {
-        return '<li><i class="m' + (j + 1) + '">' + (j + 1) + '</i><span class="nm">' + esc(x.name) + '</span><span class="bb">' + esc(x.bib) + '</span>' +
+        return '<li><i class="m' + (j + 1) + '">' + (j + 1) + '</i><span class="nm">' + esc(rn(x)) + '</span><span class="bb">' + (x.name ? esc(x.bib) : '') + '</span>' +
           '<span class="tm">' + esc(x.time || x.clock) + '</span></li>';
       }).join('') : '<li class="ov-none">No finisher yet</li>') + '</ol>';
     }
@@ -1715,7 +1860,7 @@ window.__startApp = function () {
   }
   function ovTag(cat) { return cat ? '<b class="ov-tag bg-' + catKey(cat) + '">' + esc(cat) + '</b>' : ''; }
   function ovItem(f, m) {
-    var r = m[f.bib], cat = f.cat || (r && r.cat) || '', who = '<b>' + esc(r ? r.name : 'Runner') + '</b> · bib ' + esc(f.bib);
+    var r = m[f.bib], cat = f.cat || (r && r.cat) || '', who = r && r.name ? '<b>' + esc(r.name) + '</b> · bib ' + esc(f.bib) : '<b>Bib ' + esc(f.bib) + '</b>';
     if (f.kind === 'finish') {
       return ovTag(cat) + '🏁 ' + who + ' finished' + (f.time ? ' in <b class="ov-t">' + esc(f.time) + '</b>' : '') + (f.rank ? ' · #' + esc(f.rank) : '');
     }
@@ -1773,10 +1918,10 @@ window.__startApp = function () {
     var res = null, r = bibMap()[f.bib];
     DATA.funrun.results.forEach(function (x) { if (x.bib === f.bib) res = x; });
     var cat = f.cat || (r && r.cat) || '', k = catKey(cat);
-    var name = (res && res.name) || (r && r.name) || 'Runner', rank = f.rank || (res && res.rank);
+    var known = (res && res.name) || (r && r.name) || '', name = known || 'Bib ' + f.bib, rank = f.rank || (res && res.rank);
     var gr = res && res.genderRank && res.gender ? (res.genderRank <= 3 ? ['🥇', '🥈', '🥉'][res.genderRank - 1] + ' ' : '') + ovNth(res.genderRank) + ' ' + ovGender(res.gender) : '';
     return '<div class="ov-pc c-' + k + '"><div class="ov-pc-flag bg-' + k + '"><span>🏁 Finisher</span><b>' + esc(cat) + '</b></div>' +
-      '<div class="ov-pc-main"><b class="ov-pc-name">' + esc(name) + '</b><span>Bib ' + esc(f.bib) + (rank ? ' · #' + esc(rank) + ' in ' + esc(cat) : '') +
+      '<div class="ov-pc-main"><b class="ov-pc-name">' + esc(name) + '</b><span>' + (known ? 'Bib ' + esc(f.bib) + (rank ? ' · ' : '') : '') + (rank ? '#' + esc(rank) + ' in ' + esc(cat) : '') +
       (gr ? ' · ' + esc(gr) : '') + '</span></div>' +
       '<div class="ov-pc-time"><small>Time</small><b>' + esc(f.time || (res && res.time) || f.clock || '') + '</b></div></div>';
   }
@@ -1806,6 +1951,368 @@ window.__startApp = function () {
     t.content.removeChild(nu);
     app.appendChild(t.content);
   }
+
+  // ---------------- WINNERS (?page=winners) and AWARDING SCREEN (?page=podium) ----------------
+  // Winners = the fastest per category, for men and for women, by finish time (Site - Info → Winners Places, default 3).
+  // Age group winners (Site - Info → Age Group Winners = Yes): the fastest man and woman of each age bracket,
+  // runners already on the podium are not repeated. Same rules as 🏆 Build winners list in the spreadsheet.
+  var MEDAL = ['🥇', '🥈', '🥉'];
+  function winGender(g) { return g === 'Male' ? 'Men' : g === 'Female' ? 'Women' : (g || 'Runners'); }
+  function bracketKey(b) { var m = String(b || '').match(/\d+/); return m ? Number(m[0]) : 999; }
+  function winData(cat) {
+    var places = DATA.info.winPlaces || 3, order = function (g) { return g === 'Male' ? 0 : g === 'Female' ? 1 : 2; };
+    var rs = DATA.funrun.results.filter(function (r) { return r.cat === cat && r.rank; });
+    var genders = [];
+    rs.forEach(function (r) { if (genders.indexOf(r.gender || '') === -1) genders.push(r.gender || ''); });
+    genders.sort(function (a, b) { return order(a) - order(b) || String(a).localeCompare(String(b)); });
+    var groups = genders.map(function (g) {
+      return { gender: g, label: winGender(g), list: rs.filter(function (r) { return (r.gender || '') === g; })
+        .sort(function (a, b) { return (a.genderRank || 1e9) - (b.genderRank || 1e9) || a.rank - b.rank; }).slice(0, places) };
+    });
+    var on = {}, ages = [];
+    groups.forEach(function (g) { g.list.forEach(function (r) { on[r.bib] = 1; }); });
+    if (DATA.info.winAges) {
+      var brs = [];
+      rs.forEach(function (r) { if (/\d/.test(r.bracket || '') && brs.indexOf(r.bracket) === -1) brs.push(r.bracket); });
+      brs.sort(function (a, b) { return bracketKey(a) - bracketKey(b); });
+      brs.forEach(function (br) {
+        var row = { bracket: br, w: {} }, any = false;
+        genders.forEach(function (g) {
+          var best = rs.filter(function (r) { return r.bracket === br && (r.gender || '') === g && !on[r.bib]; })
+            .sort(function (a, b) { return a.rank - b.rank; })[0];
+          if (best) { row.w[g] = best; any = true; }
+        });
+        if (any) ages.push(row);
+      });
+    }
+    return { cat: cat, n: rs.length, groups: groups, genders: genders, ages: ages };
+  }
+  // 2nd · 1st · 3rd, like a real podium. shown = how many places are revealed (awarding screen: 3rd first, 1st last).
+  function podiumHtml(list, shown, popK) {
+    var c = Math.min(3, list.length);
+    return '<div class="pdm">' + [1, 0, 2].map(function (k) {
+      var r = list[k], on = !!r && (shown === undefined || k >= c - shown);
+      return '<div class="pp p' + (k + 1) + (r ? '' : ' pp-none') + (on ? ' on' : '') + (on && k === popK ? ' pop' : '') + '">' +
+        '<div class="pp-who">' + (r ? '<span class="pp-medal">' + MEDAL[k] + '</span><b>' + esc(rn(r)) + '</b>' +
+          '<small>' + (r.name ? 'Bib ' + esc(r.bib) : '') + (r.club ? (r.name ? ' · ' : '') + esc(r.club) : '') + '</small><em>' + esc(r.time || r.clock) + '</em>' : '') + '</div>' +
+        '<div class="pp-block"><span>' + (k + 1) + '</span></div></div>';
+    }).join('') + '</div>';
+  }
+  function restHtml(list) {                         // places 4, 5 … when Winners Places is more than 3
+    if (list.length <= 3) return '';
+    return '<ol class="pp-rest" start="4">' + list.slice(3).map(function (r, j) {
+      return '<li><b>' + (j + 4) + '.</b> ' + esc(rn(r)) + ' <span>· ' + esc(r.time || r.clock) + '</span></li>';
+    }).join('') + '</ol>';
+  }
+  function winBadge() {
+    return DATA.info.winOfficial ? '<span class="win-badge ok">✅ Official results</span>'
+      : '<span class="win-badge prov">⏳ Provisional – the race director is still checking</span>';
+  }
+
+  function viewWinners() {
+    var i = DATA.info, any = DATA.funrun.results.length > 0;
+    return '<section class="phead"><div class="phead-ic">🏆</div><div><h1>Fun Run Winners</h1>' +
+      '<p>The fastest ' + (i.winPlaces || 3) + ' in each category, for men and for women, by finish time.</p>' +
+      (any ? '<div class="win-meta" id="win-badge">' + winBadge() + '</div>' : '') +
+      '<div class="actions"><a href="#" class="btn" data-page="podium">📺 Awarding screen</a> <a href="#" class="btn" data-page="funrun">🏁 All results</a></div>' +
+      '</div></section><div id="win-body">' + winBody() + '</div>';
+  }
+  function winBody() {
+    var f = DATA.funrun;
+    if (!f.results.length) return '<section class="sec">' + empty('🏆', 'The winners appear here after the race, as runners cross the finish line.') + '</section>';
+    return f.categories.map(function (c) {
+      var w = winData(c), k = catKey(c);
+      var head = '<h2><span class="dot bg-' + k + '"></span>' + esc(c) + ' <small>' + plural(w.n, 'finisher') + '</small></h2>';
+      if (!w.n) return '<section class="sec">' + head + '<div class="hint">No finishers yet in ' + esc(c) + '.</div></section>';
+      var cards = w.groups.map(function (g) {
+        return '<div class="card win-card"><h3>' + esc(g.label) + ' · ' + esc(c) + '</h3>' + podiumHtml(g.list) + restHtml(g.list) + '</div>';
+      }).join('');
+      var ages = w.ages.length ? '<div class="card win-ages"><h3>Age group winners · ' + esc(c) + ' <small>podium winners are not repeated</small></h3>' +
+        '<div class="tbl-wrap"><table><thead><tr><th>Age bracket</th>' + w.genders.map(function (g) { return '<th>' + esc(winGender(g)) + '</th>'; }).join('') +
+        '</tr></thead><tbody>' + w.ages.map(function (a) {
+          return '<tr><td><b>' + esc(a.bracket) + '</b></td>' + w.genders.map(function (g) {
+            var r = a.w[g];
+            return '<td>' + (r ? esc(rn(r)) + ' <span class="muted">· ' + (r.name ? 'Bib ' + esc(r.bib) + ' · ' : '') + esc(r.time || r.clock) + '</span>' : '<span class="muted">—</span>') + '</td>';
+          }).join('') + '</tr>';
+        }).join('') + '</tbody></table></div></div>' : '';
+      return '<section class="sec">' + head + '<div class="win-grid">' + cards + '</div>' + ages + '</section>';
+    }).join('');
+  }
+
+  // Awarding screen: a TV or projector at the awards (and an OBS scene for the live stream). One category and
+  // gender at a time; the places appear 3rd → 2nd → 1st. By itself every few seconds, or with &step=1 the emcee
+  // reveals each place with a click, Space, → or a presentation clicker (← goes back). &cat=5KM = one category only.
+  var POD = { i: 0, step: 0, timer: null, opt: null, q: null, loc: false, keys: false, sig: '' };
+  function podOpt() {
+    if (POD.opt) return POD.opt;
+    var q = {};
+    try { new URLSearchParams(location.search).forEach(function (v, k) { q[k.toLowerCase()] = v; }); } catch (err) {}
+    if (POD.q) Object.keys(POD.q).forEach(function (k) { q[k.toLowerCase()] = POD.q[k]; });
+    var cat = '';
+    if (q.cat) DATA.funrun.categories.forEach(function (c) { if (catKey(c) === catKey(q.cat)) cat = c; });
+    POD.opt = { cat: cat, step: q.step === '1' };
+    return POD.opt;
+  }
+  function podSlides() {
+    var o = podOpt(), out = [];
+    (o.cat ? [o.cat] : DATA.funrun.categories).forEach(function (c) {
+      var w = winData(c);
+      w.groups.forEach(function (g) { if (g.list.length) out.push({ kind: 'pod', cat: c, g: g }); });
+      if (w.ages.length) out.push({ kind: 'ages', cat: c, w: w });
+    });
+    return out;
+  }
+  function podCount(s) { return s && s.kind === 'pod' ? Math.min(3, s.g.list.length) : 0; }
+  function viewPodium() {
+    var i = DATA.info;
+    return '<div id="awd" class="awd">' +
+      '<div class="aw-top">' + (i.logo ? '<img class="aw-logo" src="' + safeUrl(i.logo) + '" alt="" referrerpolicy="no-referrer" onerror="this.remove()">' : '') +
+      '<div><div class="aw-ev">' + esc(i.eventName) + '</div><h1>🏆 Fun Run Winners</h1></div><span id="aw-badge"></span></div>' +
+      '<div id="aw-slide" class="aw-slide"></div>' +
+      '<div class="aw-foot"><span id="aw-dots" class="aw-dots"></span><span class="aw-hint" id="aw-hint"></span></div></div>';
+  }
+  function podStart() {
+    if (!POD.loc && window.google && google.script && google.script.url) {   // Apps Script link: options come from there
+      POD.loc = true;
+      try {
+        google.script.url.getLocation(function (l) {
+          var p = l && l.parameter;
+          if (!p || !(p.cat || p.step) || state.page !== 'podium') return;
+          POD.q = p; POD.opt = null; POD.i = 0; POD.step = 0; podDraw(-1, true); podSchedule();
+        });
+      } catch (err) {}
+    }
+    if (!POD.keys) { POD.keys = true; document.addEventListener('keydown', podKey); }
+    podDraw(-1, true);
+    podSchedule();
+    refreshRace();
+  }
+  function podKey(e) {
+    if (state.page !== 'podium') return;
+    if ([' ', 'ArrowRight', 'PageDown', 'Enter', 'ArrowDown'].indexOf(e.key) !== -1) { e.preventDefault(); podNext(); }
+    else if (['ArrowLeft', 'PageUp', 'Backspace', 'ArrowUp'].indexOf(e.key) !== -1) { e.preventDefault(); podPrev(); }
+  }
+  function podSig(slides) {
+    return (DATA.info.winOfficial ? 'o' : 'p') + JSON.stringify(slides.map(function (s) {
+      return s.kind + s.cat + (s.g ? s.g.label + s.g.list.map(function (r) { return r.bib + r.name + r.time; }).join() : JSON.stringify(s.w.ages));
+    }));
+  }
+  function podDraw(popK, enter) {
+    var el = $('#aw-slide');
+    if (!el) return;
+    var slides = podSlides(), b = $('#aw-badge');
+    POD.sig = podSig(slides);
+    if (b) b.innerHTML = DATA.info.winOfficial ? '<span class="aw-b ok">✅ Official results</span>' : '<span class="aw-b">⏳ Provisional</span>';
+    $('#aw-hint').textContent = podOpt().step ? 'Click, Space or → : next   ·   ← : back' : '';
+    if (!slides.length) {
+      el.innerHTML = '<div class="aw-empty">🏁 The winners appear here as runners cross the finish line.</div>';
+      $('#aw-dots').innerHTML = '';
+      POD.empty = true;
+      return;
+    }
+    POD.empty = false;
+    if (POD.i >= slides.length) { POD.i = 0; POD.step = 0; }
+    var s = slides[POD.i], k = catKey(s.cat), c = podCount(s), html;
+    POD.step = Math.min(POD.step, c);
+    if (s.kind === 'pod') {
+      html = '<div class="ps' + (enter ? ' enter' : '') + '"><h2><b class="ps-cat bg-' + k + '">' + esc(s.cat) + '</b> ' + esc(s.g.label) + '</h2>' +
+        podiumHtml(s.g.list, POD.step, popK) + (POD.step >= c ? restHtml(s.g.list) : '') + '</div>';
+    } else {
+      html = '<div class="ps' + (enter ? ' enter' : '') + '"><h2><b class="ps-cat bg-' + k + '">' + esc(s.cat) + '</b> Age group winners</h2>' +
+        '<table class="aw-ages"><thead><tr><th>Age bracket</th>' + s.w.genders.map(function (g) { return '<th>' + esc(winGender(g)) + '</th>'; }).join('') +
+        '</tr></thead><tbody>' + s.w.ages.map(function (a) {
+          return '<tr><td><b>' + esc(a.bracket) + '</b></td>' + s.w.genders.map(function (g) {
+            var r = a.w[g];
+            return '<td>' + (r ? '<b>' + esc(rn(r)) + '</b> <small>· ' + esc(r.time || r.clock) + '</small>' : '<small>—</small>') + '</td>';
+          }).join('') + '</tr>';
+        }).join('') + '</tbody></table></div>';
+    }
+    if (popK === 0) {                                // 1st place: a burst of confetti
+      var conf = '', colors = ['#f2b705', '#ffffff', '#e53935', '#2e7d32', '#2f5fb3', '#ffe9a8'];
+      for (var j = 0; j < 46; j++) {
+        conf += '<i style="left:' + (Math.random() * 100).toFixed(1) + '%;background:' + colors[j % colors.length] +
+          ';animation-duration:' + (2.4 + Math.random() * 1.8).toFixed(2) + 's;animation-delay:' + (Math.random() * .6).toFixed(2) + 's"></i>';
+      }
+      html += '<div class="confetti">' + conf + '</div>';
+    }
+    el.innerHTML = html;
+    $('#aw-dots').innerHTML = slides.map(function (x, j) { return '<i' + (j === POD.i ? ' class="on"' : '') + '></i>'; }).join('');
+  }
+  function podNext() {
+    var slides = podSlides();
+    if (!slides.length) return;
+    var s = slides[POD.i] || slides[0], c = podCount(s);
+    if (POD.step < c) { POD.step++; podDraw(c - POD.step); }          // reveal the next place: 3rd, then 2nd, then 1st
+    else { POD.i = (POD.i + 1) % slides.length; POD.step = 0; podDraw(-1, true); }
+    podSchedule();
+  }
+  function podPrev() {
+    var slides = podSlides();
+    if (!slides.length) return;
+    POD.i = (POD.i - 1 + slides.length) % slides.length;
+    POD.step = podCount(slides[POD.i]);
+    podDraw(-1, true);
+    podSchedule();
+  }
+  function podSchedule() {
+    clearTimeout(POD.timer);
+    if (state.page !== 'podium' || podOpt().step) return;
+    var slides = podSlides();
+    if (!slides.length) return;
+    var s = slides[POD.i] || slides[0], c = podCount(s);
+    var wait = s.kind === 'ages' ? 12000 : POD.step === 0 ? 1500 : POD.step < c ? 2600 : 9000;
+    POD.timer = setTimeout(podNext, wait);
+  }
+  function podUpdate() {                             // new results or settings: redraw only if something changed
+    if (!$('#awd')) return;
+    var slides = podSlides();
+    if (podSig(slides) === POD.sig) return;
+    var wasEmpty = POD.empty;
+    podDraw(-1, wasEmpty);
+    if (wasEmpty) podSchedule();
+  }
+
+  // ---------------- PHOTOS (Site - Photos tab) ----------------
+  // "Cover" photos show big under the page title (several take turns every 5 seconds); "Gallery" photos show in a
+  // Photos section at the end of the page. Tap any photo to see it large; ← → or the arrows go through the photos.
+  // A photo whose link does not open (e.g. a Drive file not shared "Anyone with the link") is simply left out.
+  var LB = { page: '', i: 0 };
+  function pagePhotos(id) { return (DATA.photos || []).filter(function (p) { return p.page === id; }); }
+  function coverHtml(id) {
+    var all = pagePhotos(id), cov = all.filter(function (p) { return p.cover; });
+    if (!cov.length) return '';
+    return '<figure class="cover" id="cover">' + cov.map(function (p, k) {
+      return '<img class="' + (k === 0 ? 'on' : '') + '" src="' + safeUrl(p.full) + '" alt="' + esc(p.caption || '') + '" data-photo="' + all.indexOf(p) + '"' +
+        (k ? ' loading="lazy"' : '') + ' referrerpolicy="no-referrer" onerror="this.remove()">';
+    }).join('') + '<figcaption id="cover-cap"' + (cov[0].caption ? '' : ' hidden') + '>' + esc(cov[0].caption || '') + '</figcaption></figure>';
+  }
+  function coverTurn() {                            // several cover photos: the next one every 5 seconds
+    var c = $('#cover');
+    if (!c || document.visibilityState === 'hidden') return;
+    var imgs = c.querySelectorAll('img');
+    if (imgs.length < 2) return;
+    var k = 0;
+    for (var j = 0; j < imgs.length; j++) if (imgs[j].classList.contains('on')) k = j;
+    imgs[k].classList.remove('on');
+    var nx = imgs[(k + 1) % imgs.length];
+    nx.classList.add('on');
+    var cap = $('#cover-cap');
+    if (cap) { cap.textContent = nx.alt; cap.hidden = !nx.alt; }
+  }
+  setInterval(coverTurn, 5000);
+  function photosSection(id) {
+    var all = pagePhotos(id), gal = all.filter(function (p) { return id === 'home' || !p.cover; });
+    if (!gal.length) return '';
+    return '<section class="sec" id="photos"><h2>📸 Photos</h2><div class="gallery">' + gal.map(function (p) {
+      return '<button type="button" class="ph" data-photo="' + all.indexOf(p) + '" aria-label="' + esc(p.caption || 'Photo') + ' – see it large">' +
+        '<img src="' + safeUrl(p.thumb) + '" alt="' + esc(p.caption || '') + '" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.remove()">' +
+        (p.caption ? '<span class="ph-cap">' + esc(p.caption) + '</span>' : '') + '</button>';
+    }).join('') + '</div></section>';
+  }
+  function lbList() {                               // the photos that opened on the page (broken links are gone)
+    var seen = {}, out = [];
+    document.querySelectorAll('#app [data-photo]').forEach(function (el) { var k = Number(el.getAttribute('data-photo')); if (!seen[k]) { seen[k] = 1; out.push(k); } });
+    return out.sort(function (a, b) { return a - b; });
+  }
+  function lbOpen(page, k) { LB.page = page; LB.i = Math.max(0, lbList().indexOf(k)); lbDraw(); }
+  function lbDraw() {
+    var photos = pagePhotos(LB.page), list = lbList(), all = list.map(function (k) { return photos[k]; }).filter(Boolean);
+    if (!all.length) { lbClose(); return; }
+    LB.i = (LB.i % all.length + all.length) % all.length;
+    var p = all[LB.i], el = $('#lb');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'lb'; el.className = 'lb';
+      el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Photo');
+      document.body.appendChild(el);
+    }
+    el.innerHTML = '<img src="' + safeUrl(p.full) + '" alt="' + esc(p.caption || '') + '" referrerpolicy="no-referrer">' +
+      '<div class="lb-cap">' + esc(p.caption || '') + (all.length > 1 ? ' <small>' + (LB.i + 1) + ' / ' + all.length + '</small>' : '') + '</div>' +
+      '<button type="button" class="lb-x" data-lb="x" aria-label="Close">✕</button>' +
+      (all.length > 1 ? '<button type="button" class="lb-prev" data-lb="-1" aria-label="Previous photo">‹</button>' +
+        '<button type="button" class="lb-next" data-lb="1" aria-label="Next photo">›</button>' : '');
+    document.body.classList.add('lb-open');
+    var x = el.querySelector('.lb-x');
+    if (x) x.focus({ preventScroll: true });
+  }
+  function lbClose() { var el = $('#lb'); if (el) el.remove(); document.body.classList.remove('lb-open'); }
+  document.addEventListener('keydown', function (e) {
+    if (!$('#lb')) return;
+    if (e.key === 'Escape') { lbClose(); }
+    else if (e.key === 'ArrowRight') { LB.i++; lbDraw(); }
+    else if (e.key === 'ArrowLeft') { LB.i--; lbDraw(); }
+    else return;
+    e.preventDefault();
+  });
+
+  // ---------------- RUNNER PAGE (?page=myreg) – registered runners only ----------------
+  // Like the marshal page: a sign-in first – LAST NAME + BIRTHDAY as the PIN (MMDDYYYY). Only a match shows the
+  // runner's registration. Nothing is saved on the phone; Sign out (or leaving the page) clears it.
+  var MR = { busy: false, res: null, err: '', contact: '', notFound: false, form: {}, show: false };
+  function mrVal(id) { return esc(MR.form[id] || ''); }
+  function viewMyReg() {
+    var i = DATA.info;
+    var brand = '<div class="mr-brand">' + (i.logo ? '<img src="' + safeUrl(i.logo) + '" alt="" referrerpolicy="no-referrer" onerror="this.remove()">' : '<span class="mr-ic">🏃</span>') +
+      '<div><small>' + esc(i.eventName) + '</small><b>Runner page</b></div></div>';
+    var back = '<a href="#" class="mr-back" data-page="funrun">← Event website</a>';
+    if (MR.res) return '<section class="mr-shell">' + brand + mrInfo() + back + '</section>';
+    return '<section class="mr-shell">' + brand +
+      '<form class="card mr-form" id="mr-form" autocomplete="off" novalidate><h1>🔐 Runner sign-in</h1>' +
+      '<p class="mr-lead">For registered Fun Run runners: see your registration, category, race bib and singlet size.</p>' +
+      '<label>Last name <small>as you registered</small><input id="mr-name" maxlength="60" placeholder="e.g. Dela Cruz" autocapitalize="words" value="' + mrVal('mr-name') + '"></label>' +
+      '<label>Birthday PIN <small>8 numbers: month, day, year – e.g. <b>01151990</b> for January 15, 1990</small>' +
+      '<input id="mr-pin" type="' + (MR.show ? 'text' : 'password') + '" inputmode="numeric" maxlength="10" placeholder="MMDDYYYY" value="' + mrVal('mr-pin') + '"></label>' +
+      '<label class="mr-chk"><input type="checkbox" id="mr-show"' + (MR.show ? ' checked' : '') + '> Show PIN</label>' +
+      '<button class="btn mr-go" type="submit">' + (MR.busy ? 'Checking…' : 'Enter') + '</button>' + mrErr() +
+      '<p class="mr-note">Your details are shown only to you, and nothing is saved on this phone.</p></form>' + back + '</section>';
+  }
+  function mrErr() {
+    if (!MR.err) return '';
+    return '<div class="mr-bad" role="alert"><b>❌ ' + esc(MR.err) + '</b>' + (MR.notFound ? '<p>Type your last name the way you registered, and your birthday as ' +
+      'month (2 numbers), day (2 numbers), year (4 numbers).' + (MR.contact ? ' Still not working? Contact ' + esc(MR.contact) + '.' : '') + '</p>' : '') + '</div>';
+  }
+  function mrInfo() {
+    var list = MR.res.runners || [];
+    var row = function (label, value) { return value ? '<div class="mr-row"><dt>' + label + '</dt><dd>' + value + '</dd></div>' : ''; };
+    return '<div class="mr-hello">Hi, ' + esc(list[0].first || list[0].name) + '! ✅ You are registered.</div>' + list.map(function (r) {
+      var k = catKey(r.cat);
+      var pay = r.pay === 'verified' ? '✅ Verified' : r.pay === 'issue' ? '⚠️ There is a problem with your payment – please contact the organizers' : r.pay === 'pending' ? '⏳ Waiting for verification' : '';
+      var kit = r.kit === 'claimed' ? '🎽 Claimed' : r.kit === 'waiting' ? 'Not claimed yet' : '';
+      return '<div class="card mr-card"><div class="bibcard mr-bib"><div class="bib-band bg-' + k + '">' + esc(r.cat) + '</div><div class="bib-no">' + esc(r.bib) + '</div>' +
+        '<div class="bib-name">' + esc(r.name) + '</div></div>' +
+        '<dl class="mr-dl">' + row('Registration date', esc(r.date)) + row('Category', esc(r.cat)) + row('Race bib number', '<b>' + esc(r.bib) + '</b>') +
+        row('Singlet size', '<b>' + esc(r.size || 'Not given') + '</b>') + row('Registration', esc([r.regType, r.source].filter(Boolean).join(' · '))) +
+        row('Payment', esc(pay)) + row('Race kit', esc(kit)) + '</dl>' +
+        '<p class="mr-note">Wrong name or singlet size? Tell the organizers' + (r.kit === 'claimed' ? '' : ' before claiming your race kit') +
+        (MR.res.contact ? ': ' + esc(MR.res.contact) : '') + '.</p></div>';
+    }).join('') + '<button type="button" class="btn mr-out" data-mr="done">Sign out</button>';
+  }
+  function mrDraw() { if (state.page === 'myreg') { $('#app').innerHTML = viewMyReg(); } }
+  function mrCheck() {
+    var name = (MR.form['mr-name'] || '').trim(), raw = (MR.form['mr-pin'] || '').trim();
+    var pm = raw.match(/^(\d{1,2})\D+(\d{1,2})\D+(\d{4})$/);     // 1/15/1990 works too
+    var pin = pm ? ('0' + pm[1]).slice(-2) + ('0' + pm[2]).slice(-2) + pm[3] : raw.replace(/\D/g, '');
+    MR.res = null; MR.contact = ''; MR.notFound = false;
+    if (!name) MR.err = 'Type your last name.';
+    else if (pin.length !== 8) MR.err = 'Type your birthday as 8 numbers: month, day, year (e.g. 01151990).';
+    else MR.err = '';
+    if (MR.err || MR.busy) { mrDraw(); return; }
+    MR.busy = true; mrDraw();
+    google.script.run.withSuccessHandler(function (res) {
+      MR.busy = false;
+      if (res && res.ok && res.runners && res.runners.length) { MR.res = res; MR.err = ''; MR.form = {}; }
+      else { MR.err = (res && res.error) || 'Could not check right now. Try again.'; MR.contact = (res && res.contact) || ''; MR.notFound = !!(res && res.notFound); }
+      mrDraw(); window.scrollTo(0, 0);
+    }).withFailureHandler(function () {
+      MR.busy = false; MR.err = 'No connection right now. Check your internet and try again.'; mrDraw();
+    }).checkMyRegistration({ name: name, pin: pin });
+  }
+
+  // ---------------- runner names hidden on the public pages (Site - Info → Hide Runner Names) ----------------
+  // The website gets bib numbers only. Instead of "Find your race bib", the Fun Run page sends runners to the
+  // runner page: their category, bib and status show only after their last name + birthday.
+  function namesHidden() { return !!(DATA.funrun && DATA.funrun.hideNames); }
+  function rn(r) { return r && r.name ? r.name : 'Bib ' + (r && r.bib || ''); }
 
   // ---------------- RACE KIT & PAYMENT BOARD (?page=kits) ----------------
   // A wide public board for a TV at the kit-claiming area: every runner with a bib, whether the payment is
@@ -1944,7 +2451,7 @@ window.__startApp = function () {
     return hasGas() && !DATA.light && (document.visibilityState !== 'hidden' || state.page === 'overlay') && state.page !== 'marshal' && state.page !== 'qrcodes';
   }
   function wantRace() {
-    return state.page === 'live' || state.page === 'overlay' || ((state.page === 'funrun' || state.page === 'home') && !!(DATA.race && DATA.race.stations && DATA.race.stations.length));
+    return state.page === 'live' || state.page === 'overlay' || state.page === 'winners' || state.page === 'podium' || ((state.page === 'funrun' || state.page === 'home') && !!(DATA.race && DATA.race.stations && DATA.race.stations.length));
   }
   function racePollEvery() {                    // how often the page asks "anything new?" (a tiny question)
     if (state.page === 'live' || state.page === 'overlay') return 1000;   // big-screen race board & stream overlay: every second
@@ -1985,6 +2492,14 @@ window.__startApp = function () {
 
   function updateRaceViews() {
     if (state.page === 'overlay') { ovUpdate(); return; }
+    if (state.page === 'podium') { podUpdate(); return; }
+    if (state.page === 'winners') {
+      var wy = window.scrollY;
+      if ($('#win-body')) $('#win-body').innerHTML = winBody();
+      if ($('#win-badge')) $('#win-badge').innerHTML = winBadge();
+      window.scrollTo(0, wy);
+      return;
+    }
     var y = window.scrollY;
     if (state.page === 'live' && !$('#trk-body')) render();
     if ((state.page === 'funrun' || state.page === 'live') && $('#trk-body')) {
@@ -2333,10 +2848,15 @@ window.__startApp = function () {
 
   // ---- 🔫 Start Line: the exact gun start of each category ----
   var G = { msg: '', pending: {} };
+  function gunCats() { return (M.station.cats && M.station.cats.length ? M.station.cats : (DATA.funrun && DATA.funrun.categories) || []); }
   function gunPanel() {
-    var cats = (M.station.cats && M.station.cats.length ? M.station.cats : (DATA.funrun && DATA.funrun.categories) || []);
+    var cats = gunCats();
     var gun = (DATA.race && DATA.race.gun) || {};
-    return '<div class="m-gun"><b>🔫 Gun start</b><span>Tap the moment the race starts. Finish times are measured from this exact time.</span>' +
+    var pa = G.pending['*'], same = cats.length && cats.every(function (c) { return gun[c] && gun[c] === gun[cats[0]]; });
+    var all = cats.length > 1 ? '<button type="button" class="m-gunbtn m-gunall" data-gunall="1">🔫 START ALL · ' + cats.map(esc).join(' + ') +
+      '<small>' + (pa ? 'Not sent yet (' + esc(mClock(pa)) + ') – tap to send' : same ? 'All started ' + esc(mClock(gun[cats[0]])) : 'One tap: the same start time for every category') + '</small></button>' : '';
+    return '<div class="m-gun"><b>🔫 Gun start</b><span>Tap the moment the race starts. Finish times are measured from this exact time.' +
+      (all ? ' All categories start together? Use START ALL. Separate starts? Use each category’s button.' : '') + '</span>' + all +
       '<div class="m-gunbtns">' + cats.map(function (c) {
         var p = G.pending[c];
         return '<button type="button" class="m-gunbtn bg-' + catKey(c) + '" data-gunstart="' + esc(c) + '">🔫 START ' + esc(c) +
@@ -2362,10 +2882,35 @@ window.__startApp = function () {
       var el = $('#m-gun'); if (el) el.innerHTML = gunPanel();
     }).setGunStart(staffReq({ cat: cat, clientTime: t }));
   }
+  function gunTapAll() {                              // mass start: every category gets the time of this one tap
+    var cats = gunCats(), t = G.pending['*'] || mNow();
+    var gun = (DATA.race && DATA.race.gun) || {};
+    var had = cats.filter(function (c) { return gun[c]; });
+    if (!G.pending['*'] && !window.confirm('START ALL – ' + cats.join(', ') + ' at ' + mClock(t) + '?' +
+        (had.length ? '\n\nThis replaces the start already saved for ' + had.join(', ') + '.' : '') + '\n\nThe time of your tap is kept, however long you take to answer.')) return;
+    G.pending['*'] = t; G.msg = '🔫 Sending the start of ' + cats.join(', ') + ' (' + mClock(t) + ')…';
+    $('#m-gun').innerHTML = gunPanel();
+    google.script.run.withSuccessHandler(function (res) {
+      if (staffAuthFail(res)) return;
+      if (res && res.ok && res.cats && res.cats.length === cats.length) {
+        delete G.pending['*'];
+        DATA.race = DATA.race || {}; DATA.race.gun = DATA.race.gun || {};
+        res.cats.forEach(function (c) { DATA.race.gun[c] = res.gunMs; delete G.pending[c]; });
+        G.msg = '✅ ' + res.cats.join(', ') + ' started at ' + res.clock + '. The race clocks are running.';
+      } else if (res && res.ok) {                    // an older script on the server: it saved one category only
+        delete G.pending['*'];
+        G.msg = '⚠️ Only ' + res.cat + ' was saved – the script needs the latest Website.gs. Tap each category’s START button now; each keeps its own tap time.';
+      } else G.msg = (res && res.error) || 'Not saved. Tap START ALL again.';
+      var el = $('#m-gun'); if (el) el.innerHTML = gunPanel();
+    }).withFailureHandler(function () {
+      G.msg = 'No signal – the start time ' + mClock(t) + ' is kept on this phone. Tap START ALL again to send it.';
+      var el = $('#m-gun'); if (el) el.innerHTML = gunPanel();
+    }).setGunStart(staffReq({ cats: cats, cat: cats[0], clientTime: t }));
+  }
 
   var wakeLock = null;
   function keepAwake() {
-    if ((state.page !== 'marshal' && state.page !== 'live' && state.page !== 'kits' && state.page !== 'overlay') || !navigator.wakeLock || wakeLock) return;   // keep the screen on
+    if ((state.page !== 'marshal' && state.page !== 'live' && state.page !== 'kits' && state.page !== 'overlay' && state.page !== 'podium') || !navigator.wakeLock || wakeLock) return;   // keep the screen on
     navigator.wakeLock.request('screen').then(function (l) { wakeLock = l; l.addEventListener('release', function () { wakeLock = null; }); }).catch(function () {});
   }
 
@@ -3340,7 +3885,7 @@ window.__startApp = function () {
     volleyball: function () { return viewSport('volleyball'); },
     pickleball: function () { return viewSport('pickleball'); },
     mlbb: function () { return viewSport('mlbb'); },
-    bingo: viewBingo, trees: viewTrees, mentors: viewMentors, marshal: viewMarshal, qrcodes: viewQr, live: viewLive, kits: viewKits, overlay: viewOverlay,
+    bingo: viewBingo, trees: viewTrees, mentors: viewMentors, marshal: viewMarshal, qrcodes: viewQr, live: viewLive, kits: viewKits, overlay: viewOverlay, winners: viewWinners, podium: viewPodium, myreg: viewMyReg,
     parade: function () { return viewProgramPage('parade'); }, ball: function () { return viewProgramPage('ball'); }
   };
 
@@ -3503,17 +4048,24 @@ window.__startApp = function () {
   }
 
   function render() {
+    if ($('#lb') && LB.page !== state.page) lbClose();
+    if (state.page !== 'myreg') { MR.res = null; MR.err = ''; MR.notFound = false; MR.form = {}; MR.show = false; }   // leaving the page clears the runner's details
     if (state.page !== 'marshal' && CAM.on) camStop();
     document.body.classList.toggle('marshal-mode', state.page === 'marshal');
-    document.body.classList.toggle('board-mode', state.page === 'live' || state.page === 'kits');
+    document.body.classList.toggle('runner-mode', state.page === 'myreg');
+    document.body.classList.toggle('board-mode', state.page === 'live' || state.page === 'kits' || state.page === 'podium');
     document.body.classList.toggle('overlay-mode', state.page === 'overlay');
     document.documentElement.classList.toggle('overlay-mode', state.page === 'overlay');
     renderNav();
     renderSportBg();
     var app = $('#app'), keep = $('#fb-live');
+    var built = false;
     if (state.page === 'overlay' && $('#ov')) ovUpdate();      // the stream overlay updates in place: pop-ups and the moving line keep going
+    else if (state.page === 'podium' && $('#awd')) podUpdate();   // the awarding screen keeps its place in the reveal
     else {
+      built = true;
       var html = (VIEWS[state.page] || viewHome)();
+      if (PAGES.some(function (x) { return x.id === state.page; })) html += photosSection(state.page);   // Site - Photos gallery
       if (keep && html.indexOf('id="fb-live" data-src="' + esc(keep.getAttribute('data-src')) + '"') !== -1) swapAroundVideo(app, keep, html);   // the video keeps playing
       else app.innerHTML = html;
     }
@@ -3543,8 +4095,10 @@ window.__startApp = function () {
     if (state.page === 'live') keepAwake();
     if (state.page === 'kits') { keepAwake(); kbFit(); kbTurn(); }
     if (state.page === 'overlay') { keepAwake(); ovStart(); }
+    if (state.page === 'podium') { keepAwake(); if (built) podStart(); }
+    if (state.page === 'winners') refreshRace();
     if (state.page === 'live' || state.page === 'funrun') refreshRace();   // check for new check-ins right away
-    if (state.page === 'funrun' && state.scrollToBib && $('#bibq')) { state.scrollToBib = false; $('#bibq').scrollIntoView({ block: 'center' }); }
+    if (state.page === 'funrun' && state.scrollToBib && $('#bib-sec')) { state.scrollToBib = false; ($('#bibq') || $('#bib-sec')).scrollIntoView({ block: 'center' }); }
   }
 
   function go(page) {
@@ -3615,6 +4169,18 @@ window.__startApp = function () {
     if (t) { state.runnerLimit += 60; $('#runlist').innerHTML = runnerList(); return; }
     t = e.target.closest('[data-lane]');
     if (t) { var lk = t.getAttribute('data-lane'); TRK.open[lk] = !TRK.open[lk]; $('#trk-body').innerHTML = trackBody(); return; }
+    t = e.target.closest('[data-mr="done"]');
+    if (t) { MR.res = null; MR.err = ''; MR.notFound = false; MR.form = {}; MR.show = false; mrDraw(); window.scrollTo(0, 0); return; }   // Sign out
+    if (e.target.id === 'mr-show') { MR.show = e.target.checked; var pin = $('#mr-pin'); if (pin) pin.type = MR.show ? 'text' : 'password'; }
+    t = e.target.closest('[data-lb]');
+    if (t) { var lbd = t.getAttribute('data-lb'); if (lbd === 'x') lbClose(); else { LB.i += Number(lbd); lbDraw(); } return; }
+    if (e.target.id === 'lb') { lbClose(); return; }           // tap beside the photo: close
+    t = e.target.closest('[data-photo]');
+    if (t) { lbOpen(state.page, Number(t.getAttribute('data-photo'))); return; }
+    t = e.target.closest('#awd');
+    if (t) { podNext(); return; }                    // awarding screen: a click reveals the next place
+    t = e.target.closest('[data-gunall]');
+    if (t) { gunTapAll(); return; }
     t = e.target.closest('[data-gunstart]');
     if (t) { gunTap(t.getAttribute('data-gunstart')); return; }
     t = e.target.closest('[data-kbcat]');
@@ -3682,9 +4248,11 @@ window.__startApp = function () {
     if (e.target.id === 'm-form') { e.preventDefault(); mSubmit(); }
     if (e.target.id === 'm-login') { e.preventDefault(); mLogin(); }
     if (e.target.id === 'k-form') { e.preventDefault(); kitSearch(($('#k-q') || {}).value); }
+    if (e.target.id === 'mr-form') { e.preventDefault(); mrCheck(); }
   });
   document.addEventListener('input', function (e) {
     if (e.target.id === 'bibq') { state.bibQuery = e.target.value; $('#bibres').innerHTML = bibResults(); }
+    if (/^mr-(name|pin)$/.test(e.target.id)) MR.form[e.target.id] = e.target.value;
     if (e.target.id === 'runq') { state.runnerQuery = e.target.value; state.runnerLimit = 60; $('#runlist').innerHTML = runnerList(); }
     if (e.target.id === 'kbq') { KBD.q = e.target.value; $('#kb-body').innerHTML = kbBody(); }
     if (e.target.id === 'trackq') { state.trackQuery = e.target.value; $('#trk-body').innerHTML = trackBody(); }
