@@ -735,6 +735,7 @@
 
   /* ---------- marshal page ---------- */
   body.marshal-mode .nav, body.marshal-mode .updated, body.marshal-mode .foot { display: none; }
+  body.staff-only .nav, body.staff-only .updated, body.staff-only .foot, body.staff-only #sport-bg { display: none; }
   .m-wrap { max-width: 520px; margin: 18px auto 40px; display: grid; gap: 14px; }
   .m-station { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border-radius: 16px; background: var(--pine); color: #fff; }
   .m-station small { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .1em; opacity: .75; font-weight: 700; }
@@ -981,6 +982,10 @@ window.__startApp = function () {
     { id: 'ball',       label: 'Closing & Grand Ball', icon: '💃' }
   ];
   var SPORT_IDS = ['basketball', 'volleyball', 'pickleball', 'mlbb'];
+  // The staff page (<website>/staff.html, the same file as index.html): only staff & marshal check-in,
+  // no public menu; public pages open in a new tab.
+  var STAFF_ONLY = !!window.STAFF_ONLY;
+  var STAFF_PAGES = ['marshal', 'qrcodes'];
 
   var DATA = INITIAL_DATA;
   var lastFetch = Date.now();
@@ -1024,6 +1029,11 @@ window.__startApp = function () {
   // ---------------- shell ----------------
   function renderNav() {
     $('#brandName').textContent = DATA.info.eventName;
+    if (STAFF_ONLY) {
+      var sub = document.querySelector('.brand-text small');
+      if (sub) sub.textContent = 'Staff & marshal check-in';
+      document.title = 'Staff check-in · ' + DATA.info.eventName;
+    }
     var mark = document.querySelector('.brand-mark');
     if (mark) {
       mark.classList.toggle('logo', !!DATA.info.logo);
@@ -3026,13 +3036,34 @@ window.__startApp = function () {
     M.staff = String(($('#m-staff') || {}).value || '').trim().slice(0, 40);
     if (!M.pick) { M.error = 'Pick your station first.'; render(); return; }
     if (!pin) { M.error = 'Enter your station PIN.'; render(); return; }
-    if (!hasGas()) return;
+    if (!hasGas() || M.checking) return;
+    M.checking = true; M.error = '';
+    var btn = $('#m-login button[type="submit"]');
+    if (btn) { btn.disabled = true; btn.textContent = 'Checking the PIN…'; }
     google.script.run.withSuccessHandler(function (res) {
+      M.checking = false;
       if (res && res.ok) { M.station = res.station; M.pin = pin; M.error = ''; mSave(); render(); mPump(); clockCheck(3); }
       else { M.error = (res && res.error) || 'Could not sign in.'; render(); }
-    }).withFailureHandler(function () { M.error = 'No internet connection. Try again when you have signal.'; render(); })
+    }).withFailureHandler(function () { M.checking = false; M.error = 'No internet connection. Try again when you have signal.'; render(); })
       .marshalLogin(M.pick, pin);
   }
+
+  // The staff screens open at once from the copy saved on the phone; the fresh station list arrives a moment later.
+  window.__staffFresh = function (d) {
+    if (!d || !d.race || !DATA.light) return;
+    DATA.race.stations = d.race.stations; DATA.race.gun = d.race.gun; DATA.info = d.info; DATA.scannerLink = d.scannerLink;
+    DATA.generatedMs = d.generatedMs;
+    if (M.station) {
+      var now = d.race.stations.filter(function (x) { return x.name === M.station.name; })[0];
+      if (now) { M.station = now; mSave(); }
+    }
+    if (state.page === 'marshal' && !(M.station && M.pin) && !M.checking) {
+      var pinVal = ($('#m-pin') || {}).value, staffVal = ($('#m-staff') || {}).value;
+      render();
+      if ($('#m-pin') && pinVal) $('#m-pin').value = pinVal;
+      if ($('#m-staff') && staffVal !== undefined) $('#m-staff').value = staffVal;
+    } else if (state.page === 'marshal' && $('#m-gun')) $('#m-gun').innerHTML = gunPanel();
+  };
 
   function mUndo(id) {
     if (!hasGas()) return;
@@ -4289,6 +4320,7 @@ window.__startApp = function () {
     if (state.page !== 'myreg') { MR.res = null; MR.err = ''; MR.notFound = false; MR.form = {}; MR.show = false; }   // leaving the page clears the runner's details
     if (state.page !== 'marshal' && CAM.on) camStop();
     document.body.classList.toggle('marshal-mode', state.page === 'marshal');
+    document.body.classList.toggle('staff-only', STAFF_ONLY);
     document.body.classList.toggle('runner-mode', state.page === 'myreg');
     document.body.classList.toggle('board-mode', state.page === 'live' || state.page === 'kits' || state.page === 'podium');
     document.body.classList.toggle('overlay-mode', state.page === 'overlay');
@@ -4341,6 +4373,10 @@ window.__startApp = function () {
 
   function go(page) {
     if (!isPage(page)) page = 'home';
+    if (STAFF_ONLY && STAFF_PAGES.indexOf(page) === -1) {
+      if (page !== 'home') window.open(location.pathname.replace(/staff(\.html)?\/?$/i, '') + '?page=' + page, '_blank', 'noopener');
+      return;                                       // the staff page stays on staff screens
+    }
     if (DATA.light && page !== 'marshal' && page !== 'qrcodes' && hasGas()) {
       $('#app').innerHTML = '<section class="sec">' + empty('⏳', 'Loading the event website…') + '</section>';
       google.script.run.withSuccessHandler(function (txt) {
@@ -4586,13 +4622,19 @@ window.__startApp = function () {
 (function () {
   'use strict';
   var KEY = 'paskoriyuhan-site-v2';                       // last copy, so the page opens instantly next time
+  var STAFF_KEY = 'paskoriyuhan-staff-v1';                 // staff screens: station list + event name only (no runner data)
   try { localStorage.removeItem('paskoriyuhan-site-v1'); } catch (e) {}   // copies saved before runner names were hidden
   var q = new URLSearchParams(location.search);
   var bib = String(q.get('bib') || '').replace(/\D/g, '').replace(/^0+(?=\d)/, '').slice(0, 6);
   window.INITIAL_BIB = bib;                                // opened from a bib QR code
   window.INITIAL_CODE = String(q.get('c') || '').replace(/[^0-9a-f]/gi, '').slice(0, 10).toUpperCase();
   window.INITIAL_CHECK = '';
-  window.INITIAL_PAGE = bib ? 'scan' : String(q.get('page') || 'home').replace(/[^a-z]/g, '');
+  // The staff page: the same file saved as staff.html (or staff/index.html) opens straight into staff check-in.
+  var STAFF_ONLY = /(^|\/)staff(\.html|\/(index\.html)?)?$/i.test(location.pathname);
+  window.STAFF_ONLY = STAFF_ONLY;
+  var asked = String(q.get('page') || (STAFF_ONLY ? 'marshal' : 'home')).replace(/[^a-z]/g, '');
+  if (STAFF_ONLY && asked !== 'qrcodes') asked = 'marshal';
+  window.INITIAL_PAGE = bib ? 'scan' : asked;
   window.INITIAL_DATA = null;
   var connected = /^https:\/\/script\.google\.com\/.+\/exec$/.test(String(API_URL || '').trim());
 
@@ -4609,6 +4651,7 @@ window.__startApp = function () {
         }
         if (!res || !res.ok) throw new Error((res && res.error) || 'The website did not answer properly');
         if (fn === 'getSiteData') { try { localStorage.setItem(KEY, res.value); } catch (e) {} }
+        if (fn === 'getMarshalPageData') { try { localStorage.setItem(STAFF_KEY, res.value); } catch (e) {} }
         ok(res.value);
       })
       .catch(function (err) { fail(err); });
@@ -4701,9 +4744,9 @@ window.__startApp = function () {
     var upd = function () { var el = document.getElementById('retry-in'); if (el) el.textContent = 'in ' + Math.max(0, Math.ceil((due - Date.now()) / 1000)) + ' s'; };
     upd(); tick = setInterval(upd, 1000);
   }
-  var staff = window.INITIAL_PAGE === 'marshal';
+  var staff = window.INITIAL_PAGE === 'marshal' || (STAFF_ONLY && window.INITIAL_PAGE === 'qrcodes');
   var cached = null;
-  if (!staff) { try { cached = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {} }
+  try { cached = JSON.parse(localStorage.getItem(staff ? STAFF_KEY : KEY) || 'null'); } catch (e) {}
   if (bib) {                                               // check the bib's QR security code first
     waiting++;
     call('checkBibQr', [bib, window.INITIAL_CODE], function (v) { window.INITIAL_CHECK = v || ''; done(); }, function () { done(); });
@@ -4711,6 +4754,9 @@ window.__startApp = function () {
   if (cached && cached.info) {
     data = cached;                                         // open at once; live updates bring it up to date in seconds
     if (!waiting) start();
+    if (staff) call('getMarshalPageData', [], function (txt) {   // staff screens: the fresh station list, a moment later
+      try { var d = JSON.parse(txt); if (window.__staffFresh) window.__staffFresh(d); } catch (e) {}
+    }, function () {});
   } else {
     waiting++;
     (function load() {                                     // a screen nobody touches (OBS, a TV board) heals by itself:
