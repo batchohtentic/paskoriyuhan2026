@@ -676,6 +676,138 @@
   .vox-btn.rec { background: #8e0000; box-shadow: 0 0 0 6px rgba(198, 40, 40, .25); }
   .vox-msg { min-height: 1em; font-size: 13px; font-weight: 600; color: var(--ink2); }
   .hq-msg .btn.sm { margin-top: 4px; }
+  /* ---------- ⏱ live race clock (?page=clock) and the timer strip on the Fun Run page ---------- */
+  .seg7 { display: inline-flex; align-items: center; gap: .06em; height: 1em; vertical-align: middle; }
+  .seg7 svg { height: 1em; width: auto; overflow: visible; }
+  .s7 rect { fill: currentColor; opacity: .09; }
+  .s7 rect.on { opacity: 1; }
+  .s7c circle { fill: currentColor; }
+  [data-rclock][data-mode="run"] { color: #ffb300; }
+  [data-rclock][data-mode="count"] { color: #e9eef3; }
+  [data-rclock][data-mode="wait"] { color: #7d7071; }
+  .rclk { --u: min(1vh, .55vw); position: fixed; inset: 0; z-index: 5; display: grid; grid-template-rows: auto 1fr; overflow: hidden auto; background: #0b0606; color: #fff; }
+  .rclk-top { display: flex; align-items: center; gap: calc(var(--u) * 2); padding: calc(var(--u) * 2.4) 3vw; }
+  .rclk-logo { width: calc(var(--u) * 7); height: calc(var(--u) * 7); border-radius: 50%; background: #fff; object-fit: contain; padding: calc(var(--u) * .3); }
+  .rclk-top small, .rclk-tod small { display: block; font-size: calc(var(--u) * 2); font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #ffe9a8; }
+  .rclk-top b { font-size: calc(var(--u) * 4.4); }
+  .rclk-tod { margin-left: auto; text-align: right; }
+  .rclk-tod span { font-size: calc(var(--u) * 3.6); font-weight: 800; font-variant-numeric: tabular-nums; }
+  .rclk-rows { display: grid; align-content: center; justify-content: center; gap: calc(var(--u) * 3.4); padding: 0 3vw calc(var(--u) * 3); }
+  .rclk-row { display: grid; grid-template-columns: auto 1fr; column-gap: 3vw; row-gap: calc(var(--u) * .6); align-items: center; }
+  .rclk-cat { grid-row: span 2; min-width: calc(var(--u) * 19); padding: calc(var(--u) * 1.2) calc(var(--u) * 2.4); border-radius: calc(var(--u) * 1.6);
+    font-size: calc(var(--u) * 5); font-weight: 800; text-align: center; color: #fff; }
+  .rclk-dig { font-size: calc(var(--u) * 19); line-height: 1; filter: drop-shadow(0 0 calc(var(--u) * 1.2) rgba(255, 179, 0, .3)); }
+  .rclk-st { font-size: calc(var(--u) * 2.4); color: rgba(255, 255, 255, .7); }
+  .rclk.one .rclk-row { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+  .rclk.one .rclk-cat { grid-row: auto; font-size: calc(var(--u) * 6); }
+  .rclk.one .rclk-dig { font-size: calc(var(--u) * 38); }
+  .rclk.one .rclk-st { font-size: calc(var(--u) * 3); }
+  @media (max-aspect-ratio: 1/1) {
+    .rclk { --u: min(1.6vw, .9vh); }
+    .rclk-top { flex-wrap: wrap; gap: 4px 14px; padding: 14px 16px; }
+    .rclk-logo { width: 40px; height: 40px; }
+    .rclk-top small, .rclk-tod small { font-size: 11px; }
+    .rclk-top b { font-size: 20px; }
+    .rclk-tod span { font-size: 18px; white-space: nowrap; }
+    .rclk-rows { justify-content: stretch; gap: 18px; padding: 0 16px 16px; }
+    .rclk-row { grid-template-columns: 1fr; row-gap: 4px; }
+    .rclk-cat { grid-row: auto; justify-self: start; min-width: 0; padding: 3px 12px; border-radius: 8px; font-size: 16px; }
+    .rclk-dig { font-size: min(22vw, 12.5vh); }
+    .rclk-st { font-size: 13px; }
+    .rclk.one .rclk-dig { font-size: min(22vw, 30vh); }
+    .rclk.one .rclk-cat { justify-self: center; font-size: 22px; }
+    .rclk.one .rclk-st { font-size: 15px; }
+  }
+  .rclk.bg-clear, .rclk.bg-green { background: transparent; }
+  .rclk.bg-green { background: #00b140; }
+  .rclk.bg-clear .rclk-top, .rclk.bg-green .rclk-top { display: none; }
+  .rclk.bg-clear .rclk-rows, .rclk.bg-green .rclk-rows { align-content: start; justify-content: start; gap: calc(var(--u) * 1.2); padding: calc(var(--u) * 3); }
+  .rclk.bg-clear .rclk-row, .rclk.bg-green .rclk-row { column-gap: calc(var(--u) * 2); padding: calc(var(--u) * 1.2) calc(var(--u) * 2.2); border-radius: calc(var(--u) * 1.6); background: rgba(8, 4, 4, .78); }
+  .rclk.bg-clear .rclk-cat, .rclk.bg-green .rclk-cat { min-width: calc(var(--u) * 10); padding: calc(var(--u) * .6) calc(var(--u) * 1.4); border-radius: calc(var(--u) * 1); font-size: calc(var(--u) * 2.8); }
+  .rclk.bg-clear .rclk-dig, .rclk.bg-green .rclk-dig { font-size: calc(var(--u) * 7.5); }
+  .rclk.bg-clear .rclk-st, .rclk.bg-green .rclk-st { font-size: calc(var(--u) * 1.6); }
+  .rclk.one.bg-clear .rclk-dig, .rclk.one.bg-green .rclk-dig { font-size: calc(var(--u) * 13); }
+  .rcs { padding: 14px 16px; border-radius: 18px; background: #0b0606; color: #fff; }
+  .rcs-h { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .rcs-h .btn { color: #fff; border-color: rgba(255, 255, 255, .35); background: transparent; }
+  .rcs-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+  .rcs-item { display: grid; gap: 4px; justify-items: start; }
+  .rcs-cat { padding: 2px 10px; border-radius: 8px; font-size: 13px; font-weight: 800; color: #fff; }
+  .rcs-dig { font-size: 46px; line-height: 1; }
+  .rcs-item small { font-size: 12px; color: rgba(255, 255, 255, .65); }
+  /* ---------- 👋 staff welcome dashboard (sign-in screen) ---------- */
+  .m-wrap.wl { max-width: 1000px; gap: 16px; }
+  .wl-hero { display: grid; gap: 16px; padding: 20px; border-radius: 22px; color: #fff; box-shadow: var(--shadow);
+    background: radial-gradient(120% 140% at 0% 0%, var(--pine2) 0%, var(--pine) 55%, var(--pine-ink) 100%); }
+  .wl-hi { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .wl-logo { flex: none; width: 56px; height: 56px; border-radius: 50%; background: #fff; object-fit: contain; padding: 3px; }
+  .wl-hello { flex: 1 1 220px; min-width: 0; }
+  .wl-hi small { font-size: 12px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #ffe9a8; }
+  .wl-hi h1 { margin: 2px 0 0; font-size: clamp(22px, 5.4vw, 32px); line-height: 1.15; }
+  .wl-hi p { margin: 4px 0 0; font-size: 14px; color: rgba(255, 255, 255, .85); }
+  .wl-now { margin-left: auto; text-align: right; }
+  .wl-now span { display: block; font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .wl-clocks { display: grid; grid-template-columns: repeat(auto-fit, minmax(78px, 1fr)); gap: 8px; padding: 12px; border-radius: 16px; background: rgba(0, 0, 0, .38); }
+  .wl-clk { display: grid; justify-items: start; gap: 5px; min-width: 0; }
+  .wl-cat { padding: 1px 8px; border-radius: 6px; font-size: 12px; font-weight: 800; color: #fff; }
+  .wl-dig { font-size: 20px; line-height: 1; }
+  .wl-sum { justify-self: start; display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .3);
+    background: rgba(255, 255, 255, .12); font: inherit; font-size: 13.5px; font-weight: 700; color: #fff; cursor: pointer; }
+  .wl-sum.warn { background: #ffe9a8; border-color: #ffe9a8; color: #4a3300; }
+  .wl-sum.bad { background: #ffd9d6; border-color: #ffd9d6; color: #7a0e14; }
+  .wl-ready { scroll-margin-top: 96px; }
+  @media (max-width: 560px) {
+    .wl-hero { padding: 16px; }
+    .wl-now { margin-left: 0; text-align: left; display: flex; align-items: baseline; gap: 8px; }
+    .wl-now span { display: inline; font-size: 17px; }
+    .wl-steps { font-size: 12.5px; }
+  }
+  .wl-clk small { font-size: 11.5px; color: rgba(255, 255, 255, .75); }
+  .wl-steps { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; font-size: 13px; font-weight: 700; color: var(--muted); }
+  .wl-steps li { display: flex; align-items: center; gap: 6px; padding: 5px 11px 5px 5px; border-radius: 999px; background: var(--line2); }
+  .wl-steps li b { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: #fff; color: var(--ink2); font-size: 12px; }
+  .wl-steps li.on { background: var(--gold-soft); color: var(--pine-ink); }
+  .wl-steps li.on b { background: var(--pine2); color: #fff; }
+  .wl-steps li.done b { background: var(--ok); color: #fff; }
+  .wl-main { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 860px) { .wl-main { grid-template-columns: minmax(0, 1.65fr) minmax(280px, 1fr); align-items: start; } }
+  .wl-left { display: grid; gap: 16px; min-width: 0; }
+  .wl-pickh h2 { margin: 0; font-size: 20px; }
+  .wl-pickh p { margin: 2px 0 0; font-size: 14px; }
+  .wl-grp h2 { margin: 0 0 8px; font-size: 15px; color: var(--ink2); }
+  .wl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+  .wl-st, .wl-chosen { --cc: var(--gold); }
+  .wl-st.c-5km, .wl-chosen.c-5km { --cc: var(--c5km); } .wl-st.c-8km, .wl-chosen.c-8km { --cc: var(--c8km); } .wl-st.c-12km, .wl-chosen.c-12km { --cc: var(--c12km); }
+  .wl-st { position: relative; display: flex; align-items: center; gap: 12px; min-height: 66px; padding: 12px 12px 12px 16px; border-radius: 16px;
+    border: 1.5px solid var(--line); background: #fff; box-shadow: var(--shadow); font: inherit; color: var(--ink); text-align: left; cursor: pointer; }
+  .wl-st::before { content: ''; position: absolute; left: 0; top: 12px; bottom: 12px; width: 4px; border-radius: 0 4px 4px 0; background: var(--cc); }
+  .wl-st:hover, .wl-st:focus-visible { border-color: var(--cc); }
+  .wl-st:active { transform: scale(.985); }
+  .wl-ic { flex: none; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: var(--line2); font-size: 22px; }
+  .wl-tx { flex: 1; min-width: 0; display: grid; gap: 2px; }
+  .wl-tx b { font-size: 15.5px; line-height: 1.25; }
+  .wl-tx small { font-size: 12.5px; line-height: 1.3; color: var(--muted); }
+  .wl-go { flex: none; font-size: 26px; line-height: 1; color: var(--muted); }
+  .wl-sign { scroll-margin-top: 96px; display: grid; gap: 14px; padding: 18px; border-radius: 20px; border: 1.5px solid var(--line); background: #fff; box-shadow: var(--shadow); }
+  .wl-back { justify-self: start; padding: 4px 0; border: 0; background: none; font: inherit; font-size: 14px; font-weight: 700; color: var(--pine2); cursor: pointer; }
+  .wl-chosen { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 14px; border-left: 5px solid var(--cc); background: var(--line2); }
+  .wl-chosen .wl-ic { background: #fff; }
+  .wl-chosen small { display: block; font-size: 11.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+  .wl-chosen b { display: block; font-size: 18px; line-height: 1.2; }
+  .wl-chosen .j { font-size: 13px; color: var(--ink2); }
+  .wl-pinrow { display: flex; gap: 8px; }
+  .wl-pinrow .m-pin { flex: 1; min-width: 0; }
+  .wl-eye { flex: none; padding: 0 14px; border-radius: 12px; border: 1.5px solid var(--line); background: #fff; font: inherit; font-weight: 700; color: var(--ink2); cursor: pointer; }
+  .wl-fine { margin: 0; font-size: 12.5px; color: var(--muted); }
+  .wl-ready { display: grid; padding: 16px; border-radius: 20px; border: 1.5px solid var(--line); background: #fff; box-shadow: var(--shadow); }
+  .wl-ready h2 { margin: 0 0 4px; font-size: 16px; }
+  .wl-row { display: grid; grid-template-columns: 26px minmax(0, 1fr) 10px; gap: 10px; align-items: start; padding: 9px 0; border-top: 1px solid var(--line2); }
+  .wl-row:first-child { border-top: 0; }
+  .wl-row .i { font-size: 18px; line-height: 1.25; }
+  .wl-row b { display: block; font-size: 14px; }
+  .wl-row span { font-size: 12.5px; color: var(--muted); }
+  .wl-row > i { width: 10px; height: 10px; margin-top: 6px; border-radius: 50%; background: #d3c9bd; }
+  .wl-row > i.ok { background: var(--ok); } .wl-row > i.warn { background: #e0a100; } .wl-row > i.bad { background: var(--red); }
   /* big-screen board (?page=live) */
   body.board-mode .top, body.board-mode .updated, body.board-mode .foot { display: none; }
   body.board-mode .wrap { max-width: 1920px; }
@@ -1003,7 +1135,7 @@ window.__startApp = function () {
 
   // ---------------- helpers ----------------
   function $(s) { return document.querySelector(s); }
-  function isPage(p) { return p === 'marshal' || p === 'qrcodes' || p === 'live' || p === 'kits' || p === 'overlay' || p === 'winners' || p === 'podium' || p === 'myreg' || PAGES.some(function (x) { return x.id === p; }); }
+  function isPage(p) { return p === 'marshal' || p === 'qrcodes' || p === 'live' || p === 'kits' || p === 'overlay' || p === 'winners' || p === 'podium' || p === 'myreg' || p === 'clock' || PAGES.some(function (x) { return x.id === p; }); }
   function pageInfo(id) { return PAGES.filter(function (x) { return x.id === id; })[0] || PAGES[0]; }
   function esc(s) {
     return String(s === null || s === undefined ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -1226,6 +1358,7 @@ window.__startApp = function () {
     var watch = (i.fbLive ? '<a class="btn" href="#" data-scrollto="fb-live">🔴 Watch live video</a>' : '') +
       (f.results.length ? '<a class="btn" href="#" data-page="winners">🏆 Winners</a>' : '');
     return pageHeader('funrun', watch + reg) +
+      '<div id="clock-strip" data-sig="' + esc(clockStripCats().join(',')) + '">' + raceClockStrip() + '</div>' +
       '<section class="sec"><div class="stats">' + tiles + '</div>' + seg + '</section>' +
       bibSection() +
       fbLiveSection() +
@@ -2707,6 +2840,111 @@ window.__startApp = function () {
   document.addEventListener('pointerup', function () { if (VOX.rec) voxStop(true); });
   document.addEventListener('pointercancel', function () { if (VOX.rec) voxStop(true); });
 
+  // ---------------- ⏱ LIVE RACE CLOCK (?page=clock, and the timer strip on the Fun Run page) ----------------
+  // Big LED-style digits per category: a countdown before the gun, then the race time from the exact gun start
+  // (START / START ALL, or Site - Info → Gun Start). Every screen uses Google's time (sent with each live update),
+  // so a phone or TV whose own clock is wrong still shows the right race time. &cat=5KM = one category, huge.
+  var TS = { skew: 0, rtt: 1e9, at: 0 };
+  function syncNote(server, t0, t1) {              // keeps the most precise answer, renewed every 5 minutes
+    var rtt = t1 - t0;
+    if (!isFinite(server) || rtt < 0) return;
+    if (rtt < TS.rtt || Date.now() - TS.at > 300000) { TS.skew = server - (t0 + t1) / 2; TS.rtt = rtt; TS.at = Date.now(); }
+  }
+  function nowSync() {                             // Google's time, when this device's clock is clearly off
+    if (CLK.at && CLK.use) return Date.now() + CLK.off;
+    return Date.now() + (TS.at && Math.abs(TS.skew) > Math.max(1000, TS.rtt / 2 + 300) ? TS.skew : 0);
+  }
+  var SEG = { '0': 'abcdef', '1': 'bc', '2': 'abged', '3': 'abgcd', '4': 'fgbc', '5': 'afgcd', '6': 'afgedc', '7': 'abc', '8': 'abcdefg', '9': 'abcdfg', '-': 'g', ' ': '' };
+  var SEG_R = { a: [10, 0, 44, 10], b: [54, 8, 10, 46], c: [54, 60, 10, 46], d: [10, 104, 44, 10], e: [0, 60, 10, 46], f: [0, 8, 10, 46], g: [10, 52, 44, 10] };
+  function segText(txt) {                          // "1:23:45" in seven-segment digits (drawn, no font needed)
+    return '<span class="seg7" role="img" aria-label="' + esc(txt.replace(/-/g, '–')) + '">' + txt.split('').map(function (ch) {
+      if (ch === ':') return '<svg class="s7c" viewBox="0 0 18 118" aria-hidden="true"><circle cx="9" cy="38" r="6"/><circle cx="9" cy="82" r="6"/></svg>';
+      var on = SEG[ch] || '';
+      return '<svg class="s7" viewBox="-2 -2 72 118" aria-hidden="true"><g transform="skewX(-5) translate(6 0)">' + 'abcdefg'.split('').map(function (k) {
+        var r = SEG_R[k];
+        return '<rect x="' + r[0] + '" y="' + r[1] + '" width="' + r[2] + '" height="' + r[3] + '" rx="5"' + (on.indexOf(k) !== -1 ? ' class="on"' : '') + '/>';
+      }).join('') + '</g></svg>';
+    }).join('') + '</span>';
+  }
+  function hms(s) { return Math.floor(s / 3600) + ':' + ('0' + Math.floor(s % 3600 / 60)).slice(-2) + ':' + ('0' + s % 60).slice(-2); }
+  function clockState(cat, now) {
+    var gun = DATA.race && DATA.race.gun && DATA.race.gun[cat];
+    if (!gun) return { t: '-:--:--', st: 'Waiting for the gun start', sh: 'Not started', mode: 'wait' };
+    var d = now - gun, g = new Date(gun);
+    var at = g.toLocaleTimeString('en-US', gun % 60000 ? { hour: 'numeric', minute: '2-digit', second: '2-digit' } : { hour: 'numeric', minute: '2-digit' });
+    var day = g.toDateString() === new Date(now).toDateString() ? '' : g.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ';
+    if (d < -96 * 3600000) return { t: '-:--:--', st: 'Starts ' + day + at, sh: 'Starts ' + day.replace(', ', ''), mode: 'wait' };
+    if (d < 0) return { t: hms(Math.ceil(-d / 1000)), st: 'Starts ' + (day ? day : 'at ') + at + ' · counting down', sh: 'Starts ' + (day ? day.replace(', ', '') : at), mode: 'count' };
+    if (d > 6 * 3600000) return { t: '-:--:--', st: 'Race over', sh: 'Race over', mode: 'wait' };
+    return { t: hms(Math.floor(d / 1000)), st: 'Race time · started ' + g.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' }), sh: 'Running', mode: 'run' };
+  }
+  function clockTick() {                           // 10 times a second, so the seconds change right on time
+    var els = document.querySelectorAll('[data-rclock]');
+    if (!els.length) return;
+    var now = nowSync();
+    els.forEach(function (el) {
+      var x = clockState(el.getAttribute('data-rclock'), now);
+      if (el._t !== x.t) { el._t = x.t; el.innerHTML = segText(x.t); }
+      if (el.getAttribute('data-mode') !== x.mode) el.setAttribute('data-mode', x.mode);
+      var st = el.parentNode.querySelector('[data-rclockst]');
+      var stt = st && st.hasAttribute('data-short') ? x.sh : x.st;
+      if (st && st.textContent !== stt) st.textContent = stt;
+    });
+    var tn = document.getElementById('rclk-now');
+    if (tn) { var nt = new Date(now).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' }); if (tn.textContent !== nt) tn.textContent = nt; }
+  }
+  setInterval(clockTick, 100);
+
+  function clockQ() {
+    var q = {};
+    try { new URLSearchParams(location.search).forEach(function (v, k) { q[k.toLowerCase()] = v; }); } catch (err) {}
+    return q;
+  }
+  function clockBg() {                             // &bg=clear: digits only, over the camera in OBS; &bg=green: for a Color Key
+    var bg = String(clockQ().bg || '').toLowerCase();
+    return /^(clear|green)$/.test(bg) ? bg : '';
+  }
+  function clockCats() {
+    var q = {};
+    try { new URLSearchParams(location.search).forEach(function (v, k) { q[k.toLowerCase()] = v; }); } catch (err) {}
+    var cats = DATA.funrun.categories;
+    if (q.cat) { var one = cats.filter(function (c) { return catKey(c) === catKey(q.cat); }); if (one.length) return one; }
+    return cats;
+  }
+  function viewClock() {
+    var i = DATA.info, cats = clockCats();
+    return '<div class="rclk' + (cats.length === 1 ? ' one' : '') + (clockBg() ? ' bg-' + clockBg() : '') + '"><div class="rclk-top">' +
+      (i.logo ? '<img class="rclk-logo" src="' + safeUrl(i.logo) + '" alt="" referrerpolicy="no-referrer" onerror="this.remove()">' : '') +
+      '<div><small>' + esc(i.eventName) + '</small><b>⏱ Fun Run race clock</b></div>' +
+      '<div class="rclk-tod"><small>Time now</small><span id="rclk-now"></span></div></div>' +
+      '<div class="rclk-rows">' + cats.map(function (c) {
+        var k = catKey(c);
+        return '<div class="rclk-row c-' + k + '"><div class="rclk-cat bg-' + k + '">' + esc(c) + '</div>' +
+          '<div class="rclk-dig" data-rclock="' + esc(c) + '"></div><div class="rclk-st" data-rclockst="' + esc(c) + '"></div></div>';
+      }).join('') + '</div></div>';
+  }
+  // the timer strip on the Fun Run page: from 2 hours before a gun start until the race is over
+  function clockStripCats() {
+    var g = (DATA.race && DATA.race.gun) || {}, now = nowSync();
+    return DATA.funrun.categories.filter(function (c) { return g[c] && now > g[c] - 2 * 3600000 && now < g[c] + 6 * 3600000; });
+  }
+  function raceClockStrip() {
+    var cats = clockStripCats();
+    if (!cats.length) return '';
+    return '<section class="sec rcs" aria-label="Live race clock"><div class="rcs-h"><b>⏱ Live race clock</b>' +
+      '<a href="#" class="btn ghost sm" data-page="clock">⛶ Full screen</a></div><div class="rcs-row">' + cats.map(function (c) {
+        var k = catKey(c);
+        return '<div class="rcs-item c-' + k + '"><span class="rcs-cat bg-' + k + '">' + esc(c) + '</span>' +
+          '<span class="rcs-dig" data-rclock="' + esc(c) + '"></span><small data-rclockst="' + esc(c) + '"></small></div>';
+      }).join('') + '</div></section>';
+  }
+  function clockStripRefresh() {                   // a gun start set while the page is open: the strip appears by itself
+    var w = $('#clock-strip');
+    if (!w) return;
+    var sig = clockStripCats().join(',');
+    if (w.getAttribute('data-sig') !== sig) { w.setAttribute('data-sig', sig); w.innerHTML = raceClockStrip(); clockTick(); }
+  }
+
   // ---------------- RACE KIT & PAYMENT BOARD (?page=kits) ----------------
   // A wide public board for a TV at the kit-claiming area: every runner with a bib, whether the payment is
   // verified and whether the race bib & kit were claimed. Wide screens show one category page at a time and
@@ -2844,11 +3082,11 @@ window.__startApp = function () {
     return hasGas() && !DATA.light && (document.visibilityState !== 'hidden' || state.page === 'overlay') && state.page !== 'marshal' && state.page !== 'qrcodes';
   }
   function wantRace() {
-    return state.page === 'live' || state.page === 'overlay' || state.page === 'winners' || state.page === 'podium' || ((state.page === 'funrun' || state.page === 'home') && !!(DATA.race && DATA.race.stations && DATA.race.stations.length));
+    return state.page === 'live' || state.page === 'overlay' || state.page === 'winners' || state.page === 'podium' || state.page === 'clock' || ((state.page === 'funrun' || state.page === 'home') && !!(DATA.race && DATA.race.stations && DATA.race.stations.length));
   }
   function racePollEvery() {                    // how often the page asks "anything new?" (a tiny question)
     if (state.page === 'live' || state.page === 'overlay') return 1000;   // big-screen race board & stream overlay: every second
-    if (state.page === 'kits') return 2000;      // kit & payment board
+    if (state.page === 'kits' || state.page === 'clock') return 2000;   // kit & payment board, race clock
     if (wantRace() && raceActive()) return 2000; // race pages while the race is on
     if (state.page === 'funrun') return 3000;    // Fun Run page: new registrations
     return 5000;
@@ -2860,10 +3098,12 @@ window.__startApp = function () {
     if (RP.busy) return;
     RP.busy = true; RP.n++;
     var race = wantRace(), full = now === true || RP.n % Math.max(1, Math.round(60000 / racePollEvery())) === 0;   // about once a minute: full race download anyway
+    var t0 = Date.now();
     google.script.run.withSuccessHandler(function (txt) {
       RP.busy = false;
       var d = null;
       try { d = JSON.parse(txt); } catch (err) {}
+      if (d && d.now) syncNote(d.now, t0, Date.now());
       if (d && d.race && d.race.race) {
         if (!TRK.prev) trkNoteMoves();
         RP.ver = d.race.ver || d.rv || '';
@@ -2885,6 +3125,7 @@ window.__startApp = function () {
 
   function updateRaceViews() {
     if (state.page === 'overlay') { ovUpdate(); return; }
+    if (state.page === 'clock') { clockTick(); return; }
     if (state.page === 'podium') { podUpdate(); return; }
     if (state.page === 'winners') {
       var wy = window.scrollY;
@@ -2951,24 +3192,123 @@ window.__startApp = function () {
       '</section>';
   }
 
-  function marshalLogin() {
-    var stations = (DATA.race && DATA.race.stations) || [];
-    if (M.station && !M.pick) M.pick = M.station.name;
-    var list = stations.length ? stations.map(function (s) {
-      return '<button type="button" class="m-pick' + (s.name === M.pick ? ' on' : '') + '" data-pick="' + esc(s.name) + '">' + esc(s.name) +
-        '<small>' + esc(stSub(s)) + '</small></button>';
-    }).join('') : '<div class="hint">No marshal stations are set up yet. Ask the race organizer.</div>';
-    return '<section class="m-wrap"><div><h1 style="margin:0;font-size:26px">Staff &amp; marshal check-in</h1>' +
-      '<p class="muted" style="margin:4px 0 0">Pick your station and enter the PIN the organizer gave you.</p></div>' +
-      '<div class="m-stations">' + list + '</div>' +
+  // ---------------- 👋 STAFF WELCOME DASHBOARD (the sign-in screen of staff.html and ?page=marshal) ----------------
+  // Step 1: a welcome header with the live race clocks, then the stations grouped by job. Step 2: the chosen station
+  // with name + PIN. Beside it, a live "is this phone ready?" check. Nothing private is shown before sign-in.
+  var WL_ICON = { start: '🚦', checkpoint: '🔄', finish: '🏁', kit: '🎽', payment: '💳', hq: '📡' };
+  var WL_JOB = { start: 'Check runners in and fire the 🔫 gun start', checkpoint: 'Check runners in at the turn', finish: 'Record every finisher’s time',
+    kit: 'Release race bibs and singlets', payment: 'Verify payment proofs', hq: 'Messages, 🎤 walkie-talkie and station status' };
+  var WL_GROUPS = [{ t: '🏃 On the race course', types: ['start', 'checkpoint', 'finish'] }, { t: '🎽 Registration & race kits', types: ['payment', 'kit'] },
+    { t: '📡 Race control', types: ['hq'] }];
+  var PERM = { asked: false };
+  function permRead() {                           // camera (QR scanning) and microphone (walkie-talkie): allowed yet?
+    if (PERM.asked) return;
+    PERM.asked = true;
+    try {
+      if (!navigator.permissions || !navigator.permissions.query) return;
+      ['camera', 'microphone'].forEach(function (n) {
+        navigator.permissions.query({ name: n }).then(function (p) { PERM[n] = p.state; p.onchange = function () { PERM[n] = p.state; }; }).catch(function () {});
+      });
+    } catch (err) {}
+  }
+  function wlCat(s) { return s.cats && s.cats.length === 1 ? s.cats[0] : ''; }
+  function wlCard(s) {
+    var t = stType(s), c = wlCat(s);
+    return '<button type="button" class="wl-st t-' + t + (c ? ' c-' + catKey(c) : '') + '" data-pick="' + esc(s.name) + '">' +
+      '<span class="wl-ic" aria-hidden="true">' + (WL_ICON[t] || '📍') + '</span><span class="wl-tx"><b>' + esc(s.name) + '</b><small>' +
+      esc(t === 'checkpoint' && !c ? (s.cats && s.cats.length ? s.cats.join(', ') : 'All categories') + ' · ' + WL_JOB[t] : WL_JOB[t] || stSub(s)) +
+      '</small></span><span class="wl-go" aria-hidden="true">›</span></button>';
+  }
+  function wlStations(stations) {
+    var order = DATA.funrun.categories;
+    var rank = function (s) { var c = (s.cats || [])[0]; var i = order.indexOf(c); return i === -1 ? 99 : i; };
+    return WL_GROUPS.map(function (g) {
+      var list = stations.filter(function (s) { return g.types.indexOf(stType(s)) !== -1; }).sort(function (a, b) {
+        return g.types.indexOf(stType(a)) - g.types.indexOf(stType(b)) || rank(a) - rank(b);
+      });
+      return list.length ? '<div class="wl-grp"><h2>' + g.t + '</h2><div class="wl-grid">' + list.map(wlCard).join('') + '</div></div>' : '';
+    }).join('');
+  }
+  function wlSign(s) {
+    var t = stType(s), c = wlCat(s);
+    return '<div class="wl-sign" id="wl-sign"><button type="button" class="wl-back" data-wl-back>‹ All stations</button>' +
+      '<div class="wl-chosen' + (c ? ' c-' + catKey(c) : '') + '"><span class="wl-ic" aria-hidden="true">' + (WL_ICON[t] || '📍') + '</span>' +
+      '<div><small>You are signing in to</small><b>' + esc(s.name) + '</b><span class="j">' + esc(WL_JOB[t] || stSub(s)) + '</span></div></div>' +
       '<form id="m-login" class="m-form" autocomplete="off">' +
       '<label for="m-staff">Your name <span class="muted">(optional – saved with your entries)</span></label>' +
       '<input id="m-staff" class="search plain" type="text" maxlength="40" autocomplete="off" value="' + esc(M.staff) + '">' +
       '<label for="m-pin">Station PIN</label>' +
-      '<input id="m-pin" class="m-pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off">' +
-      '<button class="m-go" type="submit">Start checking in</button></form>' +
+      '<div class="wl-pinrow"><input id="m-pin" class="m-pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off">' +
+      '<button type="button" class="wl-eye" data-wl-eye aria-label="Show the PIN">Show</button></div>' +
+      '<button class="m-go" type="submit">Sign in &amp; start</button></form>' +
       '<div class="m-err" role="status">' + esc(M.error) + '</div>' +
-      (M.queue.length ? '<div class="m-pending">' + M.queue.length + ' check-in(s) saved on this phone will be sent after you sign in.</div>' : '') +
+      '<p class="wl-fine">🔒 The race organizer gives each station its PIN. Don’t share it: every check-in is saved with your station and name.</p></div>';
+  }
+  function wlReadyRows() {
+    var rows = [], s;
+    rows.push(navigator.onLine === false ? ['📶', 'Internet', 'No signal – you need signal to sign in', 'bad'] : ['📶', 'Internet', 'Connected', 'ok']);
+    if (!CLK.at) rows.push(['⏱', 'Phone clock', 'Checking against Google’s time…', '']);
+    else if (!CLK.use) rows.push(['⏱', 'Phone clock', 'Correct – matches Google’s time', 'ok']);
+    else {
+      s = Math.abs(CLK.off) / 1000;
+      rows.push(['⏱', 'Phone clock', (s >= 90 ? Math.round(s / 60) + ' min' : Math.round(s) + ' s') + (CLK.off > 0 ? ' behind' : ' ahead') + ' – corrected automatically', 'warn']);
+    }
+    if (BAT.level === '') rows.push(['🔋', 'Battery', 'Charge your phone fully before your shift', '']);
+    else if (BAT.charging) rows.push(['🔋', 'Battery', BAT.level + '% · charging', 'ok']);
+    else if (BAT.level < 30) rows.push(['🔋', 'Battery', BAT.level + '% – charge it or bring a power bank', 'bad']);
+    else if (BAT.level < 60) rows.push(['🔋', 'Battery', BAT.level + '% – bring a power bank', 'warn']);
+    else rows.push(['🔋', 'Battery', BAT.level + '%', 'ok']);
+    var perm = function (n, icon, label, ok, ask) {
+      if (PERM[n] === 'granted') rows.push([icon, label, ok, 'ok']);
+      else if (PERM[n] === 'denied') rows.push([icon, label, 'Blocked – allow it in the browser’s site settings', 'bad']);
+      else rows.push([icon, label, ask, '']);
+    };
+    perm('camera', '📷', 'Camera', 'Allowed – ready to scan bib QR codes', 'The phone asks the first time you scan – tap Allow');
+    perm('microphone', '🎤', 'Microphone', 'Allowed – walkie-talkie ready', 'The phone asks the first time you hold 🎤 – tap Allow');
+    rows.push(['🔊', 'Sound', 'Turn the volume up – Race HQ messages beep, voice messages play by themselves', '']);
+    if (M.queue.length) rows.push(['📨', 'Saved on this phone', M.queue.length + ' check-in(s) will be sent after you sign in', 'warn']);
+    return rows.map(function (r) {
+      return '<div class="wl-row"><span class="i" aria-hidden="true">' + r[0] + '</span><div><b>' + esc(r[1]) + '</b><span>' + esc(r[2]) + '</span></div>' +
+        '<i class="' + r[3] + '" aria-hidden="true"></i></div>';
+    }).join('');
+  }
+  function wlSum() {                               // one line in the header: ready, or how many things to check
+    var h = wlReadyRows(), bad = (h.match(/class="bad"/g) || []).length, warn = (h.match(/class="warn"/g) || []).length;
+    var n = bad + warn;
+    return '<button type="button" class="wl-sum' + (bad ? ' bad' : warn ? ' warn' : '') + '" id="wl-sum" data-wl-ready>' +
+      (n ? '⚠️ ' + n + ' thing' + (n > 1 ? 's' : '') + ' to check on this phone ›' : '✅ This phone is ready ›') + '</button>';
+  }
+  function wlRefresh() {                           // every second while the welcome screen is open
+    var el = $('#wl-ready');
+    if (!el) return;
+    var h = wlReadyRows();
+    if (el._h !== h) { el._h = h; el.innerHTML = h; var sm = $('#wl-sum'); if (sm) sm.outerHTML = wlSum(); }
+  }
+  function marshalLogin() {
+    var stations = (DATA.race && DATA.race.stations) || [], i = DATA.info || {};
+    if (M.station && !M.pick && !M.changing) M.pick = M.station.name;
+    var chosen = stations.filter(function (s) { return s.name === M.pick; })[0];
+    permRead();
+    if (hasGas() && !CLK.busy && (!CLK.at || Date.now() - CLK.at > 3600000) && Date.now() - CLK.tried > 60000) setTimeout(function () { clockCheck(2); }, 800);
+    var hi = M.staff ? 'Welcome back, ' + esc(M.staff.split(/\s+/)[0]) + '! 👋' : 'Welcome, race team! 👋';
+    var where = [i.dates, i.venue].filter(Boolean).map(esc).join(' · ');
+    var hero = '<section class="wl-hero" aria-label="Welcome"><div class="wl-hi">' +
+      (i.logo ? '<img class="wl-logo" src="' + safeUrl(i.logo) + '" alt="" referrerpolicy="no-referrer" onerror="this.remove()">' : '') +
+      '<div class="wl-hello"><small>' + esc(i.eventName || 'Fun Run') + '</small><h1>' + hi + '</h1>' +
+      '<p>Fun Run staff &amp; marshal check-in' + (where ? ' · ' + where : '') + '</p></div>' +
+      '<div class="wl-now"><small>Time now</small><span id="rclk-now"></span></div></div>' +
+      '<div class="wl-clocks" aria-label="Race clocks">' + DATA.funrun.categories.map(function (c) {
+        var k = catKey(c);
+        return '<div class="wl-clk"><span class="wl-cat bg-' + k + '">' + esc(c) + '</span><span class="wl-dig" data-rclock="' + esc(c) + '"></span>' +
+          '<small data-rclockst="' + esc(c) + '" data-short></small></div>';
+      }).join('') + '</div>' + wlSum() + '</section>';
+    var steps = '<ol class="wl-steps" aria-label="Steps"><li class="' + (chosen ? 'done' : 'on') + '"><b>' + (chosen ? '✓' : '1') + '</b>Your station</li>' +
+      '<li class="' + (chosen ? 'on' : '') + '"><b>2</b>Name &amp; PIN</li><li><b>3</b>Start</li></ol>';
+    var left = !stations.length ? '<div class="hint">No marshal stations are set up yet. Ask the race organizer.</div>' :
+      chosen ? wlSign(chosen) : '<div class="wl-pickh"><h2>Pick your station</h2><p class="muted">Tap the station the organizer assigned to you.</p></div>' + wlStations(stations) +
+        (M.error ? '<div class="m-err" role="status">' + esc(M.error) + '</div>' : '');
+    return '<section class="m-wrap wl">' + hero + steps + '<div class="wl-main"><div class="wl-left">' + left + '</div>' +
+      '<aside class="wl-ready" id="wl-readyc"><h2>✅ Is this phone ready?</h2><div id="wl-ready">' + wlReadyRows() + '</div></aside></div>' +
       (hasGas() ? '' : '<div class="m-err">Open this page from the event website link to use it.</div>') +
       '</section>';
   }
@@ -3243,6 +3583,7 @@ window.__startApp = function () {
       try { localStorage.setItem('funrun-clock', JSON.stringify({ off: CLK.off, rtt: CLK.rtt, at: CLK.at, use: CLK.use })); } catch (err) {}
       var el = $('#m-clockok');
       if (el) { el.innerHTML = clockNote(); el.className = 'm-clockok' + (CLK.use ? ' fix' : ''); }
+      wlRefresh();
     }
     (function ask() {
       var t0 = Date.now();
@@ -3325,7 +3666,7 @@ window.__startApp = function () {
 
   var wakeLock = null;
   function keepAwake() {
-    if ((state.page !== 'marshal' && state.page !== 'live' && state.page !== 'kits' && state.page !== 'overlay' && state.page !== 'podium') || !navigator.wakeLock || wakeLock) return;   // keep the screen on
+    if ((state.page !== 'marshal' && state.page !== 'live' && state.page !== 'kits' && state.page !== 'overlay' && state.page !== 'podium' && state.page !== 'clock') || !navigator.wakeLock || wakeLock) return;   // keep the screen on
     navigator.wakeLock.request('screen').then(function (l) { wakeLock = l; l.addEventListener('release', function () { wakeLock = null; }); }).catch(function () {});
   }
 
@@ -4302,7 +4643,7 @@ window.__startApp = function () {
     volleyball: function () { return viewSport('volleyball'); },
     pickleball: function () { return viewSport('pickleball'); },
     mlbb: function () { return viewSport('mlbb'); },
-    bingo: viewBingo, trees: viewTrees, mentors: viewMentors, marshal: viewMarshal, qrcodes: viewQr, live: viewLive, kits: viewKits, overlay: viewOverlay, winners: viewWinners, podium: viewPodium, myreg: viewMyReg,
+    bingo: viewBingo, trees: viewTrees, mentors: viewMentors, marshal: viewMarshal, qrcodes: viewQr, live: viewLive, kits: viewKits, overlay: viewOverlay, winners: viewWinners, podium: viewPodium, myreg: viewMyReg, clock: viewClock,
     parade: function () { return viewProgramPage('parade'); }, ball: function () { return viewProgramPage('ball'); }
   };
 
@@ -4471,9 +4812,10 @@ window.__startApp = function () {
     document.body.classList.toggle('marshal-mode', state.page === 'marshal');
     document.body.classList.toggle('staff-only', STAFF_ONLY);
     document.body.classList.toggle('runner-mode', state.page === 'myreg');
-    document.body.classList.toggle('board-mode', state.page === 'live' || state.page === 'kits' || state.page === 'podium');
-    document.body.classList.toggle('overlay-mode', state.page === 'overlay');
-    document.documentElement.classList.toggle('overlay-mode', state.page === 'overlay');
+    document.body.classList.toggle('board-mode', state.page === 'live' || state.page === 'kits' || state.page === 'podium' || state.page === 'clock');
+    var see = state.page === 'overlay' || (state.page === 'clock' && !!clockBg());   // see-through page for OBS
+    document.body.classList.toggle('overlay-mode', see);
+    document.documentElement.classList.toggle('overlay-mode', see);
     renderNav();
     renderSportBg();
     var app = $('#app'), keep = $('#fb-live');
@@ -4516,6 +4858,8 @@ window.__startApp = function () {
     if (state.page === 'overlay') { keepAwake(); ovStart(); }
     if (state.page === 'podium') { keepAwake(); if (built) podStart(); }
     if (state.page === 'winners') refreshRace();
+    if (state.page === 'clock') { keepAwake(); refreshRace(); clockTick(); }
+    if (state.page === 'funrun') clockTick();
     if (state.page === 'live' || state.page === 'funrun') refreshRace();   // check for new check-ins right away
     if (state.page === 'funrun' && state.scrollToBib && $('#bib-sec')) { state.scrollToBib = false; ($('#bibq') || $('#bib-sec')).scrollIntoView({ block: 'center' }); }
   }
@@ -4547,12 +4891,14 @@ window.__startApp = function () {
   function tick() {
     var up = $('#updated');
     if (up) up.textContent = 'Updated ' + rel(DATA.checkedMs || DATA.generatedMs);
+    if (state.page === 'funrun') clockStripRefresh();
+    if (state.page === 'marshal') wlRefresh();
     var ku = $('#kb-upd');
     if (ku) ku.textContent = 'Updated ' + rel(DATA.checkedMs || DATA.generatedMs);
     var ru = $('#race-upd');
     if (ru && (raceActive() || state.page === 'live')) ru.textContent = raceUpdated();
     document.querySelectorAll('.bd-clock[data-gun]').forEach(function (el) {
-      el.textContent = '⏱ ' + raceClock(Date.now() - Number(el.getAttribute('data-gun')));
+      el.textContent = '⏱ ' + raceClock(nowSync() - Number(el.getAttribute('data-gun')));
     });
     document.querySelectorAll('.ov-clk[data-gun]').forEach(function (el) {
       el.textContent = raceClock(mNow() - Number(el.getAttribute('data-gun')));
@@ -4611,10 +4957,19 @@ window.__startApp = function () {
     t = e.target.closest('[data-trkcat]');
     if (t) { state.trackCat = t.getAttribute('data-trkcat'); $('#trk-tabs').innerHTML = trackTabs(); $('#trk-body').innerHTML = trackBody(); return; }
     t = e.target.closest('[data-pick]');
-    if (t) {
+    if (t) {                                       // welcome screen, step 2: the chosen station with name + PIN
       M.pick = t.getAttribute('data-pick'); M.error = '';
-      document.querySelectorAll('.m-pick').forEach(function (b) { b.classList.toggle('on', b === t); });
-      var pin = $('#m-pin'); if (pin) pin.focus();
+      render();
+      var sg = $('#wl-sign'); if (sg && sg.scrollIntoView) sg.scrollIntoView({ block: 'start' });
+      var f = M.staff ? $('#m-pin') : $('#m-staff'); if (f) { try { f.focus({ preventScroll: true }); } catch (err) { f.focus(); } }
+      return;
+    }
+    if (e.target.closest('[data-wl-ready]')) { var rc = $('#wl-readyc'); if (rc) rc.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
+    if (e.target.closest('[data-wl-back]')) { M.pick = ''; M.changing = true; M.error = ''; render(); window.scrollTo(0, 0); return; }
+    t = e.target.closest('[data-wl-eye]');
+    if (t) {
+      var pf = $('#m-pin');
+      if (pf) { var show = pf.type === 'password'; pf.type = show ? 'text' : 'password'; t.textContent = show ? 'Hide' : 'Show'; t.setAttribute('aria-label', show ? 'Hide the PIN' : 'Show the PIN'); }
       return;
     }
     t = e.target.closest('[data-undo]');
